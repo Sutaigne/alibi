@@ -557,6 +557,84 @@ function Score-And-Add {
 }
 
 # ============================================================================
+# Get-PrunedFiles — fast recursive file walker that prunes dependency-cache
+# directories BEFORE descending. PowerShell's Get-ChildItem -Recurse can't
+# do this (any -Where applied to the pipeline runs after enumeration, so
+# node_modules / site-packages / .venv / etc. get fully walked before the
+# filter rejects results). This helper uses .NET DirectoryInfo enumeration
+# with explicit pruning, which is dramatically faster on ML-heavy / dev
+# machines.
+#
+# Returns System.IO.FileInfo objects — same shape as Get-ChildItem -File,
+# so callers can use .FullName, .Name, .Length, .CreationTime, .LastWriteTime,
+# .DirectoryName, .Extension, .BaseName interchangeably.
+# ============================================================================
+
+$Script:DefaultPrunedDirNames = @(
+    'node_modules', '.git', '.hg', '.svn', 'site-packages',
+    'venv', '.venv', 'env', 'envs',
+    '__pycache__', '.pytest_cache', '.mypy_cache', '.ruff_cache', '.tox',
+    'anaconda3', 'miniconda3', 'conda',
+    '.cache', '.npm', '.yarn',
+    '.next', '.nuxt', '.cargo', '.rustup'
+)
+
+function Get-PrunedFiles {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)][string]$Root,
+        [string[]]$Extensions = $null,        # e.g. @('.onnx') or @('.exe','.py')
+        [int]$MaxDepth = 8,
+        [int]$ResultCap = 0,                  # 0 = unlimited
+        [string[]]$ExcludeDirNames = $null    # $null = default dep-cache list
+    )
+    if (-not (Test-Path -LiteralPath $Root)) { return }
+
+    $excludes = if ($null -ne $ExcludeDirNames) { $ExcludeDirNames } else { $Script:DefaultPrunedDirNames }
+    $excludeSet = @{}
+    foreach ($n in $excludes) { $excludeSet[$n.ToLower()] = $true }
+
+    $extSet = $null
+    if ($Extensions) {
+        $extSet = @{}
+        foreach ($e in $Extensions) {
+            $k = if ($e.StartsWith('.')) { $e.ToLower() } else { '.' + $e.ToLower() }
+            $extSet[$k] = $true
+        }
+    }
+
+    $results = [System.Collections.Generic.List[System.IO.FileInfo]]::new()
+    $stack = [System.Collections.Generic.Stack[object]]::new()
+    try {
+        $stack.Push(@{ Dir = [System.IO.DirectoryInfo]::new($Root); Depth = 0 })
+    } catch { return $results }
+
+    while ($stack.Count -gt 0) {
+        $cur = $stack.Pop()
+        $dir = $cur.Dir
+        $depth = $cur.Depth
+
+        try {
+            foreach ($f in $dir.EnumerateFiles()) {
+                if ($extSet -and -not $extSet.ContainsKey($f.Extension.ToLower())) { continue }
+                [void]$results.Add($f)
+                if ($ResultCap -gt 0 -and $results.Count -ge $ResultCap) { return $results }
+            }
+        } catch {}
+
+        if ($depth -ge $MaxDepth) { continue }
+
+        try {
+            foreach ($d in $dir.EnumerateDirectories()) {
+                if ($excludeSet.ContainsKey($d.Name.ToLower())) { continue }
+                $stack.Push(@{ Dir = $d; Depth = $depth + 1 })
+            }
+        } catch {}
+    }
+    return $results
+}
+
+# ============================================================================
 # SCAN FUNCTIONS
 # ============================================================================
 
@@ -1109,17 +1187,15 @@ function Scan-UserScriptContents {
     $scanRoots = $scanRoots | Where-Object { Test-Path $_ }
 
     $scriptFiles = [System.Collections.Generic.List[object]]::new()
+    # v4.1.4: Get-PrunedFiles handles dep-cache pruning + multi-extension walk
+    # in one pass per root (faster than the prior per-extension loop).
+    $scriptExts = @('.bat','.cmd','.ps1','.vbs','.wsf','.psm1','.lua','.ahk')
     foreach ($root in $scanRoots) {
-        foreach ($ext in @('*.bat','*.cmd','*.ps1','*.vbs','*.wsf','*.psm1','*.lua','*.ahk')) {
-            try {
-                Get-ChildItem $root -Recurse -File -Depth 8 -Filter $ext -ErrorAction SilentlyContinue |
-                    Where-Object {
-                        $_.Length -lt 10MB -and
-                        ($_.Name.ToLower() -notin $excludeNames) -and
-                        (-not ($selfDir -and $_.DirectoryName.ToLower().StartsWith($selfDir)))
-                    } |
-                    ForEach-Object { [void]$scriptFiles.Add($_) }
-            } catch {}
+        foreach ($f in (Get-PrunedFiles -Root $root -Extensions $scriptExts -ResultCap 3000)) {
+            if ($f.Length -ge 10MB) { continue }
+            if ($f.Name.ToLower() -in $excludeNames) { continue }
+            if ($selfDir -and $f.DirectoryName.ToLower().StartsWith($selfDir)) { continue }
+            [void]$scriptFiles.Add($f)
         }
     }
 
@@ -1207,25 +1283,24 @@ function Scan-ObscuredFileNames {
 
     $extWatchlist = @('.exe','.dll','.bat','.cmd','.ps1','.vbs','.lua','.ahk','.sys','.bin')
 
+    # v4.1.4: dep-cache prune. node_modules etc. would never be the place where
+    # someone hides a cheat under a hex-name; skipping these is detection-neutral.
     foreach ($root in $roots) {
-        try {
-            Get-ChildItem $root -Recurse -File -Depth 8 -ErrorAction SilentlyContinue |
-                Where-Object { $extWatchlist -contains $_.Extension.ToLower() -and $_.Length -lt 100MB } |
-                ForEach-Object {
-                    $name = $_.BaseName
-                    $reason = ''
-                    if ($name -match '^0x[0-9a-fA-F]+$') { $reason = "0x-prefix hex name ($name$($_.Extension))" }
-                    elseif ($name -match '^[0-9a-fA-F]{8,}$' -and $name -match '[a-fA-F]') { $reason = "raw hex name ($name$($_.Extension))" }
-                    elseif ($name -match '^\d{4,}$') { $reason = "pure-numeric name ($name$($_.Extension))" }
-                    elseif ($name -match '^[a-zA-Z0-9]{1,2}$' -and $name -notin @('go','vc','7z','C','x')) { $reason = "ultra-short obscured name ($name$($_.Extension))" }
-                    if ($reason) {
-                        Add-Finding 'ObscuredNames' $_.FullName "Obscured filename: $reason" 'MEDIUM' 'dual-use' @{
-                            FileName = $_.Name; FullPath = $_.FullName; Pattern = $reason
-                            SizeBytes = $_.Length; LastWrite = $_.LastWriteTime.ToString('s')
-                        }
-                    }
+        foreach ($f in (Get-PrunedFiles -Root $root -Extensions $extWatchlist -ResultCap 4000)) {
+            if ($f.Length -ge 100MB) { continue }
+            $name = $f.BaseName
+            $reason = ''
+            if ($name -match '^0x[0-9a-fA-F]+$') { $reason = "0x-prefix hex name ($name$($f.Extension))" }
+            elseif ($name -match '^[0-9a-fA-F]{8,}$' -and $name -match '[a-fA-F]') { $reason = "raw hex name ($name$($f.Extension))" }
+            elseif ($name -match '^\d{4,}$') { $reason = "pure-numeric name ($name$($f.Extension))" }
+            elseif ($name -match '^[a-zA-Z0-9]{1,2}$' -and $name -notin @('go','vc','7z','C','x')) { $reason = "ultra-short obscured name ($name$($f.Extension))" }
+            if ($reason) {
+                Add-Finding 'ObscuredNames' $f.FullName "Obscured filename: $reason" 'MEDIUM' 'dual-use' @{
+                    FileName = $f.Name; FullPath = $f.FullName; Pattern = $reason
+                    SizeBytes = $f.Length; LastWrite = $f.LastWriteTime.ToString('s')
                 }
-        } catch {}
+            }
+        }
     }
 }
 
@@ -1301,14 +1376,13 @@ function Scan-KnownHashes {
     }
     $roots = $roots | Where-Object { Test-Path $_ }
 
+    # v4.1.4: dep-cache prune. Skips node_modules / site-packages / .venv etc.
+    # A real cheat-sample wouldn't be stashed inside an npm dependency tree.
     $candidates = [System.Collections.Generic.List[object]]::new()
     foreach ($root in $roots) {
-        foreach ($ext in @('*.exe','*.dll')) {
-            try {
-                Get-ChildItem $root -Recurse -File -Depth 8 -Filter $ext -ErrorAction SilentlyContinue |
-                    Where-Object { $_.Length -lt 100MB -and $_.Length -gt 0 } |
-                    ForEach-Object { [void]$candidates.Add($_) }
-            } catch {}
+        foreach ($f in (Get-PrunedFiles -Root $root -Extensions @('.exe','.dll') -ResultCap 2000)) {
+            if ($f.Length -le 0 -or $f.Length -ge 100MB) { continue }
+            [void]$candidates.Add($f)
         }
     }
 
@@ -1346,9 +1420,11 @@ function Scan-LuaScripts {
         "$env:USERPROFILE\Projects", "$env:USERPROFILE\Games"
     ) | Where-Object { $_ -and (Test-Path $_) }
 
+    # v4.1.4: prune dep-cache dirs (node_modules / site-packages / .venv / etc.)
+    # before recursing — those routinely contain bundled .lua files (Neovim
+    # plugins, build-tool .lua scripts) that aren't real cheat scripts.
     foreach ($root in $roots) {
-        Get-ChildItem $root -Recurse -File -Depth 8 -Filter '*.lua' -ErrorAction SilentlyContinue | ForEach-Object {
-            $file = $_
+        foreach ($file in (Get-PrunedFiles -Root $root -Extensions @('.lua') -ResultCap 1500)) {
             $zone = Get-DownloadSourceUrl $file.FullName
             $meta = @{
                 FileName       = $file.Name
@@ -1368,20 +1444,20 @@ function Scan-LuaScripts {
             if ($hit) {
                 $meta['Pattern'] = $hit
                 Add-Finding 'LuaScript' $file.FullName "[$hit] $($file.Name)" 'HIGH' 'cheat' $meta
-                return
+                continue
             }
 
             $hitC = Match-Keyword $lc $Keywords_High_Cheats
             if ($hitC) {
                 $meta['Pattern'] = $hitC
                 Add-Finding 'LuaScript' $file.FullName "[$hitC] $($file.Name)" 'HIGH' 'cheat' $meta
-                return
+                continue
             }
             $hitI = Match-Keyword $lc $Keywords_High_Input
             if ($hitI) {
                 $meta['Pattern'] = $hitI
                 Add-Finding 'LuaScript' $file.FullName "[$hitI] $($file.Name)" 'HIGH' 'input' $meta
-                return
+                continue
             }
 
             # No cheat or input-device keyword. Emit at INFO so the file is listed
@@ -1722,10 +1798,10 @@ function Scan-AIVisionArtifacts {
     # — walking them was the single biggest contributor to AIVision wall time.
     Write-Host '  [*] AI-vision aimbot artifacts (ONNX / YOLO / external HID)...' -ForegroundColor DarkGray
 
-    # Skip these directory NAMES (matched as path segments, case-insensitive).
-    # A real AI-aimbot constellation lives in a hand-organized user folder,
-    # not in a dependency cache. Skipping these is detection-neutral.
-    $excludePattern = '(?i)\\(node_modules|\.git|\.hg|\.svn|site-packages|\.venv|venv|env|envs|__pycache__|\.pytest_cache|\.mypy_cache|\.ruff_cache|\.tox|anaconda3|miniconda3|conda|\.cache|\.npm|\.yarn|\.next|\.nuxt|\.cargo|\.rustup|dist-info)\\'
+    # v4.1.4 perf: use Get-PrunedFiles which prunes node_modules / site-packages
+    # / .venv / conda envs / etc. BEFORE recursing into them. The previous
+    # v4.1.1 fix only filtered AFTER Get-ChildItem enumerated, which on
+    # ML-heavy machines still hung walking caches with 100k+ files inside.
 
     $roots = @(
         "$env:USERPROFILE\Documents", "$env:USERPROFILE\Desktop",
@@ -1739,81 +1815,61 @@ function Scan-AIVisionArtifacts {
     $arduinoHits = [System.Collections.Generic.List[object]]::new()
     $pyDepHits = [System.Collections.Generic.List[object]]::new()
 
-    # Hard caps on the .exe/.py walk in particular — ML-heavy users can have
-    # tens of thousands of Python scripts across virtualenvs. We don't need
-    # to scan them all to find a named-brand aimbot binary.
     $exePyCapPerRoot = 800
     $pyDepCapPerRoot = 150
 
     foreach ($root in $roots) {
-        # ONNX models (YOLO weights). Cap recursion depth implicitly via cap on results.
-        try {
-            Get-ChildItem $root -Recurse -File -Depth 8 -Filter '*.onnx' -ErrorAction SilentlyContinue |
-                Where-Object { $_.FullName -notmatch $excludePattern } |
-                Select-Object -First 200 |
-                ForEach-Object { [void]$onnxFiles.Add($_) }
-        } catch {}
+        # ONNX models (YOLO weights).
+        foreach ($f in (Get-PrunedFiles -Root $root -Extensions @('.onnx') -ResultCap 200)) {
+            [void]$onnxFiles.Add($f)
+        }
 
         # Named-brand executables (HIGH on their own).
-        try {
-            Get-ChildItem $root -Recurse -File -Depth 8 -Include '*.exe','*.py' -ErrorAction SilentlyContinue |
-                Where-Object { $_.FullName -notmatch $excludePattern -and $_.Length -lt 200MB } |
-                Select-Object -First $exePyCapPerRoot |
-                ForEach-Object {
-                    $hit = Match-Keyword "$($_.Name) $($_.DirectoryName)" $VisionAimbot_AI_PC
-                    if ($hit) {
-                        $meta = @{
-                            Pattern   = $hit
-                            FileName  = $_.Name
-                            FullPath  = $_.FullName
-                            SizeBytes = $_.Length
-                            Created   = $_.CreationTime.ToString('s')
-                            LastWrite = $_.LastWriteTime.ToString('s')
-                        }
-                        Add-Finding 'AIVision' $_.FullName "[$hit] AI-vision aimbot executable: $($_.Name)" 'HIGH' 'cheat' $meta
-                        [void]$brandHits.Add($_)
-                    }
+        foreach ($f in (Get-PrunedFiles -Root $root -Extensions @('.exe','.py') -ResultCap $exePyCapPerRoot)) {
+            if ($f.Length -ge 200MB) { continue }
+            $hit = Match-Keyword "$($f.Name) $($f.DirectoryName)" $VisionAimbot_AI_PC
+            if ($hit) {
+                $meta = @{
+                    Pattern   = $hit
+                    FileName  = $f.Name
+                    FullPath  = $f.FullName
+                    SizeBytes = $f.Length
+                    Created   = $f.CreationTime.ToString('s')
+                    LastWrite = $f.LastWriteTime.ToString('s')
                 }
-        } catch {}
+                Add-Finding 'AIVision' $f.FullName "[$hit] AI-vision aimbot executable: $($f.Name)" 'HIGH' 'cheat' $meta
+                [void]$brandHits.Add($f)
+            }
+        }
 
-        # Arduino sketches with HID-descriptor patterns - dead giveaway when
-        # paired with the ONNX/Python side of the constellation.
-        try {
-            Get-ChildItem $root -Recurse -File -Depth 8 -Filter '*.ino' -ErrorAction SilentlyContinue |
-                Where-Object { $_.FullName -notmatch $excludePattern } |
-                Select-Object -First 100 |
-                ForEach-Object {
-                    try {
-                        $content = Get-Content $_.FullName -Raw -ErrorAction Stop
-                        if ($content -match '(?i)(Mouse\.move|HID-Project|MouseAbsolute|Keyboard\.press.*Mouse)') {
-                            [void]$arduinoHits.Add($_)
-                        }
-                    } catch {}
+        # Arduino sketches with HID-descriptor patterns.
+        foreach ($f in (Get-PrunedFiles -Root $root -Extensions @('.ino') -ResultCap 100)) {
+            try {
+                $content = Get-Content $f.FullName -Raw -ErrorAction Stop
+                if ($content -match '(?i)(Mouse\.move|HID-Project|MouseAbsolute|Keyboard\.press.*Mouse)') {
+                    [void]$arduinoHits.Add($f)
                 }
-        } catch {}
+            } catch {}
+        }
 
-        # Python ML dependency markers - requirements.txt / pyproject.toml /
-        # site-packages dirs naming aimbot-typical libraries.
-        try {
-            Get-ChildItem $root -Recurse -File -Depth 8 -Include 'requirements.txt','pyproject.toml','*.cfg' -ErrorAction SilentlyContinue |
-                Where-Object { $_.FullName -notmatch $excludePattern } |
-                Select-Object -First $pyDepCapPerRoot |
-                ForEach-Object {
-                    try {
-                        $content = Get-Content $_.FullName -Raw -ErrorAction Stop
-                        $combo = 0
-                        if ($content -match '(?i)ultralytics') { $combo++ }
-                        if ($content -match '(?i)\btorch\b') { $combo++ }
-                        if ($content -match '(?i)\bmss\b') { $combo++ }
-                        if ($content -match '(?i)pyautogui|pydirectinput|pynput') { $combo++ }
-                        if ($content -match '(?i)opencv-python|cv2') { $combo++ }
-                        if ($content -match '(?i)onnxruntime') { $combo++ }
-                        if ($combo -ge 3) {
-                            [void]$pyDepHits.Add(@{ File=$_; Score=$combo })
-                        }
-                    } catch {}
+        # Python ML dependency markers - requirements.txt / pyproject.toml / .cfg
+        foreach ($f in (Get-PrunedFiles -Root $root -Extensions @('.txt','.toml','.cfg') -ResultCap ($pyDepCapPerRoot * 3))) {
+            $n = $f.Name.ToLower()
+            if ($n -ne 'requirements.txt' -and $n -ne 'pyproject.toml' -and -not $n.EndsWith('.cfg')) { continue }
+            try {
+                $content = Get-Content $f.FullName -Raw -ErrorAction Stop
+                $combo = 0
+                if ($content -match '(?i)ultralytics') { $combo++ }
+                if ($content -match '(?i)\btorch\b') { $combo++ }
+                if ($content -match '(?i)\bmss\b') { $combo++ }
+                if ($content -match '(?i)pyautogui|pydirectinput|pynput') { $combo++ }
+                if ($content -match '(?i)opencv-python|cv2') { $combo++ }
+                if ($content -match '(?i)onnxruntime') { $combo++ }
+                if ($combo -ge 3) {
+                    [void]$pyDepHits.Add(@{ File=$f; Score=$combo })
                 }
-        } catch {}
+            } catch {}
+        }
     }
 
     # Emit ONNX findings according to constellation rules.

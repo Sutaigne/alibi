@@ -3,12 +3,8 @@
 # To verify a kit you received:
 #   1. Download HASHES.txt from this repo at the matching tag.
 #   2. In the kit folder, run:  sha256sum -c HASHES.txt
-#      (or, pure-Windows: Get-FileHash per file).
-#   3. Every line must report 'OK'. Mismatch = modified kit; don't trust the report.
 #
-# Re-generated on each release.
-#
-# Format: <SHA256>  <relative-path>
+# Re-generated on each release. Format: <SHA256>  <relative-path>
 
 # --- repo root: the runnable distribution ---
 314058db7beff3511bb59556f34b9d5dd35e7fdb54fc3dd6d7193b0f45e01a82 *Run scan.bat
@@ -21,7 +17,7 @@ da10d733a8628d518a9931693761f02645eb63d8278d08d9df7f8c1d7e53108f *scanner/consol
 8c3c8eaf9d99990de6e60a513dfb3f97f57eaa350c5fbfc1e22698a9a00bcc3d *scanner/console-rig-audit.ps1
 0b680b000ecc2b500bbde276aadac5a850a8dcbc11c8990f52a96e21a11b22a1 *scanner/console-run-check.bat
 065ef704012b8c3f410916e702165dc1fd197d586d852fc8473af735273b0d0b *scanner/console-setup-checklist.html
-2fd6b2c9d1d43fee58d303bcb27b3e5dde31c4b6c8d57e300ac5e6bf46f602e8 *scanner/forensic-common.ps1
+f023d3250bd536023ac13d86476bd30ad7b058d519e70d893a1df988ab204889 *scanner/forensic-common.ps1
 f697d59ff68523d3aa9ba3dd8dbd015659230a221c0c668b16a574e2f1156c4b *scanner/forensic-scan.ps1
 671c81e911af316569e92ce162cfee0bb5efaff9c8096942c9b7c102aa809f40 *scanner/generate-visual-companion-console.ps1
 659db814bc9ee87bda9506fa613780bc8e6da3a487866e040d46c8bac59fd957 *scanner/generate-visual-companion.ps1
