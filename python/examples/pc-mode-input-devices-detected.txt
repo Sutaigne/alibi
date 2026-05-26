@@ -1,0 +1,303 @@
+================================================================
+  QUICK READ - START HERE
+================================================================
+
+  VERDICT: INPUT DEVICES DETECTED
+
+  No cheat brands or HWID spoofers were detected, but this scan
+  found HIGH-confidence indicators of input-device software.
+  (XIM, Cronus, ReaSnow, KMBox, Titan, etc.)
+
+  These are commercial mouse/keyboard adapters. Some games treat
+  them as bannable; some do not. Context is required.
+
+  Named items:
+    - [Installed] xim matrix - [xim matrix] XIM MATRIX
+    - [Installed] cronuszen - [cronuszen] Cronus Zen Studio
+    - [Installed] rewasd - [rewasd] reWASD
+    - [Installed] hidhide - [hidhide] HidHide
+    - [USB] cronus - [cronus] Cronus Zen
+    - [USB] xim matrix - [xim matrix] XIM Matrix
+    - [AppData] xim matrix - XIM MATRIX - 312 files, 41 distinct days
+    - [AppData] cronuszen - Cronus Zen Studio - 528 files, 87 distinct days
+    - [AppData] rewasd - reWASD - 96 files, 22 distinct days
+    - [Process] hidhide - HidHideClient.exe (PID 5104)
+    - [Process] rewasdengine - reWASDEngine.exe (PID 6248)
+    - [Process] xim matrix - XIM Matrix Manager.exe (PID 9320)
+    - [Service] hidhide - HidHide (Running)
+
+  ----------------------------------------------------------------
+  HISTORICAL findings (logged, did NOT affect verdict)
+  ----------------------------------------------------------------
+  1 finding(s) older than 180 days were demoted by the
+  recency-decay rule. These are visible below in the full report but
+  did not count toward the verdict above. Old artifacts from games or
+  tools the user has long since stopped using should not make a
+  currently-clean machine look dirty.
+
+================================================================
+
+================================================================
+  ALIBI v4.0 - CONSOLIDATED REPORT
+================================================================
+
+  Generated:  2026-05-26 02:14:11
+  Hostname:   BREAD-PC
+  Username:   BradS
+  OS:         Windows 11 (10.0.26200)
+  Admin mode: False
+  Verdict:    INPUT DEVICES DETECTED
+
+  Read-only scan. No system state was modified. No network calls.
+================================================================
+
+================================================================
+  SECTION 1 OF 3 - CHEAT TRACE SCAN
+================================================================
+
+  Summary (recent, within last 180 days - verdict-relevant):
+    HIGH    findings : 9
+    MEDIUM  findings : 2
+    INFO    items    : 3
+    WARN    (access) : 1
+
+  Summary (historical, >180 days old - logged but did NOT affect verdict):
+    Demoted historical findings : 1
+    (Originally HIGH-severity   : 0)
+
+  [HIGH/input] [AppData] XIM MATRIX - 312 files, 41 distinct days
+        Source: C:\Users\Jordan\AppData\Local\XIM Matrix
+        Pattern: xim matrix
+        Label: XIM MATRIX
+        Directory: C:\Users\Jordan\AppData\Local\XIM Matrix
+        FileCount: 312
+        DistinctActivityDays: 41
+        ActivitySpanDays: 110
+        OldestWrite: 2026-02-05T02:14:11
+        NewestWrite: 2026-05-25T18:14:11
+        MostRecentTimestamp: 2026-05-25T18:14:11
+        AgeDays: 0
+
+  [HIGH/input] [AppData] Cronus Zen Studio - 528 files, 87 distinct days
+        Source: C:\Users\Jordan\AppData\Local\ConsoleTuner
+        Pattern: cronuszen
+        Label: Cronus Zen Studio
+        Directory: C:\Users\Jordan\AppData\Local\ConsoleTuner
+        FileCount: 528
+        DistinctActivityDays: 87
+        ActivitySpanDays: 240
+        OldestWrite: 2025-09-28T02:14:11
+        NewestWrite: 2026-05-25T18:14:11
+        MostRecentTimestamp: 2026-05-25T18:14:11
+        AgeDays: 0
+
+  [HIGH/input] [AppData] reWASD - 96 files, 22 distinct days
+        Source: C:\Users\Jordan\AppData\Roaming\reWASD
+        Pattern: rewasd
+        Label: reWASD
+        Directory: C:\Users\Jordan\AppData\Roaming\reWASD
+        FileCount: 96
+        DistinctActivityDays: 22
+        ActivitySpanDays: 128
+        OldestWrite: 2026-01-18T02:14:11
+        NewestWrite: 2026-05-25T02:14:11
+        MostRecentTimestamp: 2026-05-25T02:14:11
+        AgeDays: 1
+
+  [HIGH/input] [Installed] [xim matrix] XIM MATRIX
+        Source: XIM MATRIX
+        Pattern: xim matrix
+        Name: XIM MATRIX
+        Publisher: XIM Technologies
+        InstallDate: 2026-02-04
+        Version: 20250118.6
+        MostRecentTimestamp: 2026-02-04T00:00:00
+        AgeDays: 111
+
+  [HIGH/input] [Installed] [cronuszen] Cronus Zen Studio
+        Source: Cronus Zen Studio
+        Pattern: cronuszen
+        Name: Cronus Zen Studio
+        Publisher: Collective Minds Gaming Co.
+        InstallDate: 2025-09-22
+        Version: 2.2.10
+        MostRecentTimestamp: 2025-09-22T00:00:00
+        AgeDays: 246
+
+  [HIGH/input] [Installed] [rewasd] reWASD
+        Source: reWASD
+        Pattern: rewasd
+        Name: reWASD
+        Publisher: Disc Soft Ltd
+        InstallDate: 2026-01-18
+        Version: 7.0.0.8400
+        MostRecentTimestamp: 2026-01-18T00:00:00
+        AgeDays: 128
+
+  [HIGH/input] [Installed] [hidhide] HidHide
+        Source: HidHide
+        Pattern: hidhide
+        Name: HidHide
+        Publisher: Nefarius Software Solutions e.U.
+        InstallDate: 2026-01-18
+        Version: 1.5.230.0
+        MostRecentTimestamp: 2026-01-18T00:00:00
+        AgeDays: 128
+
+  [HIGH/input] [USB] [cronus] Cronus Zen
+        Source: VID_2E24&PID_1000
+        Pattern: cronus
+        FriendlyName: Cronus Zen
+        VID_PID: VID_2E24&PID_1000
+        FirstInstall: 2025-09-28T02:14:11
+        LastArrival: 2026-05-25T18:14:11
+        LastRemoval: 2026-05-26T00:14:11
+        MostRecentTimestamp: 2026-05-26T00:14:11
+        AgeDays: 0
+
+  [HIGH/input] [USB] [xim matrix] XIM Matrix
+        Source: VID_2516&PID_0140
+        Pattern: xim matrix
+        FriendlyName: XIM Matrix
+        VID_PID: VID_2516&PID_0140
+        FirstInstall: 2026-02-05T02:14:11
+        LastArrival: 2026-05-25T18:14:11
+        LastRemoval: 2026-05-26T00:14:11
+        MostRecentTimestamp: 2026-05-26T00:14:11
+        AgeDays: 0
+
+  [MEDIUM/dual-use] [Installed] [obs studio] OBS Studio
+        Source: OBS Studio
+        Pattern: obs studio
+        Name: OBS Studio
+        Publisher: OBS Project
+        InstallDate: 2026-02-08
+        Version: 30.1.2
+        MostRecentTimestamp: 2026-02-08T00:00:00
+        AgeDays: 107
+
+  [MEDIUM/dual-use] [Installed] [ds4windows] DS4Windows
+        Source: DS4Windows
+        Pattern: ds4windows
+        Name: DS4Windows
+        Publisher: Ryochan7
+        InstallDate: 2026-01-15
+        Version: 3.3.3
+        MostRecentTimestamp: 2026-01-15T00:00:00
+        AgeDays: 131
+
+  [WARN/other] [ShimCache] Access denied
+        Source: HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\AppCompatCache
+
+  [INFO/other] [KnownHashes] Hashed 268 executables, checked against 1 known-bad SHA256 sample(s)
+        Source: (scan)
+        Hashed: 268
+        DatabaseSize: 1
+
+  [INFO/other] [ProcessModules] Scanned 7204 DLL modules across all running processes
+        Source: (scan)
+        ModulesScanned: 7204
+
+  [INFO/other] [RecencyDecay] Recency analysis: 11 recent, 1 historical (>180d demoted), 1 unknown-timestamp
+        Source: (summary)
+        ThresholdDays: 180
+        RecentFindings: 11
+        HistoricalFindings: 1
+        UnknownTimestampFindings: 1
+
+  ------------------------------------------------------------
+  HISTORICAL FINDINGS (>180 days old, did NOT affect verdict)
+  ------------------------------------------------------------
+
+  [INFO/input] [Installed] [HISTORICAL was MEDIUM, 1809d old] [xim apex] XIM APEX (legacy)
+        Source: XIM APEX
+        Pattern: xim apex
+        Name: XIM APEX
+        InstallDate: 2021-06-12
+        MostRecentTimestamp: 2021-06-12T00:00:00
+        AgeDays: 1809
+        RecencyClass: historical
+        OriginalSeverity: MEDIUM
+
+================================================================
+  SECTION 2 OF 3 - RUNNING PROCESSES (scored)
+================================================================
+
+  Total processes captured: 6
+    HIGH:   3
+    MEDIUM: 0
+    LOW:    1
+    CLEAN:  2
+
+  HIGH and MEDIUM processes (full detail):
+
+    [HIGH/input] HidHideClient.exe (PID 5104)
+        Path:    C:\Program Files\Nefarius Software Solutions\HidHide\x64\HidHideClient.exe
+        Cmd:     "C:\Program Files\Nefarius Software Solutions\HidHide\x64\HidHideClient.exe"
+        Reason:  matches 'hidhide' (input-device keyword)
+        Pattern: hidhide
+
+    [HIGH/input] reWASDEngine.exe (PID 6248)
+        Path:    C:\Program Files\reWASD\reWASDEngine.exe
+        Cmd:     "C:\Program Files\reWASD\reWASDEngine.exe" --service
+        Reason:  matches 'rewasdengine' (input-device keyword)
+        Pattern: rewasdengine
+
+    [HIGH/input] XIM Matrix Manager.exe (PID 9320)
+        Path:    C:\Program Files (x86)\XIM Technologies\XIM Matrix Manager\XIM Matrix Manager.exe
+        Cmd:     "C:\Program Files (x86)\XIM Technologies\XIM Matrix Manager\XIM Matrix Manager.exe"
+        Reason:  matches 'xim matrix' (input-device keyword)
+        Pattern: xim matrix
+
+  Full processes table (sorted by suspicion score):
+
+    HIGH    PID   5104  HidHideClient.exe                 C:\Program Files\Nefarius Software Solutions\HidHide\x64\HidHideClient.exe
+    HIGH    PID   6248  reWASDEngine.exe                  C:\Program Files\reWASD\reWASDEngine.exe
+    HIGH    PID   9320  XIM Matrix Manager.exe            C:\Program Files (x86)\XIM Technologies\XIM Matrix Manager\XIM Matrix Manager.exe
+    CLEAN   PID   4288  explorer.exe                      C:\Windows\explorer.exe
+    CLEAN   PID   1248  svchost.exe                       C:\Windows\System32\svchost.exe
+    LOW     PID  12384  chrome.exe                        C:\Program Files\Google\Chrome\Application\chrome.exe
+
+================================================================
+  SECTION 3 OF 3 - SERVICES (scored)
+================================================================
+
+  Total services captured: 3
+    HIGH:   1
+    MEDIUM: 1
+    LOW:    0
+    CLEAN:  1
+
+  HIGH and MEDIUM services (full detail):
+
+    [HIGH/input] HidHide (Running)
+        Display: HidHide Service
+        Path:    C:\Windows\System32\drivers\HidHide.sys
+        Mode:    Auto
+        Reason:  matches 'hidhide' (input-device keyword)
+        Pattern: hidhide
+
+    [MEDIUM/dual-use] ViGEmBus (Running)
+        Display: Virtual Gamepad Emulation Bus
+        Path:    C:\Windows\System32\drivers\ViGEmBus.sys
+        Mode:    Manual
+        Reason:  matches 'vigembus' (dual-use tool)
+        Pattern: vigembus
+
+  Full services table (sorted by suspicion score):
+
+    HIGH    Running  HidHide                           C:\Windows\System32\drivers\HidHide.sys
+    MEDIUM  Running  ViGEmBus                          C:\Windows\System32\drivers\ViGEmBus.sys
+    CLEAN   Stopped  vgc                               "C:\Program Files\Riot Vanguard\vgc.exe"
+
+================================================================
+  COVERAGE LIMITATIONS
+================================================================
+
+  - DMA cheats cannot be detected at runtime by design (no PC-side footprint). This scan flags DMA development artifacts only.
+  - Input devices configured on a separate machine leave no trace on this PC.
+  - Session duration is recorded in SRUM and requires an ESE database parser. Not extracted here.
+  - Keyword matching only. Sophisticated cleaners can wipe most of these artifacts.
+  - A clean result is necessary but not sufficient.
+
+  Report generated: 2026-05-26 02:14:11
