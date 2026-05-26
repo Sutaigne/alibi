@@ -98,4 +98,6 @@ A clean alibi report is a strong signal but it is not a proof. Treat it the way 
 
 ---
 
-**Author:** Bread ([@Sutaigne](https://github.com/Sutaigne)). Contributor: Drownmw.
+**Author:** Bread — Activision ID `Bread#3266221`, GitHub [@Sutaigne](https://github.com/Sutaigne). Contributor: Drownmw.
+
+If you're a CoD-side reviewer and want one more identity anchor before trusting the kit: the author plays under the Activision ID above. You can verify that's a real, active player in-game. The point isn't that an Activision ID is a cryptographic proof of anything — it's that the kit's author has the same skin in the game as the people he's building it for.

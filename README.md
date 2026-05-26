@@ -9,7 +9,9 @@ Two scan modes share one engine:
 - **PC mode** — for PC gamers auditing their own gaming PC
 - **Console-rig mode** — for console gamers auditing a PC connected to their console rig (capture-card host, streaming PC, MITM-aimbot setup)
 
-Author: **Bread#3266221** ([@Sutaigne](https://github.com/Sutaigne)). Contributor: **Drownmw**.
+Author: **Bread** — Activision ID `Bread#3266221`, GitHub [@Sutaigne](https://github.com/Sutaigne). Contributor: **Drownmw**.
+
+> The Activision ID is intentional: this kit was built by an active CoD player, and reviewers can verify that in-game. If you're auditing a CoD rig, you should be able to look up the kit's author the same way you'd look up the person whose machine you're scanning.
 
 > **Reviewer?** Someone handed you a report and is asking you to believe it? Read [**`docs/for-reviewers.md`**](./docs/for-reviewers.md) first. It walks you through verifying the kit, reading the verdict, and what `CLEAN` does and does not rule out. The verification chain starts with [`HASHES.txt`](./HASHES.txt).
 
