@@ -11,18 +11,18 @@
 # Format: <SHA256>  <relative-path>
 
 # --- repo root: the runnable distribution ---
-41b83fde109fb4116137de62641970b994b97f809d6da54c44e693c498f63d26 *Run scan.bat
+0e5b8a39e9f72fb46dbf98c6a265a96cf64f40d1bbca80d656a0173d6b05f4ad *Run scan.bat
 3c6f8bc18c20771efec675e600687a47b2e02f7fa139009d48bbdac896846c66 *START HERE.txt
 
 # --- scanner/ — PowerShell engine (canonical) ---
 25b3d75f4707d28bd9f3cf4e8aa42d9241776de17e068a55eddd17efb866fb18 *scanner/README.txt
 9b8041ed4407cf0c449d516607850253a7c19bb4af6776d31023b0da8af0db87 *scanner/alibi-safety-card.html
 da10d733a8628d518a9931693761f02645eb63d8278d08d9df7f8c1d7e53108f *scanner/console-lockdown-explained.html
-eb1e0ccbdc08cf646ce419a0f60cd9097ab5afe6bf89ebb1b459b45d678c544d *scanner/console-rig-audit.ps1
+8c3c8eaf9d99990de6e60a513dfb3f97f57eaa350c5fbfc1e22698a9a00bcc3d *scanner/console-rig-audit.ps1
 0b680b000ecc2b500bbde276aadac5a850a8dcbc11c8990f52a96e21a11b22a1 *scanner/console-run-check.bat
 065ef704012b8c3f410916e702165dc1fd197d586d852fc8473af735273b0d0b *scanner/console-setup-checklist.html
 2fd6b2c9d1d43fee58d303bcb27b3e5dde31c4b6c8d57e300ac5e6bf46f602e8 *scanner/forensic-common.ps1
-1b9678bcdaa4a4737a90f9562665577dc25792a83b025e0903fb951975d7ca64 *scanner/forensic-scan.ps1
+f697d59ff68523d3aa9ba3dd8dbd015659230a221c0c668b16a574e2f1156c4b *scanner/forensic-scan.ps1
 671c81e911af316569e92ce162cfee0bb5efaff9c8096942c9b7c102aa809f40 *scanner/generate-visual-companion-console.ps1
 659db814bc9ee87bda9506fa613780bc8e6da3a487866e040d46c8bac59fd957 *scanner/generate-visual-companion.ps1
 c8facb1b05abed76952cc329cc06db3fd11e34f75c68057bad69c966f2ac45ae *scanner/one-page-guide.html
@@ -33,9 +33,9 @@ bea5014e7990755b1876742bea7c579529cf2633dfae0facecfb09149c743302 *scanner/top-bi
 # --- python/src/alibi/ — Python parity port ---
 1c57cb4a841030054b9b8300e34df3e9ab573b221efa3a0d981ca92d723cc448 *python/src/alibi/__init__.py
 99a9c22081992b7a4bc812658e58f12e7156970aac479711345c5d5e358425f4 *python/src/alibi/__main__.py
-9e998becf6da2fdcff08edd518d4d633e7728aa3e3bebdbe89d59ae72860f15d *python/src/alibi/console_rig_audit.py
+6cf434ea0c9fca9a7c3e68d13f4b38946c73726e7037be2d820f94b21bd0a00b *python/src/alibi/console_rig_audit.py
 b66077a4c5ab57e305c060d335b2d05d3500ca6620c6833cb6386b4018448e7c *python/src/alibi/findings.py
-ba5542940f09ed5b7fd789e8fa1cb8c165aa2151d5ccce7a42491393a3b1ae01 *python/src/alibi/forensic_scan.py
+4a7719de87139d5f8ef089a557f606d01e459710c6a0f2c870c8b12417dbe5a5 *python/src/alibi/forensic_scan.py
 a3dd1cbe57328f88786b644d3a2f9b7bce8fd7bc0a0e7b9a2cf5e4285f58116f *python/src/alibi/keywords.py
 7dbbead902650906909f8f3a7daee9a164f3536ca49821d19b02651105609c4a *python/src/alibi/loldrivers.py
 ac1b06f133c635435dc933adf66094c0788d0cb93e59c355a984b44ba7ab562d *python/src/alibi/recency.py

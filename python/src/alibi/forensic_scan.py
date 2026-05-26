@@ -183,6 +183,10 @@ def main(argv: list[str] | None = None) -> int:
                         help="Skip the LOLDrivers BYOVD cross-reference (no network call).")
     parser.add_argument("--no-html", action="store_true",
                         help="Skip the HTML visual companion.")
+    parser.add_argument("--no-open-browser", action="store_true",
+                        help="Do not auto-open the HTML companion in the default browser at end. "
+                             "Default: open. Unified launcher passes this so it can open just "
+                             "one tab at the end of the back-to-back run.")
     parser.add_argument("--non-interactive", action="store_true",
                         help="Never prompt; combined with --skip-loldrivers for unattended runs.")
     args = parser.parse_args(argv)
@@ -314,6 +318,12 @@ def main(argv: list[str] | None = None) -> int:
             lol_db_used=engine.lol_db is not None,
         )
         write_html(html_path, html_content)
+        if not args.no_open_browser:
+            import webbrowser
+            try:
+                webbrowser.open(f"file:///{html_path.replace(os.sep, '/')}")
+            except Exception:  # noqa: BLE001 - browser open is best-effort
+                pass
     else:
         html_path = None
 

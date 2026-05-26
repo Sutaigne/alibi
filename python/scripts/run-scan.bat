@@ -33,11 +33,11 @@ if %errorlevel% NEQ 0 (
 )
 
 echo  [1/2] Running Alibi...
-python -m alibi
+python -m alibi --no-open-browser
 echo.
 
 echo  [2/2] Running Alibi (console-rig mode)...
-python -m alibi.console_rig_audit --skip-loldrivers
+python -m alibi.console_rig_audit --skip-loldrivers --no-open-browser
 echo.
 
 echo.
@@ -59,4 +59,20 @@ if exist "%TEMP%\alibi-console.summary" (
 )
 echo  ============================================================
 echo.
+
+REM --- Auto-open the PC-mode HTML in the default browser. ---
+if exist "%TEMP%\alibi-pc.summary" (
+    for /f "tokens=2 delims=|" %%a in (%TEMP%\alibi-pc.summary) do (
+        set "PC_HTML=%%a"
+        setlocal EnableDelayedExpansion
+        set "PC_HTML=!PC_HTML:.txt=_visual.html!"
+        if exist "!PC_HTML!" (
+            echo  Opening your PC-mode report in the default browser...
+            start "" "!PC_HTML!"
+            echo.
+        )
+        endlocal
+    )
+)
+
 pause

@@ -145,6 +145,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output", default=None, help="Explicit output .txt path.")
     parser.add_argument("--skip-loldrivers", action="store_true")
     parser.add_argument("--no-html", action="store_true")
+    parser.add_argument("--no-open-browser", action="store_true",
+                        help="Do not auto-open the HTML companion in the default browser at end.")
     parser.add_argument("--non-interactive", action="store_true")
     args = parser.parse_args(argv)
 
@@ -291,6 +293,12 @@ def main(argv: list[str] | None = None) -> int:
             lol_db_used=engine.lol_db is not None,
         )
         write_html(html_path, html_content)
+        if not args.no_open_browser:
+            import webbrowser
+            try:
+                webbrowser.open(f"file:///{html_path.replace(os.sep, '/')}")
+            except Exception:  # noqa: BLE001 - browser open is best-effort
+                pass
     else:
         html_path = None
 

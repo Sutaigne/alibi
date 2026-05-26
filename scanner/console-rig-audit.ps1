@@ -33,7 +33,9 @@
 [CmdletBinding()]
 param(
     [string]$OutputPath,
-    [switch]$SkipLOLDrivers   # opt-out of the LOLDrivers (loldrivers.io) network fetch
+    [switch]$SkipLOLDrivers,    # opt-out of the LOLDrivers (loldrivers.io) network fetch
+    [switch]$SkipBrowserOpen    # don't auto-open the HTML companion at end (unified
+                                # launcher passes this so we don't spam two tabs)
 )
 
 # ============================================================================
@@ -553,6 +555,7 @@ Write-Host ''
 # Auto-generate visual HTML companion (no user prompt)
 # ============================================================================
 $visualScript = Join-Path $PSScriptRoot 'generate-visual-companion-console.ps1'
+$htmlPath = $null
 if (Test-Path $visualScript) {
     Write-Host '  Generating visual HTML companion...' -ForegroundColor Cyan
     try {
@@ -562,9 +565,21 @@ if (Test-Path $visualScript) {
         $htmlPath = Join-Path $dir "${base}_visual.html"
         if (Test-Path $htmlPath) {
             Write-Host "  HTML visual saved: $htmlPath" -ForegroundColor Cyan
+        } else {
+            $htmlPath = $null
         }
     } catch {
         Write-Host "  Visual generation failed: $_" -ForegroundColor Red
+        $htmlPath = $null
+    }
+}
+
+if ($htmlPath -and -not $SkipBrowserOpen) {
+    try {
+        Write-Host "  Opening report in your default browser..." -ForegroundColor Cyan
+        Start-Process $htmlPath -ErrorAction Stop
+    } catch {
+        Write-Host "  Could not auto-open the browser. Open this file manually: $htmlPath" -ForegroundColor Yellow
     }
 }
 Write-Host ''

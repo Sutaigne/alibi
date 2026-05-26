@@ -53,14 +53,14 @@ echo.
 echo   [Phase 1 of 2]  Alibi
 echo   ------------------------------------------------------------
 echo.
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%KIT%\forensic-scan.ps1"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%KIT%\forensic-scan.ps1" -SkipBrowserOpen
 
 echo.
 echo   ============================================================
 echo   [Phase 2 of 2]  Alibi (console-rig mode)
 echo   ------------------------------------------------------------
 echo.
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%KIT%\console-rig-audit.ps1"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%KIT%\console-rig-audit.ps1" -SkipBrowserOpen
 
 REM --- Read summary files written by each .ps1 ---
 set "PC_VERDICT=(scan did not complete)"
@@ -122,5 +122,17 @@ echo    Each .txt has a matching _visual.html on your Desktop.
 echo    Send the .txt (or the .html) to whoever asked.
 echo   ============================================================
 echo.
+
+REM --- Auto-open the PC-mode HTML in the default browser.
+REM     Only one tab to avoid spam; the console-rig file is right next to it.
+if defined PC_TXT (
+    set "PC_HTML=!PC_TXT:.txt=_visual.html!"
+    if exist "!PC_HTML!" (
+        echo    Opening your PC-mode report in the default browser...
+        start "" "!PC_HTML!"
+        echo.
+    )
+)
+
 echo    Press any key to close this window.
 pause >nul
