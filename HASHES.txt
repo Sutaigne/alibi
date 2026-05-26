@@ -1,0 +1,72 @@
+# pc-check HASHES.txt — SHA256 of every shipped file (kit + Python port)
+#
+# To verify a kit you received:
+#   1. From this repo (https://github.com/Sutaigne/pc-check) at the tag
+#      matching the kit version, download HASHES.txt.
+#   2. In the kit you received, run:
+#         sha256sum -c HASHES.txt
+#      (or, on a pure-Windows machine, use Get-FileHash per file.)
+#   3. Every line must report 'OK'. Any mismatch means the kit has been
+#      modified and you should not trust its output.
+#
+# Generated for tag v3.8.0. Re-generated on each release.
+#
+# Format: <SHA256>  <relative-path>
+
+# --- PowerShell kit (kit/) — canonical ---
+ebe9fc67b24334606b7952d6ba5840b459fa491e5e9d87268891d0b151c84982 *kit/README.txt
+873e1887342596c617380a7d99883b327513bb14806e935e75cde6f1a6e54e95 *kit/console-lockdown-explained.html
+48737171eca2ad0ec0ac82dc9c6f17b0b2b74e427ed9833eea06c664a3f1bf88 *kit/console-rig-audit.ps1
+2232b131188c7618cf5b5d1b908e493acdd09bd88d9859abfb3cd2f7fe67e67a *kit/console-run-check.bat
+8d76beab4e0c032f94c586a419eaea1aa3626391e0a34821432e558628eff209 *kit/console-setup-checklist.html
+02f8ade3024e1ff845fee7811c8898a679d26c0b071a8e0558e33dd3a78931db *kit/forensic-common.ps1
+7a8fbb8c7d34fb167383f0637f27806c1e8ddf76630d85bf90390e18eac8b830 *kit/forensic-scan.ps1
+9a35e24a4bc7326ca425eadf9fd1b1c9f668619fafe1187fb592a5c5c82d8807 *kit/generate-visual-companion-console.ps1
+839d3dc35e0fcc5a3c69d38228b689b73a037ddc0f0c966f4c92b9f7a488dd76 *kit/generate-visual-companion.ps1
+da02e28c1ef4add9e67ed320df929909785e95c571b20113429a789ab0e6d560 *kit/one-page-guide.html
+1b2b58c8528db8c01013bc006d489fa96185134b27012ade03b6f744dbb2b669 *kit/pc-check-safety-card.html
+8e13b714f433d4ee0a24a4e312603d54acc9995da1e43ab8f079dcaa13852852 *kit/run-check.bat
+12313f36197e82d6bd8f25616005f73e178d400cddd883f72ef7b54e4508bd4c *kit/top-bin-explainer-offline.html
+e04131e3d6f97583ddd03ebcb3192c38fb70d8ce50d248e0a054d19fd0c3ae40 *kit/top-bin-explainer.html
+
+# --- ready-to-flash distribution ---
+99a26e508685e7e2873f4f148974364283b9a1054c9945160b129d7ab42fbfc1 *ready-to-flash/START HERE.txt
+2b08856c7e1eca2b0e0bd92c6a3aa80f2735ea336f495f93969ec62e95cf2721 *ready-to-flash/Run scan.bat
+ebe9fc67b24334606b7952d6ba5840b459fa491e5e9d87268891d0b151c84982 *ready-to-flash/kit/README.txt
+873e1887342596c617380a7d99883b327513bb14806e935e75cde6f1a6e54e95 *ready-to-flash/kit/console-lockdown-explained.html
+48737171eca2ad0ec0ac82dc9c6f17b0b2b74e427ed9833eea06c664a3f1bf88 *ready-to-flash/kit/console-rig-audit.ps1
+2232b131188c7618cf5b5d1b908e493acdd09bd88d9859abfb3cd2f7fe67e67a *ready-to-flash/kit/console-run-check.bat
+8d76beab4e0c032f94c586a419eaea1aa3626391e0a34821432e558628eff209 *ready-to-flash/kit/console-setup-checklist.html
+02f8ade3024e1ff845fee7811c8898a679d26c0b071a8e0558e33dd3a78931db *ready-to-flash/kit/forensic-common.ps1
+7a8fbb8c7d34fb167383f0637f27806c1e8ddf76630d85bf90390e18eac8b830 *ready-to-flash/kit/forensic-scan.ps1
+9a35e24a4bc7326ca425eadf9fd1b1c9f668619fafe1187fb592a5c5c82d8807 *ready-to-flash/kit/generate-visual-companion-console.ps1
+839d3dc35e0fcc5a3c69d38228b689b73a037ddc0f0c966f4c92b9f7a488dd76 *ready-to-flash/kit/generate-visual-companion.ps1
+da02e28c1ef4add9e67ed320df929909785e95c571b20113429a789ab0e6d560 *ready-to-flash/kit/one-page-guide.html
+1b2b58c8528db8c01013bc006d489fa96185134b27012ade03b6f744dbb2b669 *ready-to-flash/kit/pc-check-safety-card.html
+8e13b714f433d4ee0a24a4e312603d54acc9995da1e43ab8f079dcaa13852852 *ready-to-flash/kit/run-check.bat
+12313f36197e82d6bd8f25616005f73e178d400cddd883f72ef7b54e4508bd4c *ready-to-flash/kit/top-bin-explainer-offline.html
+e04131e3d6f97583ddd03ebcb3192c38fb70d8ce50d248e0a054d19fd0c3ae40 *ready-to-flash/kit/top-bin-explainer.html
+
+# --- Python port (python/src/pc_check/) ---
+2bb5b856093526440625977a408d95803d441d865d3b8b8a575d9ea5600606cb *python/src/pc_check/__init__.py
+43ed0d68a69dd28eb83b5571baaf992ff68471df79161f7de0ed0cf8f7e8a8b6 *python/src/pc_check/__main__.py
+6646542834e124a65f6ea4bd2381298785a8256aaefdb8ab8b10afef7d86b523 *python/src/pc_check/console_rig_audit.py
+b66077a4c5ab57e305c060d335b2d05d3500ca6620c6833cb6386b4018448e7c *python/src/pc_check/findings.py
+41e6fe5ccc3fd038d62bd5088fabff36876b4d05dd10e4e1403245849af97864 *python/src/pc_check/forensic_scan.py
+a3dd1cbe57328f88786b644d3a2f9b7bce8fd7bc0a0e7b9a2cf5e4285f58116f *python/src/pc_check/keywords.py
+4ca136516910df2ea58d8b15bd54dcb22ede4bfb6ecaf722072f275bd5857d96 *python/src/pc_check/loldrivers.py
+7e7e234dc604dc2408e12befd70c5b38aa935c9fb52139eb0b8c3b29f4e48248 *python/src/pc_check/recency.py
+1ddde68d31bfe85bcf2a975978cc4a1789e103f93039fa8d6cdf33755c3b98f3 *python/src/pc_check/reg.py
+62572df3041f663c2534f795ca7c9572a6c3e417d8cab2cb0458d057a5ebcd2f *python/src/pc_check/reports.py
+0171fa28b8f5b60bd6cc977d325c2c80a58b6b355d58e0efb03857fccb234806 *python/src/pc_check/scanners.py
+8528a9c0922276c4704a90ce3a66bb7e0af13366115c392cd7dccce0a2654ac3 *python/src/pc_check/snapshots.py
+f94e73e2a2e6320893e196b90090a2aa47620a2ab86abcd55ee3f3877aabacde *python/src/pc_check/utils.py
+1a6791f754033027f21f1a5e4d2bcba38b19b1ee118de3ac4a54fd4d536329ed *python/src/pc_check/visual_companion.py
+41ac941a17e2bd08742409699bc9b1dc132545cf7bd04e438569621323b6cb29 *python/src/pc_check/visual_scripts.js
+8bc13ff80f42ca99462203ccf28cf2453d880f1d635ad9d0fb64f6cfc3704e9b *python/src/pc_check/visual_styles.css
+
+# --- repo-root attestation files ---
+1cde72deb4bf2356dee0e89411f84092b768ee295353b634e6b90c2bde2f7cd3 *README.md
+3e60a98e1f49d4668aed0d4da997b509e11f913dbf1fc93244350dcdd1cd9177 *SECURITY.md
+08cc5d577a2e8eafc5887c65b712c90746df4f47e4dfa8dec48af4d8436b06d6 *LICENSE
+957aa40d130bcb148bbb2c8db351fba2ef265cc0dc8ffdd89b2c541d7966c9e3 *docs/for-reviewers.md

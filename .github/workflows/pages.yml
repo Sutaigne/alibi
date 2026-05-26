@@ -1,0 +1,105 @@
+name: pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "python/examples/**"
+      - "python/src/pc_check/visual_styles.css"
+      - "python/src/pc_check/visual_scripts.js"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build site
+        run: |
+          mkdir -p _site
+          cp python/examples/*.html _site/
+          cp python/examples/*.txt _site/
+
+          cat > _site/index.html <<'HTML'
+          <!doctype html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <title>pc-check · example reports</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+              :root { color-scheme: dark; }
+              body { font: 14px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+                     background: #08080a; color: #f5f5f4; max-width: 880px; margin: 0 auto; padding: 40px 28px 80px; }
+              h1 { font-family: ui-monospace, monospace; font-size: 18px; font-weight: 600; margin: 0 0 4px; letter-spacing: 0.04em; }
+              h1 small { color: #78716c; font-weight: 400; margin-left: 8px; }
+              .tagline { color: #a8a29e; margin: 0 0 32px; }
+              .grid { display: grid; gap: 16px; }
+              a.card { display: block; padding: 18px 20px; background: #0f0f13; border: 1px solid #1f1f27;
+                       border-radius: 6px; text-decoration: none; color: inherit; transition: border-color 120ms; }
+              a.card:hover { border-color: #3a3a46; }
+              .card .row1 { display: flex; align-items: baseline; gap: 12px; }
+              .card .verdict { font-family: ui-monospace, monospace; font-weight: 700; letter-spacing: 0.04em; }
+              .card .verdict.red   { color: #ff5757; }
+              .card .verdict.amber { color: #f5b53a; }
+              .card .verdict.green { color: #4ade80; }
+              .card .mode { color: #78716c; font-family: ui-monospace, monospace; font-size: 12px; }
+              .card .desc { color: #d6d3d1; margin: 8px 0 0; }
+              .card .files { color: #4a4845; font-family: ui-monospace, monospace; font-size: 11.5px; margin-top: 6px; }
+              .footer { margin-top: 48px; color: #4a4845; font-size: 12px; }
+              .footer a { color: #7dd3fc; }
+              .pulse { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ff5757;
+                       box-shadow: 0 0 8px #ff5757; margin-right: 8px; vertical-align: middle;
+                       animation: pulse 1.8s ease-in-out infinite; }
+              @keyframes pulse { 0%,100% {opacity: 1;} 50% {opacity: 0.35;} }
+            </style>
+          </head>
+          <body>
+            <h1><span class="pulse"></span>pc-check <small>example reports · synthetic data · live preview</small></h1>
+            <p class="tagline">Three rendered states of the visual companion. The data is synthetic but the markup is bit-identical to what a real scan produces. Source: <a href="https://github.com/Sutaigne/pc-check" style="color:#7dd3fc">github.com/Sutaigne/pc-check</a>.</p>
+            <div class="grid">
+              <a class="card" href="pc-mode-cheats-detected_visual.html">
+                <div class="row1"><span class="verdict red">CHEATS DETECTED</span><span class="mode">· PC mode</span></div>
+                <div class="desc">The rich case — HIGH cheat findings across nine categories (Prefetch, MUICache, DMA, KnownHashes, LOLDrivers, UserScripts, AIVision, BCD, Process), input-device co-detection, a Historical section.</div>
+                <div class="files">.html · 120 KB · also: <a href="pc-mode-cheats-detected.txt" style="color:inherit;text-decoration:underline">plain-text version</a></div>
+              </a>
+              <a class="card" href="console-rig-capture-stack_visual.html">
+                <div class="row1"><span class="verdict amber">CAPTURE STACK PRESENT</span><span class="mode">· console-rig mode</span></div>
+                <div class="desc">The streamer disclosure case — OBS, Elgato, DS4Windows, ViGEmBus surfaced as MEDIUM dual-use without any HIGH cheat or input matches. Demonstrates the legitimate-streamer carve-out tier.</div>
+                <div class="files">.html · 83 KB · also: <a href="console-rig-capture-stack.txt" style="color:inherit;text-decoration:underline">plain-text version</a></div>
+              </a>
+              <a class="card" href="pc-mode-clean_visual.html">
+                <div class="row1"><span class="verdict green">CLEAN</span><span class="mode">· PC mode</span></div>
+                <div class="desc">Empty case + Historical demo — proves the layout still reads when the verdict is green but archived findings from years ago exist. The verdict block readout fades; the Historical section explains it.</div>
+                <div class="files">.html · 79 KB · also: <a href="pc-mode-clean.txt" style="color:inherit;text-decoration:underline">plain-text version</a></div>
+              </a>
+            </div>
+            <p class="footer">These files are generated by <code>python/examples/generate_example.py</code> via the production <code>render_html()</code> in <code>src/pc_check/visual_companion.py</code>. The HTML is fully self-contained and works offline. For the real product, see <a href="https://github.com/Sutaigne/pc-check#quick-start">Quick start</a>.</p>
+          </body>
+          </html>
+          HTML
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

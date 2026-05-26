@@ -49,7 +49,10 @@ REQUIREMENTS
     process module list). Half the report would say "Access
     denied" - the scan won't run without admin.
   - About 1 MB of free disk space for the reports.
-  - No internet connection needed. The scan never makes one.
+  - No internet connection needed for the core scan. One opt-in
+    network call (the LOLDrivers BYOVD cross-reference at
+    loldrivers.io) prompts you with Y/N - press anything other
+    than Y to skip. The scan runs identically either way.
 
 
 SAFETY IN ONE LINE
@@ -57,8 +60,11 @@ SAFETY IN ONE LINE
 
 Every scan is read-only. Nothing leaves your machine. All scripts
 in the "kit" subfolder are plain text - open any .ps1 in Notepad
-and read every line. Search for "Invoke-Web" or "Remove-Item" -
-you won't find any. For the full safety attestation, open:
+and read every line. Search for "Invoke-Web" and you will find
+EXACTLY ONE result: the opt-in LOLDrivers fetch on
+kit\forensic-common.ps1 line 736. Search for "Remove-Item" or
+"Set-Item" and you'll find none in the scan path. The whole story
+is disclosed in every report's header and in:
 
   kit\pc-check-safety-card.html
 

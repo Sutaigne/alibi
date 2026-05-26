@@ -178,7 +178,7 @@ footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--rule);display
         <div class="panel-label">What it doesn't do</div>
         <h3>None of the things you'd reasonably worry about</h3>
         <ul>
-          <li>Doesn't connect to the internet (no <code>Invoke-WebRequest</code>, no telemetry, no phone-home)</li>
+          <li>Makes <strong>one opt-in</strong> outbound call &mdash; the LOLDrivers (loldrivers.io) BYOVD cross-reference &mdash; which prompts <em>Y/N</em> before running and is the only <code>Invoke-WebRequest</code> in the kit. No telemetry, no phone-home, no cloud upload. Nothing about your PC is sent &mdash; only the public driver database is downloaded.</li>
           <li>Doesn't download or install anything</li>
           <li>Doesn't modify any existing file, registry key, service, or setting</li>
           <li>Doesn't read the contents of your photos, documents, messages, or saved passwords</li>
@@ -202,12 +202,12 @@ footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--rule);display
       <div class="verify-card">
         <div class="num">VERIFY 01</div>
         <h4>Open the script in Notepad</h4>
-        <p>Right-click <code>forensic-scan.ps1</code> &rarr; Open with &rarr; Notepad. Every operation the script performs is visible as plain English plus PowerShell. Search the file for "Invoke-Web" or "Remove-" or "Set-Item" &mdash; you won't find any.</p>
+        <p>Right-click <code>forensic-scan.ps1</code> &rarr; Open with &rarr; Notepad. Every operation the script performs is visible as plain English plus PowerShell. Search <code>kit\*.ps1</code> for <code>Invoke-Web</code> and you'll find <strong>exactly one</strong> result &mdash; the opt-in LOLDrivers fetch on <code>forensic-common.ps1</code> line 736, prompted with Y/N at runtime. Search for <code>Remove-</code> or <code>Set-Item</code> and you'll find none in the scan path.</p>
       </div>
       <div class="verify-card">
         <div class="num">VERIFY 02</div>
         <h4>Watch network activity while it runs</h4>
-        <p>Open Task Manager &rarr; Performance &rarr; Ethernet / Wi-Fi. Start the scan. The "Send" graph stays at zero kbps for the entire run. The script makes no outbound connections.</p>
+        <p>Open Task Manager &rarr; Performance &rarr; Ethernet / Wi-Fi. Start the scan. If you press anything other than Y at the LOLDrivers prompt, the "Send" graph stays at zero kbps for the entire run. If you press Y, you'll see a single small fetch (~50 KB) from loldrivers.io and then nothing else. There are no other outbound connections.</p>
       </div>
       <div class="verify-card">
         <div class="num">VERIFY 03</div>

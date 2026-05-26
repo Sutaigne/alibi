@@ -461,7 +461,7 @@ footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--rule);display
       <div class="verify-card">
         <div class="num">METHOD 1</div>
         <h4>Open the source</h4>
-        <p>Right-click <code>kit\forensic-scan.ps1</code> &rarr; Open with &rarr; Notepad. Search for <code>Invoke-Web</code>, <code>Remove-Item</code>, or <code>Set-ItemProperty</code>. You won't find any.</p>
+        <p>Right-click <code>kit\forensic-scan.ps1</code> &rarr; Open with &rarr; Notepad. Search <code>kit\*.ps1</code> for <code>Invoke-Web</code> and you'll find <strong>exactly one</strong> result &mdash; the opt-in LOLDrivers fetch on <code>forensic-common.ps1</code> line 736, prompted with Y/N at runtime. Search for <code>Remove-Item</code> or <code>Set-ItemProperty</code> and you'll find none.</p>
       </div>
       <div class="verify-card">
         <div class="num">METHOD 2</div>
