@@ -11,7 +11,7 @@
 # Format: <SHA256>  <relative-path>
 
 # --- repo root: the runnable distribution ---
-0e5b8a39e9f72fb46dbf98c6a265a96cf64f40d1bbca80d656a0173d6b05f4ad *Run scan.bat
+314058db7beff3511bb59556f34b9d5dd35e7fdb54fc3dd6d7193b0f45e01a82 *Run scan.bat
 3c6f8bc18c20771efec675e600687a47b2e02f7fa139009d48bbdac896846c66 *START HERE.txt
 
 # --- scanner/ — PowerShell engine (canonical) ---
