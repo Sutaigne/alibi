@@ -1,24 +1,22 @@
 # alibi HASHES.txt — SHA256 of every shipped file
 #
-# To verify a kit you received:
-#   1. Download HASHES.txt from this repo at the matching tag.
-#   2. In the kit folder, run:  sha256sum -c HASHES.txt
+# Verify a kit:  sha256sum -c HASHES.txt
 #
-# Re-generated on each release. Format: <SHA256>  <relative-path>
+# Format: <SHA256>  <relative-path>
 
 # --- repo root: the runnable distribution ---
-314058db7beff3511bb59556f34b9d5dd35e7fdb54fc3dd6d7193b0f45e01a82 *Run scan.bat
+455ed90b40b231bdab542723aeebf183caaeee834f7ec1d577c570fcb90da222 *Run scan.bat
 3c6f8bc18c20771efec675e600687a47b2e02f7fa139009d48bbdac896846c66 *START HERE.txt
 
 # --- scanner/ — PowerShell engine (canonical) ---
 25b3d75f4707d28bd9f3cf4e8aa42d9241776de17e068a55eddd17efb866fb18 *scanner/README.txt
 9b8041ed4407cf0c449d516607850253a7c19bb4af6776d31023b0da8af0db87 *scanner/alibi-safety-card.html
 da10d733a8628d518a9931693761f02645eb63d8278d08d9df7f8c1d7e53108f *scanner/console-lockdown-explained.html
-8c3c8eaf9d99990de6e60a513dfb3f97f57eaa350c5fbfc1e22698a9a00bcc3d *scanner/console-rig-audit.ps1
+39a2ad0f9e0335c821fc65d6f365c13305fc9da5a6b1115c5bfc48fdd97407b4 *scanner/console-rig-audit.ps1
 0b680b000ecc2b500bbde276aadac5a850a8dcbc11c8990f52a96e21a11b22a1 *scanner/console-run-check.bat
 065ef704012b8c3f410916e702165dc1fd197d586d852fc8473af735273b0d0b *scanner/console-setup-checklist.html
 f023d3250bd536023ac13d86476bd30ad7b058d519e70d893a1df988ab204889 *scanner/forensic-common.ps1
-f697d59ff68523d3aa9ba3dd8dbd015659230a221c0c668b16a574e2f1156c4b *scanner/forensic-scan.ps1
+605d6daec37ba3f170c9f703634e78567271f2762e9812626f7c9a897eb52d7f *scanner/forensic-scan.ps1
 671c81e911af316569e92ce162cfee0bb5efaff9c8096942c9b7c102aa809f40 *scanner/generate-visual-companion-console.ps1
 659db814bc9ee87bda9506fa613780bc8e6da3a487866e040d46c8bac59fd957 *scanner/generate-visual-companion.ps1
 c8facb1b05abed76952cc329cc06db3fd11e34f75c68057bad69c966f2ac45ae *scanner/one-page-guide.html

@@ -18,9 +18,22 @@ REM --- Require admin. Self-elevate if needed; fail clean if declined. ---
 NET SESSION >nul 2>&1
 if %errorLevel% NEQ 0 (
     echo.
+    echo   ============================================================
+    echo    Alibi - admin elevation required
+    echo   ============================================================
+    echo.
     echo   This scan needs administrator permission.
     echo   A Windows UAC prompt will appear in a moment.
-    echo   Please click YES to continue.
+    echo.
+    echo   AFTER you click YES:
+    echo     - THIS window will close.
+    echo     - A NEW elevated window will open.
+    echo     - The scan runs in that new window (takes ~1-3 minutes).
+    echo     - When done, your browser will open the report and the
+    echo       file paths will be on your clipboard.
+    echo.
+    echo   The two-window pattern is normal Windows UAC behavior, not
+    echo   a re-run of the scan. Watch the NEW window for progress.
     echo.
     powershell.exe -NoProfile -Command "try { Start-Process -FilePath '%~f0' -Verb RunAs -ErrorAction Stop } catch { exit 1 }"
     if !errorLevel! NEQ 0 (
@@ -124,9 +137,12 @@ echo.
 
 REM --- Auto-open the PC-mode HTML in the default browser.
 REM     Only one tab to avoid spam; the console-rig file is right next to it.
+REM     Use explorer.exe (not `start ""`) so Chrome/Edge happily attach to an
+REM     existing non-admin browser process even though we're elevated — `start`
+REM     can leak the admin token to a new browser window and confuse things.
 if defined PC_HTML (
     if exist "!PC_HTML!" (
-        start "" "!PC_HTML!"
+        explorer.exe "!PC_HTML!"
     )
 )
 

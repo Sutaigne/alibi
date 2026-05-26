@@ -96,9 +96,11 @@ echo     .html visual:   !CONSOLE_HTML!
 echo.
 
 REM --- Auto-open the PC-mode HTML in the default browser. ---
+REM     Using explorer.exe (not `start ""`) so an existing browser process
+REM     can take the file even if we're running elevated.
 if defined PC_HTML (
     if exist "!PC_HTML!" (
-        start "" "!PC_HTML!"
+        explorer.exe "!PC_HTML!"
     )
 )
 

@@ -522,10 +522,16 @@ if (Test-Path $visualScript) {
 # Auto-open the visual report in the user's default browser. The unified
 # Run scan.bat passes -SkipBrowserOpen so we don't spam two tabs (it opens
 # just the PC-mode report at the very end of the run instead).
+#
+# Note: we go through explorer.exe rather than Start-Process directly so the
+# browser launches at medium integrity even when this script is elevated.
+# A direct Start-Process from an admin PowerShell can fail to attach to an
+# existing non-admin browser process and either pop a separate window or
+# silently no-op on some configurations.
 if ($htmlPath -and -not $SkipBrowserOpen) {
     try {
         Write-Host "  Opening report in your default browser..." -ForegroundColor Cyan
-        Start-Process $htmlPath -ErrorAction Stop
+        Start-Process -FilePath 'explorer.exe' -ArgumentList "`"$htmlPath`"" -ErrorAction Stop
     } catch {
         Write-Host "  Could not auto-open the browser. Open this file manually: $htmlPath" -ForegroundColor Yellow
     }

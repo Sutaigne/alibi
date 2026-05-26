@@ -575,9 +575,12 @@ if (Test-Path $visualScript) {
 }
 
 if ($htmlPath -and -not $SkipBrowserOpen) {
+    # explorer.exe relay so the browser launches at medium IL even when this
+    # script is elevated (Start-Process direct can fail to attach to an
+    # existing non-admin browser process).
     try {
         Write-Host "  Opening report in your default browser..." -ForegroundColor Cyan
-        Start-Process $htmlPath -ErrorAction Stop
+        Start-Process -FilePath 'explorer.exe' -ArgumentList "`"$htmlPath`"" -ErrorAction Stop
     } catch {
         Write-Host "  Could not auto-open the browser. Open this file manually: $htmlPath" -ForegroundColor Yellow
     }
