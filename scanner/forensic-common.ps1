@@ -462,11 +462,24 @@ function Test-IsAdmin {
 }
 
 function Match-Keyword {
-    param([string]$Text, [string[]]$Patterns)
+    # -Bounded wraps each pattern with non-letter/digit lookaround so short
+    # generic keywords (esp, bypass, loader, hoic, hping) don't false-match
+    # inside larger words. Without it, 'hoic' matches CHOICE.EXE, 'hping'
+    # matches PATHPING.EXE, 'esp' matches FDResPub / Imp[ers]onation cmdlines.
+    # Caller opts in per-context — substring matching is intentional for long
+    # specific brand names like 'engineowning' or 'phantomoverlay' where
+    # vendors append/prefix garbage to evade detection.
+    param(
+        [string]$Text,
+        [string[]]$Patterns,
+        [switch]$Bounded
+    )
     if ([string]::IsNullOrWhiteSpace($Text)) { return $null }
     $lc = $Text.ToLower()
     foreach ($p in $Patterns) {
-        if ($lc -match [regex]::Escape($p.ToLower())) { return $p }
+        $esc = [regex]::Escape($p.ToLower())
+        $rx = if ($Bounded) { '(?<![a-z0-9])' + $esc + '(?![a-z0-9])' } else { $esc }
+        if ($lc -match $rx) { return $p }
     }
     return $null
 }
@@ -1169,7 +1182,7 @@ function Scan-UserScriptContents {
     Write-Host '  [*] User-folder script contents (reads .bat / .cmd / .ps1 / .lua / .ahk)...' -ForegroundColor DarkGray
 
     $selfDir = if ($PSScriptRoot) { $PSScriptRoot.ToLower() } else { '' }
-    $excludeNames = @('forensic-scan.ps1','console-rig-audit.ps1','generate-visual-companion.ps1','forensic-common.ps1','generate-visual-companion-console.ps1')
+    $excludeNames = @('forensic-scan.ps1','console-rig-audit.ps1','generate-visual-companion.ps1','forensic-common.ps1','generate-visual-companion-console.ps1','visual-companion-common.ps1')
 
     $scanRoots = @(
         "$env:USERPROFILE\Desktop",
@@ -1437,10 +1450,13 @@ function Scan-LuaScripts {
 
             $lc = "$($file.Name) $($file.FullName)".ToLower()
 
-            $hit = $null
-            foreach ($kw in $LuaCheat_Keywords) {
-                if ($lc -match [regex]::Escape($kw.ToLower())) { $hit = $kw; break }
-            }
+            # Bounded matching: $LuaCheat_Keywords contains short generic words
+            # (esp, hack, cheat, bypass, loader, ud_) that would substring-match
+            # any path containing those letter sequences ("espresso-recipes",
+            # "ContentLoader.lua"). Word-boundary scoping keeps true cheat-
+            # script names matched while filtering paths that just happen to
+            # share a letter run.
+            $hit = Match-Keyword $lc $LuaCheat_Keywords -Bounded
             if ($hit) {
                 $meta['Pattern'] = $hit
                 Add-Finding 'LuaScript' $file.FullName "[$hit] $($file.Name)" 'HIGH' 'cheat' $meta
@@ -1632,15 +1648,16 @@ function Scan-NetworkAttackTools {
     Write-Host '  [*] Network attack / DDoS tools...' -ForegroundColor DarkGray
 
     function Score-NetworkBlob {
+        # Bounded matching required: every keyword in $NetworkAttack_* is a
+        # named tool (hoic, hping, masscan, etc.) that overlaps with Windows
+        # binaries when matched as a substring (hoic->CHOICE.EXE,
+        # hping->PATHPING.EXE).
         param([string]$Blob)
         if ([string]::IsNullOrWhiteSpace($Blob)) { return $null }
-        $lc = $Blob.ToLower()
-        foreach ($kw in $NetworkAttack_High) {
-            if ($lc -match [regex]::Escape($kw.ToLower())) { return @{ Sev='HIGH'; Kind='cheat'; Pat=$kw } }
-        }
-        foreach ($kw in $NetworkAttack_Medium) {
-            if ($lc -match [regex]::Escape($kw.ToLower())) { return @{ Sev='MEDIUM'; Kind='dual-use'; Pat=$kw } }
-        }
+        $hi = Match-Keyword $Blob $NetworkAttack_High -Bounded
+        if ($hi) { return @{ Sev='HIGH'; Kind='cheat'; Pat=$hi } }
+        $md = Match-Keyword $Blob $NetworkAttack_Medium -Bounded
+        if ($md) { return @{ Sev='MEDIUM'; Kind='dual-use'; Pat=$md } }
         return $null
     }
 
