@@ -15,56 +15,62 @@ Repo: https://github.com/Sutaigne/alibi · current tip: `e8ec1f3` (untagged)
 
 ---
 
-## Issue 1 — "It ran multiple scans" (CARRYOVER from v4.1.5)
+## Issue 1 — "It ran multiple scans" (CLOSED 2026-05-26 — not a code bug)
 
-**Status:** Untouched. Same diagnosis the previous handoff carried.
+**Status:** Closed. Diagnosis below.
 
-**Symptom:** Double-clicking `Run scan.bat` (the unified launcher at repo
-root) produced more than the expected pair of scans (PC mode +
-console-rig mode). Exact count unclear.
+**Diagnostic run on Brad's Desktop on 2026-05-26** produced two recent
+launches:
 
-**Possible causes (ranked by likelihood):**
+- **Run 1 (5/25 23:41 → 23:56):** PC #1 (23:41:54 → 23:47:42, 572 KB)
+  → Rig #1 (23:47:43 → 23:53:35, 577 KB) → PC #2 (23:51:34 → 23:56:27,
+  567 KB). PC #2 started 9 min 40 s after Run 1 began, **during** Rig #1.
+- **Run 2 (5/26 00:18 → 00:19):** 1 PC + 1 Rig, perfectly sequential.
+  Clean.
 
-1. **UAC self-elevation loop.** `Run scan.bat` checks `NET SESSION`, and
-   if non-admin, calls `powershell.exe ... Start-Process -FilePath
-   '%~f0' -Verb RunAs` to spawn an elevated copy of itself, then
-   `exit /b`. If the elevated copy somehow re-enters the elevation
-   branch (e.g. `NET SESSION` failing intermittently inside the elevated
-   process), it re-spawns. Infinite loop possible.
-2. **Accidental double-click.** Each click spawns its own independent
-   UAC + scan flow. The kit doesn't prevent concurrent launches.
-3. **v4.1.5 self-elevation messaging change broke parsing.** v4.1.5
-   added an explanatory text block before the elevation. Possibly a
-   character in the new echo block breaks cmd parsing and causes weird
-   control flow. Diff v4.1.4 vs v4.1.5 of `Run scan.bat` and look for
-   unescaped `&`, `(`, `)`, `|`, `^`, `>` inside the new echo block.
+**Why the three v4.1.5-bug hypotheses are all ruled out:**
 
-**Diagnosis to run first in the next session:**
+1. *Inline fall-through (parens / echo-block parser regression).* If the
+   non-admin parent had run inline alongside the elevated child, PC #2
+   would start at ~23:41:54, not 23:51:34.
+2. *Non-admin partial scan in the parent window.* PC #2 weighs 567 KB —
+   essentially identical to PC #1's 572 KB. That's a full elevated scan,
+   not a permission-denied stub.
+3. *UAC self-elevation loop.* A loop wouldn't space launches 10 minutes
+   apart, and each iteration would need a UAC prompt the user couldn't
+   miss.
 
-```powershell
-# Count actual report files on Brad's Desktop with timestamps
-Get-ChildItem $env:USERPROFILE\Desktop -Filter 'AlibiReport_*.txt' |
-    Sort-Object LastWriteTime |
-    Select-Object Name, LastWriteTime
-Get-ChildItem $env:USERPROFILE\Desktop -Filter 'AlibiRigReport_*.txt' |
-    Sort-Object LastWriteTime |
-    Select-Object Name, LastWriteTime
-# Plus look for the older PCForensicCheck_* names if any pre-rename runs remain.
-```
+**Actual cause:** A second `Run scan.bat` launch around 23:51:30. UAC
+prompted again, was approved, and a fresh elevated copy started PC #2 in
+parallel with the still-running Rig #1. Whether that second launch was
+an accidental re-click *or* a deliberate impatient re-launch isn't
+resolvable from the data alone, and the distinction matters less than
+it sounds: both point at the same latent UX defect.
 
-If more than 2 files (1 PC + 1 console-rig) per scan attempt, that
-confirms multiple-scan execution. Timestamps tell back-to-back
-(= elevation loop) from spaced (= user clicked twice).
+The v4.1.5 echo regression hypothesis from the earlier handoff is
+falsified by this data. `Run scan.bat` is structurally sound; the cmd
+parser correctly balances `(takes ~1-3 minutes)` inside the if-block,
+and the byte dump showed no hidden chars.
 
-**Suggested fix path:**
+**Latent UX defect to consider for a future iteration.** Phase 2
+(`console-rig-audit.ps1`) emits no progress output for ~5 minutes
+during the LOLDrivers fetch + filesystem walks. To a user watching the
+launcher window after Phase 1's flurry of activity, the window looks
+dead. That's the condition under which a reasonable person re-launches
+"just in case it stalled" — exactly the failure shape this issue
+reports. Two cheap mitigations, either is sufficient:
 
-- **Best:** Remove self-elevation entirely. Replace with a check at the
-  top: if not admin, print a clear "RIGHT-CLICK `Run scan.bat` AND PICK
-  'Run as administrator'" message, pause, exit. No `Start-Process -Verb
-  RunAs`. No second window. No re-entry possible.
-- **Acceptable:** Keep self-elevation but add a `--already-elevated`
-  sentinel argument the elevated copy passes to itself, and refuse to
-  re-elevate if that flag is present.
+- Periodic dot/heartbeat output from the long-running scans
+  (`Write-Host -NoNewline '.'` every 5–10 s during slow sections), so
+  the window visibly isn't dead.
+- A `Run scan.bat` lockfile guard: if another scan is already running,
+  show "a scan is already in progress in window <PID>" and exit instead
+  of starting a parallel scan.
+
+Neither is blocking; both would prevent the only failure mode the field
+test surfaced. Reopen if symptom recurs *and* matches a different
+pattern (near-simultaneous launches, repeated UAC prompts, or PC #2
+weighing much less than PC #1).
 
 ---
 
@@ -108,24 +114,23 @@ Desktop for a before/after visual.
 
 ---
 
-## Issue 4 — HASHES.txt regeneration (NEW, mechanical)
+## Issue 4 — HASHES.txt regeneration (DONE 2026-05-26)
 
-Several `scanner/*` hashes in `HASHES.txt` are stale after the v4.2.0
-commit (the two driver shims + the new common module + the moved
-CSS/JS, plus `forensic-common.ps1` for the bounded-matching change).
-Before the next release tag, regenerate:
+Regenerated against the current working tree. `sha256sum -c HASHES.txt`
+verifies all 37 shipped files OK.
 
-```powershell
-Get-ChildItem 'D:\Claude\Projects\PC Check\scanner' -Filter '*.ps1' |
-    Get-FileHash -Algorithm SHA256 |
-    ForEach-Object {
-        '{0} *scanner/{1}' -f $_.Hash.ToLower(), ($_.Path | Split-Path -Leaf)
-    }
-# Plus visual_styles.css, visual_scripts.js, one-page-guide.html, run-check.bat, etc.
-# Compare against HASHES.txt; rewrite the changed lines.
-```
+Net changes vs the pre-v4.2.0 file:
 
-Not blocking — only matters when cutting a release tag for distribution.
+- **Modified hashes:** `scanner/forensic-common.ps1` (bounded matching),
+  `scanner/generate-visual-companion.ps1` and
+  `scanner/generate-visual-companion-console.ps1` (60-line shims
+  replacing the old 800+/900+ line renderers),
+  `python/src/alibi/scanners.py`, `python/src/alibi/utils.py`,
+  `python/src/alibi/visual_companion.py`.
+- **Added:** `scanner/visual-companion-common.ps1`,
+  `scanner/visual_styles.css`, `scanner/visual_scripts.js`.
+- **Removed:** `python/src/alibi/visual_styles.css`,
+  `python/src/alibi/visual_scripts.js` (moved to `scanner/`).
 
 ---
 
@@ -193,8 +198,7 @@ These are stable and don't need rework unless field-test surfaces issues:
    (parser + renderer + scoring + bounded keyword matching)
 5. `python/src/alibi/visual_companion.py` — canonical Python renderer
    (the PS module mirrors this 1:1)
-6. `Run scan.bat` — needs Issue 1 attention; diff against v4.1.4
-7. `scanner/forensic-common.ps1` — `Match-Keyword` now has a `-Bounded`
+6. `scanner/forensic-common.ps1` — `Match-Keyword` now has a `-Bounded`
    switch; `Score-NetworkBlob` and the Lua-script loop use it
 
 ---
