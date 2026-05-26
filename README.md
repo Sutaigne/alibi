@@ -2,10 +2,12 @@
 
 A read-only forensic kit for Windows that lets a gamer demonstrate to a third party that their machine isn't running cheats. The deliverable is two timestamped files on the user's Desktop — a plain-text report and a matching `_visual.html` companion. A reviewer reads those files. **No system modifications, no installed software, no telemetry.** Exactly one outbound network call — the opt-in LOLDrivers BYOVD cross-reference — is prompted before running and explicitly disclosed in every report; everything else stays on the machine.
 
+**Primarily built for Call of Duty.** The kit was born out of the CoD cheating scene — the first field test (2026-05-22) was a self-confessed CoD cheater, and the deepest keyword coverage is for CoD-side brands: EngineOwning, PhantomOverlay, Lavi/Sky/iWantCheats, X22, the rut.gg / RUAVT family, Two2nd / Tomware / Cynical (the Activision-C&D'd Feb-2025 brands), plus Ricochet- and HWID-spoofer-focused detection logic. CS2, Apex, Tarkov, Rust, R6, and Marvel Rivals brand arrays were added later because the same engine handled them for free — but if you're auditing a CoD rig, this is the kit that's been most actively shaped for that.
+
 Two scan modes share one engine:
 
 - **PC mode** — for PC gamers auditing their own gaming PC
-- **Console-rig mode** — for console gamers auditing a PC connected to their console rig
+- **Console-rig mode** — for console gamers auditing a PC connected to their console rig (capture-card host, streaming PC, MITM-aimbot setup)
 
 Author: **Bread#3266221** ([@Sutaigne](https://github.com/Sutaigne)). Contributor: **Drownmw**.
 
