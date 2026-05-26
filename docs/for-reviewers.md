@@ -14,14 +14,14 @@ If you're auditing in person:
 
 ```powershell
 # In the kit's root directory (the one with Run scan.bat):
-Get-FileHash kit\forensic-common.ps1 -Algorithm SHA256
-Get-FileHash kit\forensic-scan.ps1   -Algorithm SHA256
-Get-FileHash kit\console-rig-audit.ps1 -Algorithm SHA256
+Get-FileHash scanner\forensic-common.ps1 -Algorithm SHA256
+Get-FileHash scanner\forensic-scan.ps1   -Algorithm SHA256
+Get-FileHash scanner\console-rig-audit.ps1 -Algorithm SHA256
 ```
 
 Compare those SHA256 values against [`HASHES.txt`](../HASHES.txt) at the root of this repo. If they don't match, you are not looking at the kit you think you're looking at. Stop.
 
-If you're auditing remotely (the user sends you the report only): you can't fully close this gap without a copy of the kit they ran. Ask them to also send the `kit\` folder, or to re-run the scan in front of you (over screenshare) using a fresh download of `ready-to-flash\` from this repo.
+If you're auditing remotely (the user sends you the report only): you can't fully close this gap without a copy of the kit they ran. Ask them to also send the `scanner\` folder, or to re-run the scan in front of you (over screenshare) using a fresh download of `scanner\` from this repo.
 
 The same verification works for the Python port — hash everything in `python\src\alibi\` (including `visual_styles.css` and `visual_scripts.js`).
 
@@ -79,7 +79,7 @@ Below the verdict, the report lists the artifacts that drove the call. Every lin
 If you want to confirm a match wasn't fabricated:
 
 1. Note the pattern (e.g. `engineowning`).
-2. `grep` for it in the kit's keyword arrays — [`kit/forensic-common.ps1`](../kit/forensic-common.ps1) line 42 onwards, or [`python/src/alibi/keywords.py`](../python/src/alibi/keywords.py).
+2. `grep` for it in the kit's keyword arrays — [`scanner/forensic-common.ps1`](../scanner/forensic-common.ps1) line 42 onwards, or [`python/src/alibi/keywords.py`](../python/src/alibi/keywords.py).
 3. The pattern should appear verbatim in one of `$CheatBrands_COD`, `$DMA_Indicators`, `$VisionAimbot_AI_PC`, etc. If it does not, the report has been hand-edited — the scanner can't emit a pattern that isn't in its database.
 
 ## 5. Known evasions — what `CLEAN` does NOT rule out

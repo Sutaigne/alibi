@@ -91,10 +91,21 @@ def _iso_from_ctime(stat: os.stat_result | None) -> str:
     return datetime.fromtimestamp(stat.st_ctime).strftime("%Y-%m-%dT%H:%M:%S")
 
 
-def _safe_walk(root: str) -> Iterable[tuple[str, list[str], list[str]]]:
+DEFAULT_MAX_DEPTH = 8  # cap recursion below user roots (avoids node_modules /
+                       # Steam game trees blowing up wall time)
+
+
+def _safe_walk(root: str, *, max_depth: int | None = DEFAULT_MAX_DEPTH) -> Iterable[tuple[str, list[str], list[str]]]:
     if not os.path.isdir(root):
         return
-    yield from os.walk(root, onerror=lambda _e: None)
+    root_norm = root.replace("\\", "/").rstrip("/")
+    base_depth = len(root_norm.split("/"))
+    for dirpath, dirnames, filenames in os.walk(root, onerror=lambda _e: None):
+        if max_depth is not None:
+            cur_depth = len(dirpath.replace("\\", "/").rstrip("/").split("/")) - base_depth
+            if cur_depth >= max_depth:
+                dirnames.clear()  # don't descend further
+        yield dirpath, dirnames, filenames
 
 
 def _enumerate_files(
@@ -103,9 +114,10 @@ def _enumerate_files(
     ext_lower: tuple[str, ...] | None = None,
     max_size_mb: int | None = None,
     cap: int | None = None,
+    max_depth: int | None = DEFAULT_MAX_DEPTH,
 ) -> list[tuple[str, os.stat_result]]:
     out: list[tuple[str, os.stat_result]] = []
-    for dirpath, _dirnames, filenames in _safe_walk(root):
+    for dirpath, _dirnames, filenames in _safe_walk(root, max_depth=max_depth):
         for name in filenames:
             if ext_lower is not None:
                 lo = name.lower()
@@ -1086,13 +1098,38 @@ def scan_lua_scripts(engine: Engine) -> None:
 # ---------------------------------------------------------------------------
 # Scan-DLLInjectionTimestamps — uses wevtutil for event logs
 # ---------------------------------------------------------------------------
-def _query_event_log_xml(log: str, *, max_events: int = 5000, xpath: str | None = None) -> list[str]:
+_EVENT_WINDOW_DAYS = 180  # align with recency-decay rule — anything older
+                          # would be filtered out of the verdict anyway
+_EVENT_WINDOW_MS = _EVENT_WINDOW_DAYS * 24 * 60 * 60 * 1000
+
+
+def _query_event_log_xml(log: str, *, max_events: int = 2000, xpath: str | None = None) -> list[str]:
     """Query an event log via wevtutil; return one XML-event-string per event.
     Returns empty list if log isn't accessible (typical for non-admin or no Sysmon).
+
+    A 180-day time-window filter is always applied (server-side; the event log
+    service does the filtering, dramatically faster than client-side on busy
+    machines).
     """
-    cmd = ["wevtutil.exe", "qe", log, f"/c:{max_events}", "/f:xml", "/rd:true"]
+    # XPath fragment that bounds events to the last 180 days. Combine with any
+    # caller-supplied filter via 'and'.
+    window = f"TimeCreated[timediff(@SystemTime) <= {_EVENT_WINDOW_MS}]"
     if xpath:
-        cmd.append(f"/q:{xpath}")
+        # Strip the outer brackets from the supplied XPath so we can AND it.
+        # Caller passes shapes like "*[System[EventID=4688]]". We want the
+        # inner predicate.
+        inner = xpath
+        # Best-effort: combine common shapes.
+        if inner.startswith("*[System[") and inner.endswith("]]"):
+            inner_body = inner[len("*[System["):-len("]]")]
+            combined = f"*[System[({inner_body}) and {window}]]"
+        else:
+            combined = inner  # leave the caller's filter alone; window applied
+                              # via -MaxEvents cap as a fallback
+    else:
+        combined = f"*[System[{window}]]"
+    cmd = ["wevtutil.exe", "qe", log, f"/c:{max_events}", "/f:xml", "/rd:true",
+           f"/q:{combined}"]
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=120, check=False)
     except (OSError, subprocess.SubprocessError):
@@ -1147,7 +1184,7 @@ def scan_dll_injection_timestamps(engine: Engine) -> None:
     # Source 1: Sysmon EID 7
     sysmon_events = _query_event_log_xml(
         "Microsoft-Windows-Sysmon/Operational",
-        max_events=5000,
+        max_events=2000,
         xpath="*[System[EventID=7]]",
     )
     if not sysmon_events:
@@ -1174,7 +1211,7 @@ def scan_dll_injection_timestamps(engine: Engine) -> None:
         })
 
     # Source 2: Security EID 4688
-    for xml in _query_event_log_xml("Security", max_events=10000, xpath="*[System[EventID=4688]]"):
+    for xml in _query_event_log_xml("Security", max_events=2000, xpath="*[System[EventID=4688]]"):
         data, ts = _parse_event_data(xml)
         new_proc = data.get("NewProcessName", "")
         if not new_proc:
@@ -1571,25 +1608,50 @@ def scan_ai_vision_artifacts(engine: Engine) -> None:
 # invoke_all_scans
 # ---------------------------------------------------------------------------
 def invoke_all_scans(engine: Engine) -> None:
-    """Run the full standard scan sequence. Mirrors Invoke-AllScans."""
-    scan_prefetch(engine)
-    scan_bam(engine)
-    scan_installed_software(engine)
-    scan_recent_files(engine)
-    scan_muicache(engine)
-    scan_usb_history(engine)
-    scan_driver_signing(engine)
-    scan_drivers(engine)
-    scan_downloads(engine)
-    scan_services_trace(engine)
-    scan_dma_build_artifacts(engine)
-    scan_application_data(engine)
-    scan_shimcache(engine)
-    scan_user_script_contents(engine)
-    scan_obscured_filenames(engine)
-    scan_process_modules(engine)
-    scan_known_hashes(engine)
-    scan_lua_scripts(engine)
-    scan_dll_injection_timestamps(engine)
-    scan_network_attack_tools(engine)
-    scan_ai_vision_artifacts(engine)
+    """Run the full standard scan sequence. Each scanner is timed so the
+    report surfaces per-scanner wall time — lets reviewers (and the author)
+    see exactly which step is slow on which machine.
+    """
+    import time
+    scans = [
+        ("scan_prefetch", scan_prefetch),
+        ("scan_bam", scan_bam),
+        ("scan_installed_software", scan_installed_software),
+        ("scan_recent_files", scan_recent_files),
+        ("scan_muicache", scan_muicache),
+        ("scan_usb_history", scan_usb_history),
+        ("scan_driver_signing", scan_driver_signing),
+        ("scan_drivers", scan_drivers),
+        ("scan_downloads", scan_downloads),
+        ("scan_services_trace", scan_services_trace),
+        ("scan_dma_build_artifacts", scan_dma_build_artifacts),
+        ("scan_application_data", scan_application_data),
+        ("scan_shimcache", scan_shimcache),
+        ("scan_user_script_contents", scan_user_script_contents),
+        ("scan_obscured_filenames", scan_obscured_filenames),
+        ("scan_process_modules", scan_process_modules),
+        ("scan_known_hashes", scan_known_hashes),
+        ("scan_lua_scripts", scan_lua_scripts),
+        ("scan_dll_injection_timestamps", scan_dll_injection_timestamps),
+        ("scan_network_attack_tools", scan_network_attack_tools),
+        ("scan_ai_vision_artifacts", scan_ai_vision_artifacts),
+    ]
+    timings: list[tuple[str, float]] = []
+    total_start = time.perf_counter()
+    for name, fn in scans:
+        start = time.perf_counter()
+        try:
+            fn(engine)
+        except Exception as exc:  # noqa: BLE001 - scanner-level catch
+            engine.add("ScanTiming", name, f"Scanner threw: {exc}", SEV_WARN, "other")
+        timings.append((name, round(time.perf_counter() - start, 2)))
+    total = round(time.perf_counter() - total_start, 2)
+
+    slowest = sorted(timings, key=lambda t: t[1], reverse=True)[:8]
+    slowest_str = ", ".join(f"{n}={s}s" for n, s in slowest)
+    meta: dict[str, object] = {"TotalSeconds": total, "SlowestFirst": slowest_str}
+    for n, s in timings:
+        meta[n] = f"{s}s"
+    engine.add("ScanTiming", "(summary)",
+               f"Scan timing: total {total}s. Slowest: {slowest_str}",
+               SEV_INFO, "other", meta)

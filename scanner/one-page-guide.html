@@ -220,7 +220,7 @@ footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--rule);display
     <h2>Two things you touch. Everything else is the engine.</h2>
     <div class="section-rule"></div>
 
-    <p class="lead">When you open the folder, you see three things: a text file telling you what to do, a launcher to double-click, and a "kit" subfolder containing everything that runs behind the scenes. You only ever interact with the first two.</p>
+    <p class="lead">When you open the folder, you see three things: a text file telling you what to do, a launcher to double-click, and a "scanner" subfolder containing everything that runs behind the scenes. You only ever interact with the first two.</p>
 
     <div class="files-split">
       <div class="files-col you">
@@ -235,12 +235,12 @@ footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--rule);display
           <div class="file-purpose">The launcher. Right-click &rarr; Run as administrator. Both scans run automatically. The window shows progress and stays open at the end so you can read the summary.</div>
         </div>
         <div class="file-item">
-          <div class="file-name">kit\</div>
+          <div class="file-name">scanner\</div>
           <div class="file-purpose">The engine subfolder. You don't need to open anything in here &mdash; the launcher handles it. Reference docs live here for the reviewer if they want them.</div>
         </div>
       </div>
       <div class="files-col engine">
-        <div class="col-label">Inside the kit\ subfolder</div>
+        <div class="col-label">Inside the scanner\ subfolder</div>
         <h3>The engine + reference docs</h3>
         <div class="file-item">
           <div class="file-name">forensic-common.ps1</div>
@@ -269,7 +269,7 @@ footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--rule);display
       </div>
     </div>
 
-    <p class="caption">Every <code>.ps1</code> file in <code>kit\</code> is plain text. Right-click any of them and Open with &rarr; Notepad to read every line the scan runs. There is no compiled binary, no installer, no obfuscation.</p>
+    <p class="caption">Every <code>.ps1</code> file in <code>scanner\</code> is plain text. Right-click any of them and Open with &rarr; Notepad to read every line the scan runs. There is no compiled binary, no installer, no obfuscation.</p>
   </section>
 
   <!-- ================================================================== -->
@@ -285,7 +285,7 @@ footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--rule);display
         <div class="step-num">1</div>
         <div class="step-body">
           <h3>Download and unzip the folder</h3>
-          <p>Put it anywhere &mdash; Desktop, Downloads, a USB stick. The folder structure must stay intact (the <code>Run scan.bat</code> looks for the <code>kit\</code> subfolder next to it).</p>
+          <p>Put it anywhere &mdash; Desktop, Downloads, a USB stick. The folder structure must stay intact (the <code>Run scan.bat</code> looks for the <code>scanner\</code> subfolder next to it).</p>
         </div>
       </div>
       <div class="step">
@@ -461,7 +461,7 @@ footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--rule);display
       <div class="verify-card">
         <div class="num">METHOD 1</div>
         <h4>Open the source</h4>
-        <p>Right-click <code>kit\forensic-scan.ps1</code> &rarr; Open with &rarr; Notepad. Search <code>kit\*.ps1</code> for <code>Invoke-Web</code> and you'll find <strong>exactly one</strong> result &mdash; the opt-in LOLDrivers fetch on <code>forensic-common.ps1</code> line 736, prompted with Y/N at runtime. Search for <code>Remove-Item</code> or <code>Set-ItemProperty</code> and you'll find none.</p>
+        <p>Right-click <code>scanner\forensic-scan.ps1</code> &rarr; Open with &rarr; Notepad. Search <code>scanner\*.ps1</code> for <code>Invoke-Web</code> and you'll find <strong>exactly one</strong> result &mdash; the opt-in LOLDrivers fetch on <code>forensic-common.ps1</code> line 736, prompted with Y/N at runtime. Search for <code>Remove-Item</code> or <code>Set-ItemProperty</code> and you'll find none.</p>
       </div>
       <div class="verify-card">
         <div class="num">METHOD 2</div>
@@ -475,7 +475,7 @@ footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--rule);display
       </div>
     </div>
 
-    <p class="caption" style="margin-top:24px">Final commitment: <strong>if something the scan does isn't visible in the source, the scan doesn't do it.</strong> There is no hidden behavior. The full attestation lives at <code>kit\alibi-safety-card.html</code>.</p>
+    <p class="caption" style="margin-top:24px">Final commitment: <strong>if something the scan does isn't visible in the source, the scan doesn't do it.</strong> There is no hidden behavior. The full attestation lives at <code>scanner\alibi-safety-card.html</code>.</p>
   </section>
 
   <!-- ================================================================== -->
@@ -539,7 +539,7 @@ footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--rule);display
 
   <footer>
     <span>Alibi &middot; One-Page Guide &middot; by Bread, with Drownmw</span>
-    <span>kit\one-page-guide.html</span>
+    <span>scanner\one-page-guide.html</span>
   </footer>
 
 </div>

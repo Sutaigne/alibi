@@ -1,53 +1,36 @@
-# alibi HASHES.txt — SHA256 of every shipped file (kit + Python port)
+# alibi HASHES.txt — SHA256 of every shipped file
 #
 # To verify a kit you received:
-#   1. From this repo (https://github.com/Sutaigne/alibi) at the tag
-#      matching the kit version, download HASHES.txt.
-#   2. In the kit you received, run:
-#         sha256sum -c HASHES.txt
-#      (or, on a pure-Windows machine, use Get-FileHash per file.)
-#   3. Every line must report 'OK'. Any mismatch means the kit has been
-#      modified and you should not trust its output.
+#   1. Download HASHES.txt from this repo at the matching tag.
+#   2. In the kit folder, run:  sha256sum -c HASHES.txt
+#      (or, pure-Windows: Get-FileHash per file).
+#   3. Every line must report 'OK'. Mismatch = modified kit; don't trust the report.
 #
-# Generated for tag v4.0.0. Re-generated on each release.
+# Re-generated on each release.
 #
 # Format: <SHA256>  <relative-path>
 
-# --- PowerShell kit (kit/) — canonical ---
-25b3d75f4707d28bd9f3cf4e8aa42d9241776de17e068a55eddd17efb866fb18 *kit/README.txt
-500996d30dd1edf188831ff9d05736881a8f34e0591210eb91174b47f21f9168 *kit/alibi-safety-card.html
-da10d733a8628d518a9931693761f02645eb63d8278d08d9df7f8c1d7e53108f *kit/console-lockdown-explained.html
-eb1e0ccbdc08cf646ce419a0f60cd9097ab5afe6bf89ebb1b459b45d678c544d *kit/console-rig-audit.ps1
-0b680b000ecc2b500bbde276aadac5a850a8dcbc11c8990f52a96e21a11b22a1 *kit/console-run-check.bat
-065ef704012b8c3f410916e702165dc1fd197d586d852fc8473af735273b0d0b *kit/console-setup-checklist.html
-d43a34a5943aba785e6633f3b18cb234e29bd9e80b270fe946134daeaa635a98 *kit/forensic-common.ps1
-1b9678bcdaa4a4737a90f9562665577dc25792a83b025e0903fb951975d7ca64 *kit/forensic-scan.ps1
-671c81e911af316569e92ce162cfee0bb5efaff9c8096942c9b7c102aa809f40 *kit/generate-visual-companion-console.ps1
-659db814bc9ee87bda9506fa613780bc8e6da3a487866e040d46c8bac59fd957 *kit/generate-visual-companion.ps1
-0b1d1aabe9399b4b0821262cd837eb57b2aadf03982d799abcad0c8acf6669b9 *kit/one-page-guide.html
-4eb22872d1f12906902ecada273417e120180716d42cede4dffcb48162375fe7 *kit/run-check.bat
-7772e751a53e65606655a8883777613c74ceed2a7e3d29892dfdc3c6b8a5b815 *kit/top-bin-explainer-offline.html
-bea5014e7990755b1876742bea7c579529cf2633dfae0facecfb09149c743302 *kit/top-bin-explainer.html
+# --- repo root: the runnable distribution ---
+41b83fde109fb4116137de62641970b994b97f809d6da54c44e693c498f63d26 *Run scan.bat
+3c6f8bc18c20771efec675e600687a47b2e02f7fa139009d48bbdac896846c66 *START HERE.txt
 
-# --- ready-to-flash distribution ---
-93e93f01865c73233cb9bee980532746e7410786c9dd3a2e28d0b11ae0d93cc1 *ready-to-flash/START HERE.txt
-9c5f50a5b6a955ff4dbb1e82619b2c5be8b88da4db5b70c89e512f3d9287de47 *ready-to-flash/Run scan.bat
-25b3d75f4707d28bd9f3cf4e8aa42d9241776de17e068a55eddd17efb866fb18 *ready-to-flash/kit/README.txt
-500996d30dd1edf188831ff9d05736881a8f34e0591210eb91174b47f21f9168 *ready-to-flash/kit/alibi-safety-card.html
-da10d733a8628d518a9931693761f02645eb63d8278d08d9df7f8c1d7e53108f *ready-to-flash/kit/console-lockdown-explained.html
-eb1e0ccbdc08cf646ce419a0f60cd9097ab5afe6bf89ebb1b459b45d678c544d *ready-to-flash/kit/console-rig-audit.ps1
-0b680b000ecc2b500bbde276aadac5a850a8dcbc11c8990f52a96e21a11b22a1 *ready-to-flash/kit/console-run-check.bat
-065ef704012b8c3f410916e702165dc1fd197d586d852fc8473af735273b0d0b *ready-to-flash/kit/console-setup-checklist.html
-d43a34a5943aba785e6633f3b18cb234e29bd9e80b270fe946134daeaa635a98 *ready-to-flash/kit/forensic-common.ps1
-1b9678bcdaa4a4737a90f9562665577dc25792a83b025e0903fb951975d7ca64 *ready-to-flash/kit/forensic-scan.ps1
-671c81e911af316569e92ce162cfee0bb5efaff9c8096942c9b7c102aa809f40 *ready-to-flash/kit/generate-visual-companion-console.ps1
-659db814bc9ee87bda9506fa613780bc8e6da3a487866e040d46c8bac59fd957 *ready-to-flash/kit/generate-visual-companion.ps1
-0b1d1aabe9399b4b0821262cd837eb57b2aadf03982d799abcad0c8acf6669b9 *ready-to-flash/kit/one-page-guide.html
-4eb22872d1f12906902ecada273417e120180716d42cede4dffcb48162375fe7 *ready-to-flash/kit/run-check.bat
-7772e751a53e65606655a8883777613c74ceed2a7e3d29892dfdc3c6b8a5b815 *ready-to-flash/kit/top-bin-explainer-offline.html
-bea5014e7990755b1876742bea7c579529cf2633dfae0facecfb09149c743302 *ready-to-flash/kit/top-bin-explainer.html
+# --- scanner/ — PowerShell engine (canonical) ---
+25b3d75f4707d28bd9f3cf4e8aa42d9241776de17e068a55eddd17efb866fb18 *scanner/README.txt
+9b8041ed4407cf0c449d516607850253a7c19bb4af6776d31023b0da8af0db87 *scanner/alibi-safety-card.html
+da10d733a8628d518a9931693761f02645eb63d8278d08d9df7f8c1d7e53108f *scanner/console-lockdown-explained.html
+eb1e0ccbdc08cf646ce419a0f60cd9097ab5afe6bf89ebb1b459b45d678c544d *scanner/console-rig-audit.ps1
+0b680b000ecc2b500bbde276aadac5a850a8dcbc11c8990f52a96e21a11b22a1 *scanner/console-run-check.bat
+065ef704012b8c3f410916e702165dc1fd197d586d852fc8473af735273b0d0b *scanner/console-setup-checklist.html
+033e975b9b886e41ee8a103897fa74a737c33e389191a33d5d2025179d99ebe2 *scanner/forensic-common.ps1
+1b9678bcdaa4a4737a90f9562665577dc25792a83b025e0903fb951975d7ca64 *scanner/forensic-scan.ps1
+671c81e911af316569e92ce162cfee0bb5efaff9c8096942c9b7c102aa809f40 *scanner/generate-visual-companion-console.ps1
+659db814bc9ee87bda9506fa613780bc8e6da3a487866e040d46c8bac59fd957 *scanner/generate-visual-companion.ps1
+c8facb1b05abed76952cc329cc06db3fd11e34f75c68057bad69c966f2ac45ae *scanner/one-page-guide.html
+4eb22872d1f12906902ecada273417e120180716d42cede4dffcb48162375fe7 *scanner/run-check.bat
+7772e751a53e65606655a8883777613c74ceed2a7e3d29892dfdc3c6b8a5b815 *scanner/top-bin-explainer-offline.html
+bea5014e7990755b1876742bea7c579529cf2633dfae0facecfb09149c743302 *scanner/top-bin-explainer.html
 
-# --- Python port (python/src/alibi/) ---
+# --- python/src/alibi/ — Python parity port ---
 1c57cb4a841030054b9b8300e34df3e9ab573b221efa3a0d981ca92d723cc448 *python/src/alibi/__init__.py
 99a9c22081992b7a4bc812658e58f12e7156970aac479711345c5d5e358425f4 *python/src/alibi/__main__.py
 9e998becf6da2fdcff08edd518d4d633e7728aa3e3bebdbe89d59ae72860f15d *python/src/alibi/console_rig_audit.py
@@ -58,7 +41,7 @@ a3dd1cbe57328f88786b644d3a2f9b7bce8fd7bc0a0e7b9a2cf5e4285f58116f *python/src/ali
 ac1b06f133c635435dc933adf66094c0788d0cb93e59c355a984b44ba7ab562d *python/src/alibi/recency.py
 1ddde68d31bfe85bcf2a975978cc4a1789e103f93039fa8d6cdf33755c3b98f3 *python/src/alibi/reg.py
 b87dbf5c0382643b4a8cdeb68865ca2c253a858244f54514960a482489a54145 *python/src/alibi/reports.py
-25c535b1281349d446781d96fdc934bf4233dd375da1546e422b7101b7075108 *python/src/alibi/scanners.py
+b94038a04d7b418495deb93b4df203427c6269f82f3f206fd0be4d557459d553 *python/src/alibi/scanners.py
 a13e61f66e80d05984b505442afd1a17f7a45d578cffc94c9d4b9a05ca76b85c *python/src/alibi/snapshots.py
 af892863f0c936218ffd7690e0dcf2017a60a4ddc083551c06be84f9633e2f44 *python/src/alibi/utils.py
 04e76640a682683beb4dae5ec81b855adc2c76e3c1b386984f1f0bab34be59d2 *python/src/alibi/visual_companion.py
@@ -66,7 +49,7 @@ f3e79c3acd09342608c7d37e78d04cad7577edf4bdae7d7bfc9e5908872c707a *python/src/ali
 8bc13ff80f42ca99462203ccf28cf2453d880f1d635ad9d0fb64f6cfc3704e9b *python/src/alibi/visual_styles.css
 
 # --- repo-root attestation files ---
-7505e01ce857be1fa096cb695fd14aac31d098d288dae7d250fc8aa423d9c65a *README.md
-3ac561df511b9ae8e07db1de23a219e826f593e698c574f2489fdb46f72f92f5 *SECURITY.md
+0bd969bd179dd61f4ccdd93e4446edae7cd41bb2673fe49c157c9ed17b9d0777 *README.md
+8cc93207410fb81ed6b7bdcf6ffb2c0cec7aed1469fd276bf7a1252b781f8aa3 *SECURITY.md
 08cc5d577a2e8eafc5887c65b712c90746df4f47e4dfa8dec48af4d8436b06d6 *LICENSE
-09b08dd74c57a9543c9d80ad1a7e1922a66f493f905a5713d7c80f0dc757ea54 *docs/for-reviewers.md
+71f3f4179a8337ef32bc8bc6feddf63afeda3d2a03ab3a2eda97ac205e1f3e6f *docs/for-reviewers.md

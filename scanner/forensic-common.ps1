@@ -631,7 +631,7 @@ function Scan-RecentFiles {
     if (-not (Test-Path $recent)) { return }
     $shell = $null
     try { $shell = New-Object -ComObject WScript.Shell -ErrorAction Stop } catch {}
-    Get-ChildItem $recent -Recurse -File -ErrorAction SilentlyContinue | ForEach-Object {
+    Get-ChildItem $recent -Recurse -File -Depth 8 -ErrorAction SilentlyContinue | ForEach-Object {
         $target = $null
         if ($shell -and $_.Extension -eq '.lnk') {
             try { $target = $shell.CreateShortcut($_.FullName).TargetPath } catch {}
@@ -994,7 +994,7 @@ function Scan-Downloads {
     Write-Host '  [*] Downloads folder...' -ForegroundColor DarkGray
     $dl = "$env:USERPROFILE\Downloads"
     if (-not (Test-Path $dl)) { return }
-    Get-ChildItem $dl -Recurse -File -ErrorAction SilentlyContinue | ForEach-Object {
+    Get-ChildItem $dl -Recurse -File -Depth 8 -ErrorAction SilentlyContinue | ForEach-Object {
         $zone = Get-DownloadSourceUrl $_.FullName
         $meta = @{
             FileName = $_.Name; SizeBytes = $_.Length
@@ -1027,13 +1027,13 @@ function Scan-DMABuildArtifacts {
         "$env:USERPROFILE\Projects"
     ) | Where-Object { Test-Path $_ }
     foreach ($root in $roots) {
-        Get-ChildItem $root -Recurse -File -Filter '*_top.bin' -ErrorAction SilentlyContinue | ForEach-Object {
+        Get-ChildItem $root -Recurse -File -Depth 8 -Filter '*_top.bin' -ErrorAction SilentlyContinue | ForEach-Object {
             Add-Finding 'DMA' $_.FullName "pcileech firmware build output: $($_.Name)" 'HIGH' 'cheat' @{
                 FileName = $_.Name; FullPath = $_.FullName
                 Created = $_.CreationTime.ToString('s')
             }
         }
-        Get-ChildItem $root -Recurse -Directory -ErrorAction SilentlyContinue |
+        Get-ChildItem $root -Recurse -Directory -Depth 8 -ErrorAction SilentlyContinue |
             Where-Object { $_.Name -match '(?i)pcileech' } | ForEach-Object {
             Add-Finding 'DMA' $_.FullName "pcileech directory: $($_.Name)" 'HIGH' 'cheat' @{
                 Directory = $_.FullName; Created = $_.CreationTime.ToString('s')
@@ -1050,7 +1050,7 @@ function Scan-ApplicationData {
         foreach ($appPattern in $AppDataPatterns) {
             $matches = Get-ChildItem $root -Directory -Filter $appPattern.Pattern -ErrorAction SilentlyContinue
             foreach ($dir in $matches) {
-                try { $files = Get-ChildItem $dir.FullName -Recurse -File -ErrorAction SilentlyContinue } catch { continue }
+                try { $files = Get-ChildItem $dir.FullName -Recurse -File -Depth 8 -ErrorAction SilentlyContinue } catch { continue }
                 if (-not $files -or $files.Count -eq 0) {
                     Add-Finding 'AppData' $dir.FullName "$($appPattern.Label) data dir (empty)" 'MEDIUM' 'input' @{
                         Label = $appPattern.Label; Directory = $dir.FullName; FileCount = 0
@@ -1112,7 +1112,7 @@ function Scan-UserScriptContents {
     foreach ($root in $scanRoots) {
         foreach ($ext in @('*.bat','*.cmd','*.ps1','*.vbs','*.wsf','*.psm1','*.lua','*.ahk')) {
             try {
-                Get-ChildItem $root -Recurse -File -Filter $ext -ErrorAction SilentlyContinue |
+                Get-ChildItem $root -Recurse -File -Depth 8 -Filter $ext -ErrorAction SilentlyContinue |
                     Where-Object {
                         $_.Length -lt 10MB -and
                         ($_.Name.ToLower() -notin $excludeNames) -and
@@ -1209,7 +1209,7 @@ function Scan-ObscuredFileNames {
 
     foreach ($root in $roots) {
         try {
-            Get-ChildItem $root -Recurse -File -ErrorAction SilentlyContinue |
+            Get-ChildItem $root -Recurse -File -Depth 8 -ErrorAction SilentlyContinue |
                 Where-Object { $extWatchlist -contains $_.Extension.ToLower() -and $_.Length -lt 100MB } |
                 ForEach-Object {
                     $name = $_.BaseName
@@ -1234,14 +1234,17 @@ function Scan-ProcessModules {
     $procs = $null
     try { $procs = Get-Process -ErrorAction Stop } catch { return }
     $totalScanned = 0
-    foreach ($p in $procs) {
+    $globalCap = 8000   # hard cap across ALL processes — typical machine scans ~3000-5000 modules
+    :proc foreach ($p in $procs) {
+        if ($totalScanned -ge $globalCap) { break }
         $procName = $p.Name
         if ($procName -in @('Idle','System','Registry','Memory Compression')) { continue }
         $mods = $null
         try { $mods = $p.Modules } catch { continue }
         if (-not $mods -or $mods.Count -eq 0) { continue }
-        $modList = if ($mods.Count -gt 600) { $mods | Select-Object -First 600 } else { $mods }
+        $modList = if ($mods.Count -gt 300) { $mods | Select-Object -First 300 } else { $mods }
         foreach ($m in $modList) {
+            if ($totalScanned -ge $globalCap) { break proc }
             $modPath = ''
             $modName = ''
             try { $modPath = $m.FileName; $modName = $m.ModuleName } catch { continue }
@@ -1302,7 +1305,7 @@ function Scan-KnownHashes {
     foreach ($root in $roots) {
         foreach ($ext in @('*.exe','*.dll')) {
             try {
-                Get-ChildItem $root -Recurse -File -Filter $ext -ErrorAction SilentlyContinue |
+                Get-ChildItem $root -Recurse -File -Depth 8 -Filter $ext -ErrorAction SilentlyContinue |
                     Where-Object { $_.Length -lt 100MB -and $_.Length -gt 0 } |
                     ForEach-Object { [void]$candidates.Add($_) }
             } catch {}
@@ -1344,7 +1347,7 @@ function Scan-LuaScripts {
     ) | Where-Object { $_ -and (Test-Path $_) }
 
     foreach ($root in $roots) {
-        Get-ChildItem $root -Recurse -File -Filter '*.lua' -ErrorAction SilentlyContinue | ForEach-Object {
+        Get-ChildItem $root -Recurse -File -Depth 8 -Filter '*.lua' -ErrorAction SilentlyContinue | ForEach-Object {
             $file = $_
             $zone = Get-DownloadSourceUrl $file.FullName
             $meta = @{
@@ -1397,10 +1400,19 @@ function Scan-DLLInjectionTimestamps {
     $injectorPattern = ($DLLInjector_Names | ForEach-Object { [regex]::Escape($_) }) -join '|'
     $found = [System.Collections.Generic.List[hashtable]]::new()
 
+    # Time-window filter: align with recency-decay rule (no point pulling
+    # events older than 180 days because they'd be filtered out anyway).
+    # -FilterHashtable is server-side-filtered; far faster than -MaxEvents
+    # followed by Where-Object on a busy Windows machine.
+    $eventCutoff = (Get-Date).AddDays(-180)
+
     # Source 1: Sysmon Event ID 7 (Image Loaded) - best source when available.
     try {
-        $sysmonEvents = Get-WinEvent -LogName 'Microsoft-Windows-Sysmon/Operational' -MaxEvents 5000 -ErrorAction Stop |
-            Where-Object { $_.Id -eq 7 }
+        $sysmonEvents = Get-WinEvent -FilterHashtable @{
+            LogName   = 'Microsoft-Windows-Sysmon/Operational'
+            Id        = 7
+            StartTime = $eventCutoff
+        } -MaxEvents 2000 -ErrorAction Stop
         foreach ($ev in $sysmonEvents) {
             $xml  = [xml]$ev.ToXml()
             $data = @{}
@@ -1425,9 +1437,14 @@ function Scan-DLLInjectionTimestamps {
     }
 
     # Source 2: Security Event ID 4688 (Process Create).
+    # -FilterHashtable with StartTime is dramatically faster than -FilterXPath
+    # on busy machines because the event log service does the filtering.
     try {
-        $secEvents = Get-WinEvent -LogName 'Security' -MaxEvents 10000 `
-            -FilterXPath "*[System[EventID=4688]]" -ErrorAction Stop
+        $secEvents = Get-WinEvent -FilterHashtable @{
+            LogName   = 'Security'
+            Id        = 4688
+            StartTime = $eventCutoff
+        } -MaxEvents 2000 -ErrorAction Stop
         foreach ($ev in $secEvents) {
             $xml  = [xml]$ev.ToXml()
             $data = @{}
@@ -1451,7 +1468,10 @@ function Scan-DLLInjectionTimestamps {
 
     # Source 3: Application Event Log (generic fallback).
     try {
-        $appEvents = Get-WinEvent -LogName 'Application' -MaxEvents 5000 -ErrorAction Stop |
+        $appEvents = Get-WinEvent -FilterHashtable @{
+            LogName   = 'Application'
+            StartTime = $eventCutoff
+        } -MaxEvents 1500 -ErrorAction Stop |
             Where-Object { $_.Message -match "($injectorPattern)" }
         foreach ($ev in $appEvents) {
             [void]$found.Add(@{
@@ -1624,7 +1644,7 @@ function Scan-NetworkAttackTools {
     # Source 4: Downloads folder (with Zone.Identifier source URL).
     $dl = "$env:USERPROFILE\Downloads"
     if (Test-Path $dl) {
-        Get-ChildItem $dl -Recurse -File -ErrorAction SilentlyContinue | ForEach-Object {
+        Get-ChildItem $dl -Recurse -File -Depth 8 -ErrorAction SilentlyContinue | ForEach-Object {
             $s = Score-NetworkBlob $_.Name
             if (-not $s) { return }
             $zone = Get-DownloadSourceUrl $_.FullName
@@ -1666,7 +1686,7 @@ function Scan-NetworkAttackTools {
     if (Test-Path $recent) {
         $shell = $null
         try { $shell = New-Object -ComObject WScript.Shell -ErrorAction Stop } catch {}
-        Get-ChildItem $recent -Recurse -File -ErrorAction SilentlyContinue | ForEach-Object {
+        Get-ChildItem $recent -Recurse -File -Depth 8 -ErrorAction SilentlyContinue | ForEach-Object {
             $s = Score-NetworkBlob $_.Name
             if (-not $s) { return }
             $target = $null
@@ -1712,14 +1732,14 @@ function Scan-AIVisionArtifacts {
     foreach ($root in $roots) {
         # ONNX models (YOLO weights). Cap recursion depth implicitly via cap on results.
         try {
-            Get-ChildItem $root -Recurse -File -Filter '*.onnx' -ErrorAction SilentlyContinue |
+            Get-ChildItem $root -Recurse -File -Depth 8 -Filter '*.onnx' -ErrorAction SilentlyContinue |
                 Select-Object -First 200 |
                 ForEach-Object { [void]$onnxFiles.Add($_) }
         } catch {}
 
         # Named-brand executables (HIGH on their own).
         try {
-            Get-ChildItem $root -Recurse -File -Include '*.exe','*.py' -ErrorAction SilentlyContinue |
+            Get-ChildItem $root -Recurse -File -Depth 8 -Include '*.exe','*.py' -ErrorAction SilentlyContinue |
                 Where-Object { $_.Length -lt 200MB } |
                 ForEach-Object {
                     $hit = Match-Keyword "$($_.Name) $($_.DirectoryName)" $VisionAimbot_AI_PC
@@ -1741,7 +1761,7 @@ function Scan-AIVisionArtifacts {
         # Arduino sketches with HID-descriptor patterns - dead giveaway when
         # paired with the ONNX/Python side of the constellation.
         try {
-            Get-ChildItem $root -Recurse -File -Filter '*.ino' -ErrorAction SilentlyContinue |
+            Get-ChildItem $root -Recurse -File -Depth 8 -Filter '*.ino' -ErrorAction SilentlyContinue |
                 Select-Object -First 100 |
                 ForEach-Object {
                     try {
@@ -1756,7 +1776,7 @@ function Scan-AIVisionArtifacts {
         # Python ML dependency markers - requirements.txt / pyproject.toml /
         # site-packages dirs naming aimbot-typical libraries.
         try {
-            Get-ChildItem $root -Recurse -File -Include 'requirements.txt','pyproject.toml','*.cfg' -ErrorAction SilentlyContinue |
+            Get-ChildItem $root -Recurse -File -Depth 8 -Include 'requirements.txt','pyproject.toml','*.cfg' -ErrorAction SilentlyContinue |
                 Select-Object -First 200 |
                 ForEach-Object {
                     try {
@@ -2009,25 +2029,33 @@ function Apply-RecencyDecay {
 # Drivers can call this instead of listing each Scan-* manually.
 # ============================================================================
 function Invoke-AllScans {
-    Scan-Prefetch
-    Scan-BAM
-    Scan-InstalledSoftware
-    Scan-RecentFiles
-    Scan-MUICache
-    Scan-USBHistory
-    Scan-DriverSigning
-    Scan-Drivers
-    Scan-Downloads
-    Scan-Services-Trace
-    Scan-DMABuildArtifacts
-    Scan-ApplicationData
-    Scan-ShimCache
-    Scan-UserScriptContents
-    Scan-ObscuredFileNames
-    Scan-ProcessModules
-    Scan-KnownHashes
-    Scan-LuaScripts
-    Scan-DLLInjectionTimestamps
-    Scan-NetworkAttackTools
-    Scan-AIVisionArtifacts
+    # Wraps every Scan-* call in a stopwatch so per-scanner wall time lands
+    # in the report as an INFO finding. Lets reviewers (and the author)
+    # see exactly which step is slow on which machine without guessing.
+    $allScans = @(
+        'Scan-Prefetch','Scan-BAM','Scan-InstalledSoftware','Scan-RecentFiles',
+        'Scan-MUICache','Scan-USBHistory','Scan-DriverSigning','Scan-Drivers',
+        'Scan-Downloads','Scan-Services-Trace','Scan-DMABuildArtifacts',
+        'Scan-ApplicationData','Scan-ShimCache','Scan-UserScriptContents',
+        'Scan-ObscuredFileNames','Scan-ProcessModules','Scan-KnownHashes',
+        'Scan-LuaScripts','Scan-DLLInjectionTimestamps','Scan-NetworkAttackTools',
+        'Scan-AIVisionArtifacts'
+    )
+    $timings = [System.Collections.Generic.List[pscustomobject]]::new()
+    $totalSw = [System.Diagnostics.Stopwatch]::StartNew()
+    foreach ($scanName in $allScans) {
+        $sw = [System.Diagnostics.Stopwatch]::StartNew()
+        try { & $scanName } catch {
+            Add-Finding 'ScanTiming' $scanName "Scanner threw: $_" 'WARN' 'other' @{}
+        }
+        $sw.Stop()
+        $timings.Add([pscustomobject]@{ Name=$scanName; Seconds=[math]::Round($sw.Elapsed.TotalSeconds,2) }) | Out-Null
+    }
+    $totalSw.Stop()
+    # Emit a single INFO finding summarising slowest-first per-scanner timings.
+    $top = ($timings | Sort-Object Seconds -Descending | Select-Object -First 8 |
+        ForEach-Object { "$($_.Name)=$($_.Seconds)s" }) -join ', '
+    $meta = @{ TotalSeconds = [math]::Round($totalSw.Elapsed.TotalSeconds,2); SlowestFirst = $top }
+    foreach ($t in $timings) { $meta[$t.Name] = "$($t.Seconds)s" }
+    Add-Finding 'ScanTiming' '(summary)' "Scan timing: total $($meta.TotalSeconds)s. Slowest: $top" 'INFO' 'other' $meta
 }

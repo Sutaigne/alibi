@@ -40,7 +40,7 @@ jobs:
       - name: Parse-check every .ps1
         shell: pwsh
         run: |
-          $files = Get-ChildItem -Path kit, ready-to-flash -Recurse -Filter '*.ps1' -ErrorAction SilentlyContinue
+          $files = Get-ChildItem -Path kit, scanner -Recurse -Filter '*.ps1' -ErrorAction SilentlyContinue
           $hadError = $false
           foreach ($f in $files) {
             $tokens = $null; $errors = $null

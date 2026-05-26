@@ -2,7 +2,7 @@
 
 Read-only Windows forensic kit. A gamer runs it, hands the resulting `.txt` (and matching `_visual.html`) to a third party, and the third party reads it to decide whether the machine shows signs of cheat software, HWID spoofers, DMA-cheat build artifacts, or commercial input adapters (XIM, Cronus, ReaSnow, KMBox, Titan, reWASD).
 
-This is a Python parity port of the PowerShell kit. **The PowerShell kit in `../kit/` remains the canonical implementation.** This Python version is provided as an alternative for reviewers who would rather read Python source, and for cross-platform development.
+This is a Python parity port of the PowerShell kit. **The PowerShell kit in `../scanner/` remains the canonical implementation.** This Python version is provided as an alternative for reviewers who would rather read Python source, and for cross-platform development.
 
 ## What it does
 

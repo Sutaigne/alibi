@@ -15,25 +15,24 @@ Author: **Bread** — Activision ID `Bread#3266221`, GitHub [@Sutaigne](https://
 
 > **Reviewer?** Someone handed you a report and is asking you to believe it? Read [**`docs/for-reviewers.md`**](./docs/for-reviewers.md) first. It walks you through verifying the kit, reading the verdict, and what `CLEAN` does and does not rule out. The verification chain starts with [`HASHES.txt`](./HASHES.txt).
 
-## Two surfaces, one product
-
-| Surface | Path | Status |
-|---|---|---|
-| PowerShell kit | [`kit/`](./kit) | **Canonical.** Ships from `ready-to-flash/` as a USB-stick distribution. |
-| Python parity port | [`python/`](./python) | Alternative for reviewers who would rather read Python source, or for cross-platform development. |
-| Pre-built USB distribution | [`ready-to-flash/`](./ready-to-flash) | The PowerShell kit + unified `Run scan.bat` launcher, ready to flash to a USB. |
-| Historical zips | [`archive/`](./archive) | Older builds; kept for provenance. |
-| Project docs | [`docs/`](./docs) | Dev handoff, design-handoff bundle, memory notes. |
-
-Both surfaces produce the same `.txt` data shape and apply the same 22-scanner detection logic. The HTML companion is the same on both sides — same design, same JS, same CSS — because the Python port and the PowerShell kit share the [design handoff](./docs/design-handoff-2026-05/).
-
 ## Quick start
 
-### PowerShell (canonical)
+**The repo itself is the runnable distribution.** Download the ZIP from GitHub (or `git clone`), unzip / copy to a USB stick if you want portability, then **double-click `Run scan.bat` at the root.** That's it.
 
-Flash `ready-to-flash/` to a USB stick. Plug it in. Double-click `Run scan.bat`. Approve the UAC prompt. Two scans run back-to-back (PC mode + console-rig mode); two pairs of timestamped files land on the Desktop.
+```
+.
+├── Run scan.bat              ← double-click this
+├── START HERE.txt            ← read this first if confused
+├── scanner/                  ← the .ps1 scanner files (the engine)
+├── python/                   ← Python parity port (alternative implementation)
+├── docs/                     ← reviewer guide, dev history, design source
+├── archive/                  ← old builds, kept for provenance
+├── README.md / SECURITY.md / HASHES.txt / LICENSE
+```
 
-### Python parity
+Two scans run back-to-back (PC mode + console-rig mode); two pairs of timestamped files land on the Desktop. Approve the UAC prompt when it appears — admin is required for full coverage. Total time: about 1–2 minutes on a typical machine; the first run pulls the LOLDrivers driver database (opt-in, ~50 KB).
+
+### Python parity (alternative implementation for reviewers who prefer Python)
 
 ```powershell
 cd python

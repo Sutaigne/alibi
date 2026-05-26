@@ -41,7 +41,7 @@ if %errorLevel% NEQ 0 (
     exit /b
 )
 
-set "KIT=%~dp0kit"
+set "KIT=%~dp0scanner"
 
 cls
 echo.
