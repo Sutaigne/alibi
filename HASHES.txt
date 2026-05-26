@@ -49,7 +49,7 @@ f3e79c3acd09342608c7d37e78d04cad7577edf4bdae7d7bfc9e5908872c707a *python/src/ali
 8bc13ff80f42ca99462203ccf28cf2453d880f1d635ad9d0fb64f6cfc3704e9b *python/src/alibi/visual_styles.css
 
 # --- repo-root attestation files ---
-0bd969bd179dd61f4ccdd93e4446edae7cd41bb2673fe49c157c9ed17b9d0777 *README.md
+b278d8249a12ac4ae8d73f82b4782a0c37203b3b214da1258e01e8fc834b1b8c *README.md
 8cc93207410fb81ed6b7bdcf6ffb2c0cec7aed1469fd276bf7a1252b781f8aa3 *SECURITY.md
 08cc5d577a2e8eafc5887c65b712c90746df4f47e4dfa8dec48af4d8436b06d6 *LICENSE
 71f3f4179a8337ef32bc8bc6feddf63afeda3d2a03ab3a2eda97ac205e1f3e6f *docs/for-reviewers.md

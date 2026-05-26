@@ -1,6 +1,10 @@
-# Project handoff — alibi (formerly "PC Check")
+# Project handoff — alibi (formerly "PC Check", originally "CheatChecks")
 
-> **Historical note:** This project was renamed from **PC Check** to **alibi** at v4.0.0 (2026-05-25). The v3.x history below predates the rename and intentionally preserves the original name to keep development context honest. From v4.0.0 onward, the canonical names are: repo `Sutaigne/alibi`, Python package `alibi`, console scripts `alibi` and `alibi-rig`, output filenames `AlibiReport_*.txt` / `AlibiRigReport_*.txt`. The scanner engine and detection logic are unchanged — only the brand and the verification-scaffolding around it were added in v4.0.0.
+> **Naming history:** **CheatChecks** (original name; folder of that name preserved in `C:\Users\BradS\Downloads\CheatChecks\` containing the May-12 source) → **pc-forensic-check** (zip-distribution name through May 19–22) → **PC Check** (when it got its own project directory, May 25) → **alibi** (v4.0.0, 2026-05-25, GitHub publication).
+>
+> **Timeline correction:** The version-history list below starts at v3.2 because that is the **earliest file artifact recoverable from disk** — the May-12 `forensic-scan.ps1` already stamps itself `PC Forensic Check v3.2` in its synopsis. Earlier iterations (v1.x, v2.x, v3.0, v3.1) existed in Claude chat sessions that weren't preserved as standalone files. The kit was producing real, mature scan reports by May 12 (`PCForensicCheck_20260512_224115.txt` records HIGH=10, MEDIUM=1 against a real machine, full QUICK READ block, all sections). The "first field test" entry below (2026-05-22, CoD cheater friend) was the trigger that drove the v3.3+ feature push, **not** the project's birth.
+>
+> The v4.0.0 rename to "alibi" only changed the brand and added verification scaffolding (HASHES.txt, SECURITY.md, docs/for-reviewers.md, Pages preview). Scanner engine and detection logic are unchanged from v3.8.
 
 ---
 
@@ -191,13 +195,14 @@ Verdict logic is **driver-specific** — lives in each driver's main flow + QUIC
 - **v3.5** — Curated rut.gg tokens, known-hash scanner. Shared `forensic-common.ps1` engine via dot-source. Console-rig at v1.1 with same engine. Distribution restructured to 3 visible top-level items. Unified launcher (no menu, runs both scans, auto-HTML, no press-any-key). Driver publisher allowlist expanded from 10 to 60+ entries (gaming peripherals + OEMs + components). %TEMP% summary files for end-of-run consolidated display.
 - **v3.4** — LUA/AHK mouse-macro detection, obscured-filename scanner, process-module scanner (DLL injection)
 - **v3.3** — User-folder script-content scanner (.bat/.cmd/.ps1/.vbs/.lua/.ahk with content-pattern matching)
-- **v3.2** — Original baseline. HidHide + reWASD keyword additions. Visual companion timeline. OneDrive Desktop fix. Press-any-key visual flow (removed in v3.5).
+- **v3.2** — Earliest preserved baseline (May 12, 2026; original project name "CheatChecks"). HidHide + reWASD keyword additions. Visual companion timeline. OneDrive Desktop fix. Press-any-key visual flow (removed in v3.5). Pre-v3.2 iterations existed only in Claude chat sessions; not preserved as standalone files.
 
 ## Field-test log
 
 | Date | Tester | Result | Feedback that landed |
 |---|---|---|---|
-| 2026-05-22 | A self-confessed CoD cheater (friend) | Scan correctly flagged their setup | Asked for: binary compilation (declined — destroys auditability), DOS-script content scanning (→ v3.3), rut.gg coverage (→ v3.5 after independent research), obscured filename detection (→ v3.4), LUA mouse-macro detection (→ v3.4), DLL-injection via process modules (→ v3.4) |
+| pre-2026-05-12 | Brad (self) | Kit already at v3.2 by May 12 — produced its first preserved scan report on a real machine at 22:41 local time that night. Earlier iterations (v1.x, v2.x, v3.0, v3.1) developed in Claude chat sessions; not preserved as files. | Established the engine, the scoring tiers, the QUICK READ block, the report shape. |
+| 2026-05-22 | A self-confessed CoD cheater (friend) | First *external* field test. Scan correctly flagged their setup. | Drove the v3.3+ feature push: binary compilation (declined — destroys auditability), DOS-script content scanning (→ v3.3), rut.gg coverage (→ v3.5 after independent research), obscured filename detection (→ v3.4), LUA mouse-macro detection (→ v3.4), DLL-injection via process modules (→ v3.4). |
 | 2026-05-25 | Drownmw (contributor) | Submitted v3.3 monolithic with Lua/DLL-injection/Network-attack scanners + v3.4 LOLDrivers monolithic for BYOVD detection | All merged into v3.6 / v3.7 refactored architecture |
 | 2026-05-25 | Brad (session-level direction) | Multi-game expansion + recency-decay architecture | Drove the v3.8 design — 7 new keyword arrays, Scan-AIVisionArtifacts, 180-day recency-decay rule with Historical findings section, single-source items routed into MEDIUM-only LowConfidence bucket, marketplace-domains list deferred for a future hit-threshold browser-history scanner |
 
