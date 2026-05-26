@@ -1,4 +1,4 @@
-"""PC Forensic Check — Python parity of forensic-scan.ps1.
+"""Alibi — Python parity of forensic-scan.ps1.
 
 Drives a PC-mode scan: all 21 scanners + process / service snapshots, then
 applies recency decay, computes a 4-tier verdict, writes the .txt report and
@@ -12,21 +12,21 @@ import os
 import sys
 from datetime import datetime
 
-from pc_check import SCANNER_VERSION
-from pc_check.keywords import (
+from alibi import SCANNER_VERSION
+from alibi.keywords import (
     CHEAT_BRANDS_APEX, CHEAT_BRANDS_COD, CHEAT_BRANDS_CS2, CHEAT_BRANDS_LOW_CONFIDENCE,
     CHEAT_BRANDS_MARVEL_RIVALS, CHEAT_BRANDS_R6, CHEAT_BRANDS_RUST, CHEAT_BRANDS_TARKOV,
     CHEAT_FEATURE_NAMES, DMA_DUAL_USE, DMA_INDICATORS, DUAL_USE_TOOLS,
     INPUT_DEVICES, RECENCY_THRESHOLD_DAYS, SCRIPT_CONTENT_HIGH_RISK,
     SCRIPT_CONTENT_MOUSE_MACRO, SPOOFER_BRANDS, VISION_AIMBOT_AI_PC,
 )
-from pc_check.loldrivers import resolve_loldrivers_db
-from pc_check.recency import apply_recency_decay
-from pc_check.reports import ReportContext, ReportSpec, build_text_report, collect_named_items
-from pc_check.scanners import invoke_all_scans
-from pc_check.snapshots import get_process_snapshot, get_service_snapshot
-from pc_check.utils import Engine, is_admin, resolve_desktop
-from pc_check.visual_companion import render_html, write_html
+from alibi.loldrivers import resolve_loldrivers_db
+from alibi.recency import apply_recency_decay
+from alibi.reports import ReportContext, ReportSpec, build_text_report, collect_named_items
+from alibi.scanners import invoke_all_scans
+from alibi.snapshots import get_process_snapshot, get_service_snapshot
+from alibi.utils import Engine, is_admin, resolve_desktop
+from alibi.visual_companion import render_html, write_html
 
 
 def _pc_quick_read(ctx: ReportContext) -> list[str]:
@@ -93,7 +93,7 @@ def _pc_quick_read(ctx: ReportContext) -> list[str]:
         lines.append("  - The scan report is the only data source.")
         lines.append("")
         lines.append("Context for interpretation:")
-        lines.append(f"  - This log was produced by PC Forensic Check {SCANNER_VERSION}, a read-only")
+        lines.append(f"  - This log was produced by Alibi {SCANNER_VERSION}, a read-only")
         lines.append("    forensic scan that matches Windows artifact data against a")
         lines.append("    research-confirmed keyword database of cheat software, HWID spoofers,")
         lines.append("    DMA-cheat artifacts, and commercial input devices (XIM, Cronus,")
@@ -103,7 +103,7 @@ def _pc_quick_read(ctx: ReportContext) -> list[str]:
         lines.append("")
         lines.append("<<< LOG START >>>")
         lines.append("")
-        lines.append("[Paste the full contents of the PCForensicCheck_*.txt file here,")
+        lines.append("[Paste the full contents of the AlibiReport_*.txt file here,")
         lines.append(" OR upload the file as an attachment.]")
         lines.append("")
         lines.append("<<< LOG END >>>")
@@ -135,7 +135,7 @@ _PC_LIMITATIONS = [
 ]
 
 
-def _resolve_output_path(explicit: str | None, *, stem: str = "PCForensicCheck") -> str:
+def _resolve_output_path(explicit: str | None, *, stem: str = "AlibiReport") -> str:
     if explicit:
         parent = os.path.dirname(explicit)
         if parent and not os.path.isdir(parent):
@@ -175,8 +175,8 @@ def _compute_verdict_pc(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        prog="pc-check",
-        description="PC Forensic Check — Python parity of forensic-scan.ps1.",
+        prog="alibi",
+        description="Alibi — Python parity of forensic-scan.ps1.",
     )
     parser.add_argument("--output", default=None, help="Explicit output .txt path.")
     parser.add_argument("--skip-loldrivers", action="store_true",
@@ -207,7 +207,7 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     print()
-    print(f"  PC Forensic Check {SCANNER_VERSION}")
+    print(f"  Alibi {SCANNER_VERSION}")
     print("  =======================")
     print()
     print(f"  Host:   {os.environ.get('COMPUTERNAME','')}")
@@ -290,7 +290,7 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     spec = ReportSpec(
-        title=f"PC FORENSIC CHECK {SCANNER_VERSION} - CONSOLIDATED REPORT",
+        title=f"ALIBI {SCANNER_VERSION} - CONSOLIDATED REPORT",
         quick_read_block=_pc_quick_read,
         limitations=_PC_LIMITATIONS,
         threshold_days=RECENCY_THRESHOLD_DAYS,
@@ -309,7 +309,7 @@ def main(argv: list[str] | None = None) -> int:
             services=services,
             verdict=verdict,
             threshold_days=RECENCY_THRESHOLD_DAYS,
-            report_title=f"PC Forensic Check {SCANNER_VERSION}",
+            report_title=f"Alibi {SCANNER_VERSION}",
             mode_label="pc-mode",
             lol_db_used=engine.lol_db is not None,
         )
@@ -335,7 +335,7 @@ def main(argv: list[str] | None = None) -> int:
     print("  ============================================================")
     print()
 
-    _write_summary("pc-check-pc.summary", verdict, output_path,
+    _write_summary("alibi-pc.summary", verdict, output_path,
                    total_cheat_high, total_input_high, total_medium)
     return 0
 

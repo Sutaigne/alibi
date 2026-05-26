@@ -24,7 +24,7 @@ jobs:
         run: python -m compileall -q src
       - name: Import smoke test
         run: |
-          python -c "import sys; sys.path.insert(0, 'src'); import pc_check.keywords, pc_check.utils, pc_check.recency, pc_check.scanners, pc_check.snapshots, pc_check.loldrivers, pc_check.reports, pc_check.visual_companion, pc_check.forensic_scan, pc_check.console_rig_audit; print('imports OK')"
+          python -c "import sys; sys.path.insert(0, 'src'); import alibi.keywords, alibi.utils, alibi.recency, alibi.scanners, alibi.snapshots, alibi.loldrivers, alibi.reports, alibi.visual_companion, alibi.forensic_scan, alibi.console_rig_audit; print('imports OK')"
       - name: Install and run pytest
         run: |
           python -m pip install -e .[dev]

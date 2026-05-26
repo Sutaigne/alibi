@@ -1,5 +1,5 @@
 ================================================================
-  PC FORENSIC CHECK v3.2 - README
+  ALIBI v3.2 - README
 ================================================================
 
 
@@ -48,7 +48,7 @@ HOW TO RUN
 2. When Windows asks for admin permission (UAC prompt), click Yes.
 3. Wait 30 to 90 seconds.
 4. When done, a black window will show:
-     Saved to: C:\Users\<you>\Desktop\PCForensicCheck_<timestamp>.txt
+     Saved to: C:\Users\<you>\Desktop\AlibiReport_<timestamp>.txt
 5. That .txt file is your report. Send it to whoever asked for it.
 
 
@@ -240,7 +240,7 @@ WHAT IT DOES NOT DO
     -SkipLOLDrivers on the command line for unattended runs.
   - No file modification anywhere on your system. The only files
     created are the report on your Desktop and (if you opt in) a
-    cached copy of the LOLDrivers DB at %TEMP%\pc-check-loldb.clixml.
+    cached copy of the LOLDrivers DB at %TEMP%\alibi-loldb.clixml.
   - No telemetry, keystroke logging, screen capture, or background
     process. The script runs once, writes the report, and exits.
 
@@ -310,7 +310,7 @@ THE VISUAL COMPANION
 `generate-visual-companion.ps1` produces a styled HTML report from
 the .txt. Run it like this:
 
-  .\generate-visual-companion.ps1 -InputPath .\PCForensicCheck_<ts>.txt
+  .\generate-visual-companion.ps1 -InputPath .\AlibiReport_<ts>.txt
 
 It drops `<basename>_visual.html` next to the source file. Open in
 any browser. Useful when you want a single-page document for review

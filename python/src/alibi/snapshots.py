@@ -17,8 +17,8 @@ import subprocess
 from datetime import datetime
 from typing import Any
 
-from pc_check.findings import SCORE_RANK, ScoredItem
-from pc_check.utils import Engine, score_item
+from alibi.findings import SCORE_RANK, ScoredItem
+from alibi.utils import Engine, score_item
 
 
 _PS_PROCESS_CMD = [

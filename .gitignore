@@ -24,12 +24,12 @@ Thumbs.db
 
 # Generated scan outputs (these land on the user's Desktop in real use; the
 # repo carries deliberate synthetic examples under python/examples/).
-PCForensicCheck_*.txt
-PCForensicCheck_*_visual.html
-ConsoleRigAudit_*.txt
-ConsoleRigAudit_*_visual.html
+AlibiReport_*.txt
+AlibiReport_*_visual.html
+AlibiRigReport_*.txt
+AlibiRigReport_*_visual.html
 
 # Temp summary files written by the unified launcher
-*pc-check-pc.summary
-*pc-check-console.summary
-*pc-check-loldb.json
+*alibi-pc.summary
+*alibi-console.summary
+*alibi-loldb.json

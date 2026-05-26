@@ -1,5 +1,5 @@
 ================================================================
-  PC FORENSIC CHECK - START HERE
+  ALIBI - START HERE
 ================================================================
 
 This folder lets you produce credible proof your gaming setup
@@ -16,10 +16,10 @@ HOW TO USE
   3. Click YES on the UAC prompt
   4. Wait about 2-3 minutes (scans both PC and console-rig sides)
   5. Check your Desktop for the four output files:
-       PCForensicCheck_<timestamp>.txt           the PC report
-       PCForensicCheck_<timestamp>_visual.html   visual of the PC report
-       ConsoleRigAudit_<timestamp>.txt           the console-rig report
-       ConsoleRigAudit_<timestamp>_visual.html   visual of the console report
+       AlibiReport_<timestamp>.txt           the PC report
+       AlibiReport_<timestamp>_visual.html   visual of the PC report
+       AlibiRigReport_<timestamp>.txt           the console-rig report
+       AlibiRigReport_<timestamp>_visual.html   visual of the console report
   6. Send the .txt files (or the .html visuals - both work) to
      whoever asked.
 
@@ -66,7 +66,7 @@ kit\forensic-common.ps1 line 736. Search for "Remove-Item" or
 "Set-Item" and you'll find none in the scan path. The whole story
 is disclosed in every report's header and in:
 
-  kit\pc-check-safety-card.html
+  kit\alibi-safety-card.html
 
 
 --------------------------------------------------------------

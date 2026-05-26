@@ -4,7 +4,7 @@ This is the kit's ONLY outbound network call, and it is opt-in. The CSV
 contains no PC-side data — only the public list of known-vulnerable and
 known-malicious Windows drivers, indexed by filename and SHA256.
 
-A 1-hour cache at %TEMP%\\pc-check-loldb.json lets the unified launcher run
+A 1-hour cache at %TEMP%\\alibi-loldb.json lets the unified launcher run
 PC and console-rig scans back-to-back without re-prompting / re-fetching.
 """
 from __future__ import annotations
@@ -20,10 +20,10 @@ import urllib.error
 import urllib.request
 from typing import Any
 
-from pc_check.utils import Engine
+from alibi.utils import Engine
 
 LOLDRIVERS_URL = "https://www.loldrivers.io/api/drivers.csv"
-CACHE_FILENAME = "pc-check-loldb.json"
+CACHE_FILENAME = "alibi-loldb.json"
 CACHE_TTL_SECONDS = 60 * 60  # 1 hour
 
 _SHA256_RE = re.compile(r"[0-9a-fA-F]{64}")
@@ -41,7 +41,7 @@ def fetch_loldrivers_db(engine: Engine) -> dict[str, Any] | None:
     try:
         req = urllib.request.Request(
             LOLDRIVERS_URL,
-            headers={"User-Agent": "pc-check/3.8 (+https://github.com/Bread-and-Drownmw/pc-check)"},
+            headers={"User-Agent": "alibi/3.8 (+https://github.com/Bread-and-Drownmw/alibi)"},
         )
         with urllib.request.urlopen(req, timeout=15) as resp:  # nosec B310 - public CSV over HTTPS
             body = resp.read().decode("utf-8", errors="replace")

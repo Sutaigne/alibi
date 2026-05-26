@@ -27,14 +27,14 @@ _SRC = _HERE.parent / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from pc_check import CONSOLE_RIG_VERSION, SCANNER_VERSION
-from pc_check.findings import Finding, ScoredItem
-from pc_check.keywords import RECENCY_THRESHOLD_DAYS
-from pc_check.reports import ReportContext, ReportSpec, build_text_report, collect_named_items
-from pc_check.utils import Engine
-from pc_check.visual_companion import render_html, write_html
-from pc_check.forensic_scan import _pc_quick_read, _PC_LIMITATIONS
-from pc_check.console_rig_audit import _console_quick_read, _CONSOLE_LIMITATIONS
+from alibi import CONSOLE_RIG_VERSION, SCANNER_VERSION
+from alibi.findings import Finding, ScoredItem
+from alibi.keywords import RECENCY_THRESHOLD_DAYS
+from alibi.reports import ReportContext, ReportSpec, build_text_report, collect_named_items
+from alibi.utils import Engine
+from alibi.visual_companion import render_html, write_html
+from alibi.forensic_scan import _pc_quick_read, _PC_LIMITATIONS
+from alibi.console_rig_audit import _console_quick_read, _CONSOLE_LIMITATIONS
 
 
 def _iso(dt: datetime) -> str:
@@ -452,7 +452,7 @@ def emit_pc(out_dir: Path) -> None:
     )
 
     spec = ReportSpec(
-        title=f"PC FORENSIC CHECK {SCANNER_VERSION} - CONSOLIDATED REPORT",
+        title=f"ALIBI {SCANNER_VERSION} - CONSOLIDATED REPORT",
         quick_read_block=_pc_quick_read,
         limitations=_PC_LIMITATIONS,
         threshold_days=RECENCY_THRESHOLD_DAYS,
@@ -465,7 +465,7 @@ def emit_pc(out_dir: Path) -> None:
         engine=engine, processes=processes, services=services,
         verdict="CHEATS DETECTED",
         threshold_days=RECENCY_THRESHOLD_DAYS,
-        report_title=f"PC Forensic Check {SCANNER_VERSION}",
+        report_title=f"Alibi {SCANNER_VERSION}",
         mode_label="pc-mode",
         lol_db_used=True,
     ))
@@ -495,7 +495,7 @@ def emit_console(out_dir: Path) -> None:
     )
 
     spec = ReportSpec(
-        title=f"CONSOLE RIG AUDIT {CONSOLE_RIG_VERSION} - CONSOLIDATED REPORT",
+        title=f"ALIBI (CONSOLE-RIG MODE) {CONSOLE_RIG_VERSION} - CONSOLIDATED REPORT",
         quick_read_block=_console_quick_read,
         limitations=_CONSOLE_LIMITATIONS,
         threshold_days=RECENCY_THRESHOLD_DAYS,
@@ -508,7 +508,7 @@ def emit_console(out_dir: Path) -> None:
         engine=engine, processes=processes, services=services,
         verdict="CAPTURE STACK PRESENT",
         threshold_days=RECENCY_THRESHOLD_DAYS,
-        report_title=f"Console Rig Audit {CONSOLE_RIG_VERSION}",
+        report_title=f"Alibi (console-rig mode) {CONSOLE_RIG_VERSION}",
         mode_label="console-rig",
         lol_db_used=False,
     ))
@@ -611,7 +611,7 @@ def emit_clean(out_dir: Path) -> None:
     )
 
     spec = ReportSpec(
-        title=f"PC FORENSIC CHECK {SCANNER_VERSION} - CONSOLIDATED REPORT",
+        title=f"ALIBI {SCANNER_VERSION} - CONSOLIDATED REPORT",
         quick_read_block=_pc_quick_read,
         limitations=_PC_LIMITATIONS,
         threshold_days=RECENCY_THRESHOLD_DAYS,
@@ -623,7 +623,7 @@ def emit_clean(out_dir: Path) -> None:
     write_html(str(html_path), render_html(
         engine=engine, processes=processes, services=services,
         verdict="CLEAN", threshold_days=RECENCY_THRESHOLD_DAYS,
-        report_title=f"PC Forensic Check {SCANNER_VERSION}",
+        report_title=f"Alibi {SCANNER_VERSION}",
         mode_label="pc-mode", lol_db_used=False,
     ))
     print(f"  wrote: {text_path.name}")

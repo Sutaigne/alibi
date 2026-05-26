@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Console Rig Audit v1.1 - scans a PC sitting next to a console for
+    Alibi (console-rig mode) v1.1 - scans a PC sitting next to a console for
     cheat-MITM software stacks.
 
 .DESCRIPTION
@@ -56,7 +56,7 @@ if (-not $OutputPath) {
             try { New-Item -ItemType Directory -Force -Path $desktop | Out-Null } catch {}
         }
     }
-    $OutputPath = Join-Path $desktop "ConsoleRigAudit_${stamp}.txt"
+    $OutputPath = Join-Path $desktop "AlibiRigReport_${stamp}.txt"
 }
 $parent = Split-Path -Parent $OutputPath
 if ($parent -and -not (Test-Path $parent)) {
@@ -136,7 +136,7 @@ $Keywords_MouseMacro  = $ScriptContent_MouseMacro
 # ============================================================================
 Clear-Host
 Write-Host ''
-Write-Host '  Console Rig Audit v1.2' -ForegroundColor Cyan
+Write-Host '  Alibi v4.0 (console-rig mode)' -ForegroundColor Cyan
 Write-Host '  =======================' -ForegroundColor Cyan
 Write-Host ''
 Write-Host "  Host:   $env:COMPUTERNAME"
@@ -346,7 +346,7 @@ $lines.Add('')
 
 # Standard report body
 $lines.Add('================================================================')
-$lines.Add('  CONSOLE RIG AUDIT v1.2 - CONSOLIDATED REPORT')
+$lines.Add('  ALIBI v4.0 (CONSOLE-RIG MODE) - CONSOLIDATED REPORT')
 $lines.Add('================================================================')
 $lines.Add('')
 $lines.Add("  Generated:  $(Get-Date)")
@@ -573,5 +573,5 @@ Write-Host ''
 # consolidated end-of-run summary across both scans.
 try {
     $sum = "$verdict|$OutputPath|$totalCheatHigh|$totalInputHigh|$totalMedium"
-    Set-Content -Path "$env:TEMP\pc-check-console.summary" -Value $sum -Encoding UTF8 -ErrorAction Stop
+    Set-Content -Path "$env:TEMP\alibi-console.summary" -Value $sum -Encoding UTF8 -ErrorAction Stop
 } catch {}

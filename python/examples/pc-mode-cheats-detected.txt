@@ -40,10 +40,10 @@
 ================================================================
 
 ================================================================
-  PC FORENSIC CHECK v3.8 - CONSOLIDATED REPORT
+  ALIBI v4.0 - CONSOLIDATED REPORT
 ================================================================
 
-  Generated:  2026-05-25 23:05:58
+  Generated:  2026-05-25 23:12:48
   Hostname:   BREAD-PC
   Username:   BradS
   OS:         Windows 11 (10.0.26200)
@@ -73,8 +73,8 @@
         FileName: aimmy.exe
         FullPath: C:\Users\Bob\source\aimmy\aimmy.exe
         SizeBytes: 18223104
-        Created: 2026-05-07T23:05:58
-        LastWrite: 2026-05-23T23:05:58
+        Created: 2026-05-07T23:12:48
+        LastWrite: 2026-05-23T23:12:48
 
   [HIGH/cheat] [AIVision] ONNX model co-located with AI-aimbot executable: yolov8n.onnx
         Source: C:\Users\Bob\source\aimmy\yolov8n.onnx
@@ -82,8 +82,8 @@
         FullPath: C:\Users\Bob\source\aimmy\yolov8n.onnx
         SizeBytes: 12405633
         CoLocated: C:\Users\Bob\source\aimmy\aimmy.exe
-        Created: 2026-05-07T23:05:58
-        LastWrite: 2026-05-07T23:05:58
+        Created: 2026-05-07T23:12:48
+        LastWrite: 2026-05-07T23:12:48
 
   [HIGH/input] [AppData] Cronus / Titan - 247 files, 38 distinct days
         Source: C:\Users\Bob\AppData\Local\ConsoleTuner
@@ -92,8 +92,8 @@
         FileCount: 247
         DistinctActivityDays: 38
         ActivitySpanDays: 95
-        OldestWrite: 2026-02-19T23:05:58
-        NewestWrite: 2026-05-24T23:05:58
+        OldestWrite: 2026-02-19T23:12:48
+        NewestWrite: 2026-05-24T23:12:48
 
   [HIGH/cheat] [BCD] TEST SIGNING ENABLED - unsigned drivers can load
         Source: testsigning
@@ -102,7 +102,7 @@
         Source: C:\Users\Bob\source\pcileech-fpga-build\pcileech_top.bin
         FileName: pcileech_top.bin
         FullPath: C:\Users\Bob\source\pcileech-fpga-build\pcileech_top.bin
-        Created: 2026-05-04T23:05:58
+        Created: 2026-05-04T23:12:48
 
   [HIGH/cheat] [KnownHashes] [RUT AND RUAVT LAUNCHER UPDATED.exe (rut.gg)] hash match - confirmed cheat sample
         Source: C:\Users\Bob\Downloads\RUT AND RUAVT LAUNCHER UPDATED.exe
@@ -111,7 +111,7 @@
         FileName: RUT AND RUAVT LAUNCHER UPDATED.exe
         FullPath: C:\Users\Bob\Downloads\RUT AND RUAVT LAUNCHER UPDATED.exe
         SizeBytes: 8421376
-        LastWrite: 2026-05-20T23:05:58
+        LastWrite: 2026-05-20T23:12:48
         KnownSampleOf: RUT AND RUAVT LAUNCHER UPDATED.exe (rut.gg)
         HashSource: Hybrid Analysis sandbox report
 
@@ -134,22 +134,22 @@
         Pattern: rut.gg
         Value: C:\Users\Bob\Downloads\RUT V4 Launcher.exe
         Data: RUT and RUAVT
-        LastWrite: 2026-05-20T23:05:58
+        LastWrite: 2026-05-20T23:12:48
 
   [HIGH/cheat] [Prefetch] [engineowning] ENGINEOWNING
         Source: C:\Windows\Prefetch\ENGINEOWNING.EXE-1A2B3C4D.pf
         Pattern: engineowning
-        FirstSeen: 2026-05-11T23:05:58
-        LastModified: 2026-05-23T23:05:58
+        FirstSeen: 2026-05-11T23:12:48
+        LastModified: 2026-05-23T23:12:48
 
   [HIGH/input] [USB] [cronus] Cronus Zen
         Source: VID_2E24&PID_1000
         Pattern: cronus
         FriendlyName: Cronus Zen
         VID_PID: VID_2E24&PID_1000
-        FirstInstall: 2026-01-25T23:05:58
-        LastArrival: 2026-05-24T23:05:58
-        LastRemoval: 2026-05-25T19:05:58
+        FirstInstall: 2026-01-25T23:12:48
+        LastArrival: 2026-05-24T23:12:48
+        LastRemoval: 2026-05-25T19:12:48
 
   [HIGH/cheat] [UserScripts] [bcdedit /set testsigning] ~\Desktop\setup.bat - high-risk command pattern inside script
         Source: C:\Users\Bob\Desktop\setup.bat
@@ -158,7 +158,7 @@
         FileName: setup.bat
         FullPath: C:\Users\Bob\Desktop\setup.bat
         SizeBytes: 412
-        LastWrite: 2026-05-17T23:05:58
+        LastWrite: 2026-05-17T23:12:48
 
   [HIGH/cheat] [UserScripts] [MoveMouseRelative] ~\Documents\macros\norecoil.lua - mouse-macro / anti-recoil script pattern
         Source: C:\Users\Bob\Documents\macros\norecoil.lua
@@ -167,12 +167,12 @@
         FileName: norecoil.lua
         FullPath: C:\Users\Bob\Documents\macros\norecoil.lua
         SizeBytes: 1847
-        LastWrite: 2026-05-22T23:05:58
+        LastWrite: 2026-05-22T23:12:48
 
-  [MEDIUM/dual-use] [DLLInject] Injector activity: xenos64.dll @ 2026-05-14T23:05:58
+  [MEDIUM/dual-use] [DLLInject] Injector activity: xenos64.dll @ 2026-05-14T23:12:48
         Source: Sysmon EID 7
         Source: Sysmon EID 7
-        Timestamp: 2026-05-14T23:05:58
+        Timestamp: 2026-05-14T23:12:48
         ImageLoaded: C:\Users\Bob\source\xenos\xenos64.dll
         TargetProcess: explorer.exe
         ProcessId: 4288
@@ -199,7 +199,7 @@
         FullPath: C:\Users\Bob\Downloads\deadbeef12345678.exe
         Pattern: raw hex name (deadbeef12345678.exe)
         SizeBytes: 1204800
-        LastWrite: 2026-05-21T23:05:58
+        LastWrite: 2026-05-21T23:12:48
 
   [WARN/other] [BAM] Access denied
         Source: HKLM\SYSTEM\CurrentControlSet\Services\bam\State\UserSettings
@@ -212,8 +212,8 @@
         FileName: resnet50.onnx
         FullPath: C:\Users\Bob\Documents\ml-class\resnet50.onnx
         SizeBytes: 102400000
-        Created: 2026-04-13T23:05:58
-        LastWrite: 2026-04-15T23:05:58
+        Created: 2026-04-13T23:12:48
+        LastWrite: 2026-04-15T23:12:48
 
   [INFO/other] [KnownHashes] Hashed 312 executables, checked against 1 known-bad SHA256 sample(s)
         Source: (scan)
@@ -248,9 +248,9 @@
   [MEDIUM/cheat] [Prefetch] [HISTORICAL was HIGH, 420d old] [engineowning] OLDCHEAT (CoD MW 2019)
         Source: C:\Windows\Prefetch\OLDCHEAT.EXE-9F8E7D6C.pf
         Pattern: engineowning
-        FirstSeen: 2024-06-04T23:05:58
-        LastModified: 2025-03-31T23:05:58
-        MostRecentTimestamp: 2025-03-31T23:05:58
+        FirstSeen: 2024-06-04T23:12:48
+        LastModified: 2025-03-31T23:12:48
+        MostRecentTimestamp: 2025-03-31T23:12:48
         AgeDays: 420
         RecencyClass: historical
         OriginalSeverity: HIGH
@@ -329,4 +329,4 @@
   - Keyword matching only. Sophisticated cleaners can wipe most of these artifacts.
   - A clean result is necessary but not sufficient.
 
-  Report generated: 2026-05-25 23:05:58
+  Report generated: 2026-05-25 23:12:48

@@ -1,6 +1,6 @@
 # Security policy
 
-`pc-check` is a read-only Windows forensic kit. Its value depends on three properties: the source is what the reviewer reads, the scan does not modify the system, and the detection logic is honest about what it can and cannot see. If you find a flaw in any of those, this document is how to tell us.
+`alibi` is a read-only Windows forensic kit. Its value depends on three properties: the source is what the reviewer reads, the scan does not modify the system, and the detection logic is honest about what it can and cannot see. If you find a flaw in any of those, this document is how to tell us.
 
 ## Supported versions
 
@@ -14,7 +14,7 @@
 Reports we want to receive:
 
 - **Detection bypasses** — a cheat / spoofer / DMA artifact / input adapter that the kit *should* flag but doesn't, with enough specificity that we can reproduce.
-- **Trust-claim contradictions** — copy in the README, `kit/README.txt`, `pc-check-safety-card.html`, or `one-page-guide.html` that says the kit doesn't do X, but the source does X.
+- **Trust-claim contradictions** — copy in the README, `kit/README.txt`, `alibi-safety-card.html`, or `one-page-guide.html` that says the kit doesn't do X, but the source does X.
 - **Side effects** — anything the kit modifies on the host (registry, files, services) that violates the read-only guarantee. The opt-in LOLDrivers fetch is the one disclosed network call; anything else is a bug.
 - **Parsing crashes** — malformed input (a weird Prefetch entry, a registry value the kit doesn't expect, a non-UTF8 path) that crashes the scanner before it writes a report.
 - **HTML / JS issues** in the visual companion — XSS via untrusted finding metadata, broken offline behavior, anything that calls out to the network.
@@ -33,7 +33,7 @@ These are documented limitations, not bugs:
 
 **Preferred:** use GitHub's private vulnerability reporting:
 
-→ https://github.com/Sutaigne/pc-check/security/advisories/new
+→ https://github.com/Sutaigne/alibi/security/advisories/new
 
 This routes the report directly to the maintainers and gives you a private channel to share repro steps, sample artifacts, or sanitized scan output.
 

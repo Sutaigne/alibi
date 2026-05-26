@@ -1,6 +1,6 @@
 @echo off
 REM ========================================================================
-REM  PC Forensic Check - Launcher
+REM  Alibi - Launcher
 REM
 REM  Double-click this file to run the scan.
 REM  The scan will request admin permission (UAC prompt) for full coverage.
@@ -28,7 +28,7 @@ if %errorLevel% NEQ 0 (
 
 REM --- We're elevated. Run the scan. --------------------------------------
 echo.
-echo  Starting PC Forensic Check (elevated)...
+echo  Starting Alibi (elevated)...
 echo.
 
 REM Find forensic-scan.ps1 next to this .bat (using %~dp0 for portability)

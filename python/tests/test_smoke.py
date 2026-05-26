@@ -5,13 +5,13 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from pc_check.findings import Finding
-from pc_check.keywords import (
+from alibi.findings import Finding
+from alibi.keywords import (
     CHEAT_BRANDS_COD, DMA_INDICATORS, INPUT_DEVICES,
     KNOWN_CHEAT_HASHES, VISION_AIMBOT_AI_PC,
 )
-from pc_check.recency import apply_recency_decay, get_finding_timestamp
-from pc_check.utils import (
+from alibi.recency import apply_recency_decay, get_finding_timestamp
+from alibi.utils import (
     Engine, classify_path_risk, convert_filetime_bytes, match_allowlist,
     match_keyword, score_item,
 )

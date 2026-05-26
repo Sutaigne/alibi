@@ -1,10 +1,14 @@
-# PC Check — Project Handoff
+# Project handoff — alibi (formerly "PC Check")
 
-**Last touched:** 2026-05-25 (multi-game expansion + recency decay)
-**Project root:** `D:\Claude\Projects\PC Check\`
+> **Historical note:** This project was renamed from **PC Check** to **alibi** at v4.0.0 (2026-05-25). The v3.x history below predates the rename and intentionally preserves the original name to keep development context honest. From v4.0.0 onward, the canonical names are: repo `Sutaigne/alibi`, Python package `alibi`, console scripts `alibi` and `alibi-rig`, output filenames `AlibiReport_*.txt` / `AlibiRigReport_*.txt`. The scanner engine and detection logic are unchanged — only the brand and the verification-scaffolding around it were added in v4.0.0.
+
+---
+
+**Last touched:** 2026-05-25 (multi-game expansion + recency decay, then renamed)
+**Project root:** `D:\Claude\Projects\PC Check\` (kept on disk — repo is `Sutaigne/alibi` on GitHub)
 **Author:** Bread
 **Contributor:** Drownmw
-**Current scanner version:** v3.8 / console-rig v1.2
+**Original scanner version at the time of these notes:** v3.8 / console-rig v1.2 (now both consolidated to v4.0)
 
 ## What this project is
 

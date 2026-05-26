@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Shared engine for the PC Forensic Check kit.
+    Shared engine for the Alibi kit.
 
 .DESCRIPTION
     Dot-sourced by forensic-scan.ps1 (PC mode) and console-rig-audit.ps1
@@ -782,7 +782,7 @@ function Resolve-LOLDriversDB {
     #
     # Behavior:
     #   - If -SkipLOLDrivers, returns $null silently (writes a skip note).
-    #   - If a cached DB exists at $env:TEMP\pc-check-loldb.clixml and is
+    #   - If a cached DB exists at $env:TEMP\alibi-loldb.clixml and is
     #     less than 1 hour old, uses it silently (covers the unified-launcher
     #     case where PC and console-rig scans run back-to-back).
     #   - Otherwise prompts Y/N. On Y, fetches and writes the cache. On
@@ -796,7 +796,7 @@ function Resolve-LOLDriversDB {
         return $null
     }
 
-    $cachePath = Join-Path $env:TEMP 'pc-check-loldb.clixml'
+    $cachePath = Join-Path $env:TEMP 'alibi-loldb.clixml'
     if (Test-Path $cachePath) {
         try {
             $age = (Get-Date) - (Get-Item $cachePath).LastWriteTime

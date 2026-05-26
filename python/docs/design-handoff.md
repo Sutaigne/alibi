@@ -1,4 +1,4 @@
-# PC Check — design handoff
+# Alibi — design handoff
 
 You're being handed two synthetic example reports (`.txt` and matching `_visual.html`) and this doc. Goal: a new visual design for the HTML report. The text `.txt` doesn't change — the reviewer reads the text version when they want a plain log; the HTML is the readable, scannable, "I'm going to spend two minutes on this and make a call" surface.
 
@@ -25,7 +25,7 @@ The design has to serve all four. The verdict + named items must be unmissable; 
 
 The verdict is a four-state enum, but it differs between PC mode and console-rig mode.
 
-**PC mode** (gamer auditing their own PC, run via `pc-check`):
+**PC mode** (gamer auditing their own PC, run via `alibi`):
 
 | Verdict | Colour | Means |
 |---|---|---|
@@ -34,7 +34,7 @@ The verdict is a four-state enum, but it differs between PC mode and console-rig
 | `UNSURE` | Amber | No HIGH matches, but MEDIUM dual-use tools or odd locations |
 | `CLEAN` | Green | No recent HIGH or MEDIUM matches |
 
-**Console-rig mode** (console gamer auditing a PC connected to their console rig, run via `pc-check-console-rig`):
+**Console-rig mode** (console gamer auditing a PC connected to their console rig, run via `alibi-rig`):
 
 | Verdict | Colour | Means |
 |---|---|---|
@@ -121,9 +121,9 @@ You're also welcome to propose:
 | `examples/console-rig-capture-stack.txt` | Console-rig variant, amber-verdict shape. |
 | `examples/console-rig-capture-stack_visual.html` | Current HTML, amber-verdict baseline. |
 | `examples/generate_example.py` | The script that produced the above. If you want to test a different verdict state, edit this and re-run. |
-| `src/pc_check/visual_companion.py` | The current Python that renders the HTML. Your final design will replace the body of `render_html()`. |
-| `src/pc_check/findings.py` | The data model (`Finding`, `ScoredItem`). Authoritative. |
-| `src/pc_check/keywords.py` | All the keyword arrays, severities, allowlists, and the recency-decay config. Useful for understanding what categories exist and what `Pattern` values look like. |
+| `src/alibi/visual_companion.py` | The current Python that renders the HTML. Your final design will replace the body of `render_html()`. |
+| `src/alibi/findings.py` | The data model (`Finding`, `ScoredItem`). Authoritative. |
+| `src/alibi/keywords.py` | All the keyword arrays, severities, allowlists, and the recency-decay config. Useful for understanding what categories exist and what `Pattern` values look like. |
 
 ## Deliverable shape
 

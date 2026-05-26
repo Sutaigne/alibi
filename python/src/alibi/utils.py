@@ -14,8 +14,8 @@ import struct
 from datetime import datetime, timedelta, timezone
 from typing import Any, Iterable
 
-from pc_check.findings import Finding, SEV_HIGH, SEV_MEDIUM
-from pc_check.keywords import KNOWN_GOOD
+from alibi.findings import Finding, SEV_HIGH, SEV_MEDIUM
+from alibi.keywords import KNOWN_GOOD
 
 
 # ---------------------------------------------------------------------------

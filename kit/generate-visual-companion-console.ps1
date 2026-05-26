@@ -1,10 +1,10 @@
 <#
 .SYNOPSIS
-    Console Rig Audit - Visual Companion (threat triage edition).
-    Consumes a ConsoleRigAudit_*.txt and renders an HTML report.
+    Alibi (console-rig mode) - Visual Companion (threat triage edition).
+    Consumes a AlibiRigReport_*.txt and renders an HTML report.
 
 .DESCRIPTION
-    Renders a confidence-scored HTML report from a PCForensicCheck_*.txt.
+    Renders a confidence-scored HTML report from an AlibiReport_*.txt.
     Every visualization relates back to one question:
 
         "How confident am I this machine has no cheat or cheat-related
@@ -640,7 +640,7 @@ $html = @"
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Console Rig Audit - Threat Triage</title>
+<title>Alibi (console-rig mode) - Threat Triage</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -739,7 +739,7 @@ footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--rule);display
 <body>
 <div class="page">
 
-  <div class="eyebrow">Threat Triage - Console Rig Audit</div>
+  <div class="eyebrow">Threat Triage - Alibi (console-rig mode)</div>
   <h1 class="title">Cheat detection confidence</h1>
   <p class="dateline">
     SCAN: $(Escape-Xml $generated)<br>

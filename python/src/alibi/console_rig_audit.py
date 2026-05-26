@@ -1,4 +1,4 @@
-"""Console Rig Audit — Python parity of console-rig-audit.ps1.
+"""Alibi (console-rig mode) — Python parity of console-rig-audit.ps1.
 
 Drives a console-rig-mode scan: PC-mode base + three console-specific
 keyword arrays (vision aimbots, HID emulators, capture-card software). The
@@ -13,8 +13,8 @@ import os
 import sys
 from datetime import datetime
 
-from pc_check import CONSOLE_RIG_VERSION
-from pc_check.keywords import (
+from alibi import CONSOLE_RIG_VERSION
+from alibi.keywords import (
     CAPTURE_CARD_SOFTWARE, CHEAT_BRANDS_APEX, CHEAT_BRANDS_COD,
     CHEAT_BRANDS_CS2, CHEAT_BRANDS_LOW_CONFIDENCE, CHEAT_BRANDS_MARVEL_RIVALS,
     CHEAT_BRANDS_R6, CHEAT_BRANDS_RUST, CHEAT_BRANDS_TARKOV,
@@ -23,15 +23,15 @@ from pc_check.keywords import (
     SCRIPT_CONTENT_HIGH_RISK, SCRIPT_CONTENT_MOUSE_MACRO, SPOOFER_BRANDS,
     VISION_AIMBOTS_CONSOLE, VISION_AIMBOT_AI_PC,
 )
-from pc_check.loldrivers import resolve_loldrivers_db
-from pc_check.recency import apply_recency_decay
-from pc_check.reports import ReportContext, ReportSpec, build_text_report, collect_named_items
-from pc_check.scanners import invoke_all_scans
-from pc_check.snapshots import get_process_snapshot, get_service_snapshot
-from pc_check.utils import Engine, is_admin, resolve_desktop, match_keyword
-from pc_check.visual_companion import render_html, write_html
+from alibi.loldrivers import resolve_loldrivers_db
+from alibi.recency import apply_recency_decay
+from alibi.reports import ReportContext, ReportSpec, build_text_report, collect_named_items
+from alibi.scanners import invoke_all_scans
+from alibi.snapshots import get_process_snapshot, get_service_snapshot
+from alibi.utils import Engine, is_admin, resolve_desktop, match_keyword
+from alibi.visual_companion import render_html, write_html
 
-from pc_check.forensic_scan import _resolve_output_path, _write_summary
+from alibi.forensic_scan import _resolve_output_path, _write_summary
 
 
 def _is_capture_or_hid_pattern(pattern: str | None) -> bool:
@@ -139,8 +139,8 @@ def _compute_verdict_console(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        prog="pc-check-console-rig",
-        description="Console Rig Audit — Python parity of console-rig-audit.ps1.",
+        prog="alibi-rig",
+        description="Alibi (console-rig mode) — Python parity of console-rig-audit.ps1.",
     )
     parser.add_argument("--output", default=None, help="Explicit output .txt path.")
     parser.add_argument("--skip-loldrivers", action="store_true")
@@ -148,7 +148,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--non-interactive", action="store_true")
     args = parser.parse_args(argv)
 
-    output_path = _resolve_output_path(args.output, stem="ConsoleRigAudit")
+    output_path = _resolve_output_path(args.output, stem="AlibiRigReport")
 
     keywords_high_cheats = (
         CHEAT_BRANDS_COD + SPOOFER_BRANDS + CHEAT_FEATURE_NAMES + DMA_INDICATORS
@@ -171,7 +171,7 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     print()
-    print(f"  Console Rig Audit {CONSOLE_RIG_VERSION}")
+    print(f"  Alibi (console-rig mode) {CONSOLE_RIG_VERSION}")
     print("  =======================")
     print()
     print(f"  Host:   {os.environ.get('COMPUTERNAME','')}")
@@ -271,7 +271,7 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     spec = ReportSpec(
-        title=f"CONSOLE RIG AUDIT {CONSOLE_RIG_VERSION} - CONSOLIDATED REPORT",
+        title=f"ALIBI (CONSOLE-RIG MODE) {CONSOLE_RIG_VERSION} - CONSOLIDATED REPORT",
         quick_read_block=_console_quick_read,
         limitations=_CONSOLE_LIMITATIONS,
         threshold_days=RECENCY_THRESHOLD_DAYS,
@@ -286,7 +286,7 @@ def main(argv: list[str] | None = None) -> int:
         html_content = render_html(
             engine=engine, processes=processes, services=services,
             verdict=verdict, threshold_days=RECENCY_THRESHOLD_DAYS,
-            report_title=f"Console Rig Audit {CONSOLE_RIG_VERSION}",
+            report_title=f"Alibi (console-rig mode) {CONSOLE_RIG_VERSION}",
             mode_label="console-rig",
             lol_db_used=engine.lol_db is not None,
         )
@@ -312,7 +312,7 @@ def main(argv: list[str] | None = None) -> int:
     print("  ============================================================")
     print()
 
-    _write_summary("pc-check-console.summary", verdict, output_path,
+    _write_summary("alibi-console.summary", verdict, output_path,
                    total_cheat_high, total_input_high, total_medium)
     return 0
 

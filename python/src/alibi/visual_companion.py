@@ -41,16 +41,16 @@ from datetime import datetime
 from importlib import resources
 from typing import Any, Iterable
 
-from pc_check.findings import Finding, ScoredItem
-from pc_check.recency import get_finding_timestamp
-from pc_check.utils import Engine, is_admin
+from alibi.findings import Finding, ScoredItem
+from alibi.recency import get_finding_timestamp
+from alibi.utils import Engine, is_admin
 
 
 # ---------------------------------------------------------------------------
 # Resource loading — keep CSS and JS as plain files so reviewers can read them.
 # ---------------------------------------------------------------------------
 def _load_resource(name: str) -> str:
-    return (resources.files("pc_check") / name).read_text(encoding="utf-8")
+    return (resources.files("alibi") / name).read_text(encoding="utf-8")
 
 
 _CSS = _load_resource("visual_styles.css")
@@ -326,7 +326,7 @@ def _render_docbar(*, scan_host: str, scan_iso: str, lol_db_used: bool) -> str:
     net = "1 outbound call to loldrivers.io (opt-in)" if lol_db_used else "no network calls"
     return (
         '<div class="docbar">'
-        '<span class="tool"><b>pc-check</b> 3.8 · python · consolidated report</span>'
+        '<span class="tool"><b>alibi</b> 3.8 · python · consolidated report</span>'
         f'<span>scan <b>{_esc(scan_host)}</b> · {_esc(scan_iso)} · read-only · {_esc(net)}</span>'
         '</div>'
     )
@@ -1350,7 +1350,7 @@ def _render_docfoot(lol_db_used: bool) -> str:
            "no network calls · file self-contained")
     return (
         '<div class="docfoot">'
-        '<span>pc-check 3.8 · python · read-only scan · no system state was modified</span>'
+        '<span>alibi 4.0 · python · read-only scan · no system state was modified</span>'
         f'<span>{_esc(net)}</span>'
         '</div>'
     )
@@ -1537,10 +1537,10 @@ def render_html(
     parts.append("<!doctype html>")
     parts.append('<html lang="en"><head>')
     parts.append('<meta charset="utf-8">')
-    parts.append(f"<title>pc-check · {_esc(scan_host)} · {_esc(_iso_date(datetime.now()))} · {_esc(verdict)}</title>")
-    parts.append(f'<meta name="generator" content="pc-check 3.8 (python)">')
+    parts.append(f"<title>alibi · {_esc(scan_host)} · {_esc(_iso_date(datetime.now()))} · {_esc(verdict)}</title>")
+    parts.append(f'<meta name="generator" content="alibi 4.0 (python)">')
     parts.append('<meta name="viewport" content="width=device-width, initial-scale=1">')
-    parts.append("<!--\n  pc-check · visual companion (dark)\n"
+    parts.append("<!--\n  alibi · visual companion (dark)\n"
                  "  Self-contained. No network, no external assets, no analytics.\n"
                  "  All interactivity is plain vanilla JS in the <script> block at\n"
                  "  the bottom of this file. View source freely.\n-->")

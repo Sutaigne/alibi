@@ -1,4 +1,4 @@
-"""Add src/ to sys.path so tests can import pc_check without an install."""
+"""Add src/ to sys.path so tests can import alibi without an install."""
 import os
 import sys
 

@@ -1,8 +1,8 @@
-# For reviewers — how to read a pc-check report you didn't run
+# For reviewers — how to read an alibi report you didn't run
 
 Someone handed you a `.txt` file (and maybe a matching `_visual.html`) and is asking you to believe it. This guide is how you should approach it.
 
-The whole point of pc-check is that the report is *auditable* — every claim it makes is grounded in source you can read. But that auditability only works if you do the verification. This document walks you through it in five steps.
+The whole point of alibi is that the report is *auditable* — every claim it makes is grounded in source you can read. But that auditability only works if you do the verification. This document walks you through it in five steps.
 
 ---
 
@@ -23,7 +23,7 @@ Compare those SHA256 values against [`HASHES.txt`](../HASHES.txt) at the root of
 
 If you're auditing remotely (the user sends you the report only): you can't fully close this gap without a copy of the kit they ran. Ask them to also send the `kit\` folder, or to re-run the scan in front of you (over screenshare) using a fresh download of `ready-to-flash\` from this repo.
 
-The same verification works for the Python port — hash everything in `python\src\pc_check\` (including `visual_styles.css` and `visual_scripts.js`).
+The same verification works for the Python port — hash everything in `python\src\alibi\` (including `visual_styles.css` and `visual_scripts.js`).
 
 ## 2. Confirm the report's own header
 
@@ -38,7 +38,7 @@ Open the `.txt` file. The first 20 lines should look like:
   ...
 
 ================================================================
-  PC FORENSIC CHECK v3.8 - CONSOLIDATED REPORT
+  ALIBI v4.0 - CONSOLIDATED REPORT
 ================================================================
 
   Generated:  <timestamp>
@@ -79,7 +79,7 @@ Below the verdict, the report lists the artifacts that drove the call. Every lin
 If you want to confirm a match wasn't fabricated:
 
 1. Note the pattern (e.g. `engineowning`).
-2. `grep` for it in the kit's keyword arrays — [`kit/forensic-common.ps1`](../kit/forensic-common.ps1) line 42 onwards, or [`python/src/pc_check/keywords.py`](../python/src/pc_check/keywords.py).
+2. `grep` for it in the kit's keyword arrays — [`kit/forensic-common.ps1`](../kit/forensic-common.ps1) line 42 onwards, or [`python/src/alibi/keywords.py`](../python/src/alibi/keywords.py).
 3. The pattern should appear verbatim in one of `$CheatBrands_COD`, `$DMA_Indicators`, `$VisionAimbot_AI_PC`, etc. If it does not, the report has been hand-edited — the scanner can't emit a pattern that isn't in its database.
 
 ## 5. Known evasions — what `CLEAN` does NOT rule out
@@ -87,14 +87,14 @@ If you want to confirm a match wasn't fabricated:
 - **Pre-scan wiping.** A user who deleted Prefetch (`del C:\Windows\Prefetch\*.pf`), cleared MUICache, and ran `wevtutil cl` against the event logs before the scan will look cleaner than they are. The kit does not detect the act of wiping, only the absence of artifacts.
 - **DMA cheats at runtime.** Hardware DMA cheats (PCILeech variants on a separate FPGA) have no PC-side footprint while running. The kit flags only the *development* artifacts (`pcileech_top.bin`, branded DMA hardware build directories). A user who buys a finished DMA card and runs it without ever building firmware on their own PC will produce no DMA findings.
 - **Input devices configured on a different PC.** XIM/Cronus/ReaSnow connected via pass-through, with all configuration software on a separate machine, leaves no trace on the scanned PC.
-- **Brand-new cheats not yet in the keyword database.** The kit catches what it has been taught to catch. A cheat brand that emerged in the last few weeks may not be in the array yet. Check the [release notes](https://github.com/Sutaigne/pc-check/releases) for the most recent keyword additions.
+- **Brand-new cheats not yet in the keyword database.** The kit catches what it has been taught to catch. A cheat brand that emerged in the last few weeks may not be in the array yet. Check the [release notes](https://github.com/Sutaigne/alibi/releases) for the most recent keyword additions.
 - **Customised / private cheats.** A one-off binary written by a friend, with no recognizable brand string, will not match any keyword. The kit relies on the fact that almost all commercial cheats have distinctive names.
 
 ## 6. Escalation
 
 If something on the report does not add up — verdict disagreement, missing `Admin mode: True`, named items whose patterns aren't in the keyword arrays, or a hash that doesn't match `HASHES.txt` — your conclusion should be **"unable to verify,"** not **"cheating confirmed"** and not **"clean."** Ask for a re-run with admin elevation, screenshare-verified, against a fresh download of the kit from this repo.
 
-A clean pc-check report is a strong signal but it is not a proof. Treat it the way you'd treat any other forensic snapshot: necessary but not sufficient.
+A clean alibi report is a strong signal but it is not a proof. Treat it the way you'd treat any other forensic snapshot: necessary but not sufficient.
 
 ---
 

@@ -25,8 +25,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Iterable
 
-from pc_check.findings import SEV_HIGH, SEV_INFO, SEV_MEDIUM, SEV_WARN
-from pc_check.keywords import (
+from alibi.findings import SEV_HIGH, SEV_INFO, SEV_MEDIUM, SEV_WARN
+from alibi.keywords import (
     APPDATA_PATTERNS,
     DLL_INJECTOR_NAMES,
     DRIVER_PUBLISHER_ALLOWLIST,
@@ -36,8 +36,8 @@ from pc_check.keywords import (
     NETWORK_ATTACK_MEDIUM,
     VISION_AIMBOT_AI_PC,
 )
-from pc_check.reg import iter_subkeys, iter_values, key_exists, open_key, read_all_values, read_value
-from pc_check.utils import (
+from alibi.reg import iter_subkeys, iter_values, key_exists, open_key, read_all_values, read_value
+from alibi.utils import (
     Engine,
     classify_path_risk,
     convert_filetime_bytes,

@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    PC Forensic Check v3.5 - all-in-one scanner with verdict + AI handoff.
+    Alibi v3.5 - all-in-one scanner with verdict + AI handoff.
 
 .DESCRIPTION
     Read-only inspection of Windows forensic artifacts. Produces a single
@@ -51,7 +51,7 @@ if (-not $OutputPath) {
             try { New-Item -ItemType Directory -Force -Path $desktop | Out-Null } catch {}
         }
     }
-    $OutputPath = Join-Path $desktop "PCForensicCheck_${stamp}.txt"
+    $OutputPath = Join-Path $desktop "AlibiReport_${stamp}.txt"
 }
 $parent = Split-Path -Parent $OutputPath
 if ($parent -and -not (Test-Path $parent)) {
@@ -85,7 +85,7 @@ $Keywords_MouseMacro  = $ScriptContent_MouseMacro
 # ============================================================================
 Clear-Host
 Write-Host ''
-Write-Host '  PC Forensic Check v3.8' -ForegroundColor Cyan
+Write-Host '  Alibi v4.0' -ForegroundColor Cyan
 Write-Host '  =======================' -ForegroundColor Cyan
 Write-Host ''
 Write-Host "  Host:   $env:COMPUTERNAME"
@@ -233,7 +233,7 @@ switch ($verdict) {
         $lines.Add('  - The scan report is the only data source.')
         $lines.Add('')
         $lines.Add('Context for interpretation:')
-        $lines.Add('  - This log was produced by PC Forensic Check v3.8, a read-only forensic')
+        $lines.Add('  - This log was produced by Alibi v4.0, a read-only forensic')
         $lines.Add('    scan that matches Windows artifact data against a research-confirmed')
         $lines.Add('    keyword database of cheat software, HWID spoofers, DMA-cheat artifacts,')
         $lines.Add('    and commercial input devices (XIM, Cronus, ReaSnow, etc.).')
@@ -242,7 +242,7 @@ switch ($verdict) {
         $lines.Add('')
         $lines.Add('<<< LOG START >>>')
         $lines.Add('')
-        $lines.Add('[Paste the full contents of the PCForensicCheck_*.txt file here,')
+        $lines.Add('[Paste the full contents of the AlibiReport_*.txt file here,')
         $lines.Add(' OR upload the file as an attachment.]')
         $lines.Add('')
         $lines.Add('<<< LOG END >>>')
@@ -289,7 +289,7 @@ $lines.Add('================================================================')
 $lines.Add('')
 
 # Standard report body
-$bannerTitle = 'PC FORENSIC CHECK v3.8 - CONSOLIDATED REPORT'
+$bannerTitle = 'ALIBI v4.0 - CONSOLIDATED REPORT'
 $lines.Add('================================================================')
 $lines.Add("  $bannerTitle")
     $lines.Add('================================================================')
@@ -518,5 +518,5 @@ Write-Host ''
 # consolidated end-of-run summary across both scans.
 try {
     $sum = "$verdict|$OutputPath|$totalCheatHigh|$totalInputHigh|$totalMedium"
-    Set-Content -Path "$env:TEMP\pc-check-pc.summary" -Value $sum -Encoding UTF8 -ErrorAction Stop
+    Set-Content -Path "$env:TEMP\alibi-pc.summary" -Value $sum -Encoding UTF8 -ErrorAction Stop
 } catch {}

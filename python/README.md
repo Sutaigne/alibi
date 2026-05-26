@@ -1,4 +1,4 @@
-# PC Check — Python parity port
+# Alibi — Python parity port
 
 Read-only Windows forensic kit. A gamer runs it, hands the resulting `.txt` (and matching `_visual.html`) to a third party, and the third party reads it to decide whether the machine shows signs of cheat software, HWID spoofers, DMA-cheat build artifacts, or commercial input adapters (XIM, Cronus, ReaSnow, KMBox, Titan, reWASD).
 
@@ -27,17 +27,17 @@ No `pip install` is required to inspect the source — every file is plain `.py`
 PC mode (default — for a gamer auditing their own gaming PC):
 
 ```powershell
-python -m pc_check
+python -m alibi
 # or, if installed:
-pc-check
+alibi
 ```
 
 Console-rig mode (for a console gamer auditing a PC connected to their console rig):
 
 ```powershell
-python -m pc_check.console_rig_audit
+python -m alibi.console_rig_audit
 # or, if installed:
-pc-check-console-rig
+alibi-rig
 ```
 
 Unified launcher (runs both back-to-back, like the PowerShell `Run scan.bat`):
@@ -56,23 +56,23 @@ Options:
 
 Two files on the user's Desktop, both timestamped:
 
-- `PCForensicCheck_YYYYMMDD_HHMMSS.txt` (or `ConsoleRigAudit_*.txt`)
-- `PCForensicCheck_YYYYMMDD_HHMMSS_visual.html`
+- `AlibiReport_YYYYMMDD_HHMMSS.txt` (or `AlibiRigReport_*.txt`)
+- `AlibiReport_YYYYMMDD_HHMMSS_visual.html`
 
 The `.txt` opens with a `QUICK READ` block stating the verdict and the named items that drove it. The HTML is a colour-coded version of the same data plus a finding timeline.
 
 ## Architecture
 
-- `src/pc_check/keywords.py` — all keyword arrays, allowlists, hash database. Add a new cheat-brand token here and every scanner picks it up.
-- `src/pc_check/utils.py` — `match_keyword`, `classify_path_risk`, `score_item`, `score_and_add`, admin check, FileTime conversion.
-- `src/pc_check/scanners.py` — the 21 scan functions and `invoke_all_scans`.
-- `src/pc_check/snapshots.py` — process + service snapshots.
-- `src/pc_check/recency.py` — `apply_recency_decay` and the 180-day rule.
-- `src/pc_check/loldrivers.py` — `resolve_loldrivers_db` (opt-in CSV fetch + 1h cache).
-- `src/pc_check/reports.py` — text report builder, shared by both drivers.
-- `src/pc_check/visual_companion.py` — HTML companion, shared by both drivers (unified from day one).
-- `src/pc_check/forensic_scan.py` — PC driver.
-- `src/pc_check/console_rig_audit.py` — console-rig driver.
+- `src/alibi/keywords.py` — all keyword arrays, allowlists, hash database. Add a new cheat-brand token here and every scanner picks it up.
+- `src/alibi/utils.py` — `match_keyword`, `classify_path_risk`, `score_item`, `score_and_add`, admin check, FileTime conversion.
+- `src/alibi/scanners.py` — the 21 scan functions and `invoke_all_scans`.
+- `src/alibi/snapshots.py` — process + service snapshots.
+- `src/alibi/recency.py` — `apply_recency_decay` and the 180-day rule.
+- `src/alibi/loldrivers.py` — `resolve_loldrivers_db` (opt-in CSV fetch + 1h cache).
+- `src/alibi/reports.py` — text report builder, shared by both drivers.
+- `src/alibi/visual_companion.py` — HTML companion, shared by both drivers (unified from day one).
+- `src/alibi/forensic_scan.py` — PC driver.
+- `src/alibi/console_rig_audit.py` — console-rig driver.
 
 ## Authorship
 

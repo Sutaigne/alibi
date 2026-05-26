@@ -1,6 +1,6 @@
 @echo off
 REM ========================================================================
-REM  Console Rig Audit - Launcher
+REM  Alibi (console-rig mode) - Launcher
 REM
 REM  Use this if a PC is part of your console gaming rig (capture-card host,
 REM  second monitor, streaming PC, etc.) and you want to demonstrate that
@@ -11,7 +11,7 @@ REM  tool - use console-setup-checklist.html instead.
 REM
 REM  Double-click this file to run the scan.
 REM  The scan will request admin permission (UAC prompt) for full coverage.
-REM  Output: ONE timestamped .txt file on your Desktop (ConsoleRigAudit_*.txt).
+REM  Output: ONE timestamped .txt file on your Desktop (AlibiRigReport_*.txt).
 REM
 REM  Author: Bread
 REM  Contributor: Drownmw
@@ -30,7 +30,7 @@ if %errorLevel% NEQ 0 (
 
 REM --- We're elevated. Run the scan. --------------------------------------
 echo.
-echo  Starting Console Rig Audit (elevated)...
+echo  Starting Alibi (console-rig mode) (elevated)...
 echo.
 
 REM Find console-rig-audit.ps1 next to this .bat (using %~dp0 for portability)

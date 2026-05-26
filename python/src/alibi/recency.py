@@ -17,13 +17,13 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from typing import Any
 
-from pc_check.findings import Finding
-from pc_check.keywords import (
+from alibi.findings import Finding
+from alibi.keywords import (
     ALWAYS_RECENT_CATEGORIES,
     RECENCY_METADATA_KEYS,
     RECENCY_THRESHOLD_DAYS,
 )
-from pc_check.utils import Engine
+from alibi.utils import Engine
 
 
 def get_finding_timestamp(finding: Finding) -> datetime | None:

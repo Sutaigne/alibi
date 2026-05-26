@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────────
-   pc-check visual companion · interactive layer
+   alibi visual companion · interactive layer
    Vanilla JS, no dependencies, no network requests.
    ───────────────────────────────────────────────────────────── */
 (function () {

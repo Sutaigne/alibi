@@ -8,13 +8,13 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Callable, Iterable
 
-from pc_check.findings import Finding, SCORE_RANK, SEVERITY_RANK, ScoredItem
-from pc_check.utils import Engine, is_admin
+from alibi.findings import Finding, SCORE_RANK, SEVERITY_RANK, ScoredItem
+from alibi.utils import Engine, is_admin
 
 
 @dataclass
 class ReportSpec:
-    title: str                      # e.g. "PC FORENSIC CHECK v3.8 - CONSOLIDATED REPORT"
+    title: str                      # e.g. "ALIBI v4.0 - CONSOLIDATED REPORT"
     quick_read_block: Callable[["ReportContext"], list[str]]
     limitations: list[str]          # bullet lines, '  - ' prefix added automatically
     threshold_days: int
@@ -258,5 +258,5 @@ def collect_named_items(
     kind: str,
     severity: str,
 ) -> list[str]:
-    from pc_check.snapshots import named_items
+    from alibi.snapshots import named_items
     return named_items(engine, processes, services, kind, severity)
