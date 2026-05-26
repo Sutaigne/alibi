@@ -1,0 +1,142 @@
+================================================================
+  QUICK READ - START HERE
+================================================================
+
+  VERDICT: CLEAN
+
+  No RECENT HIGH or MEDIUM matches against the cheat / input-device /
+  dual-use keyword database (within the last 180 days).
+
+  Scope of this scan:
+    Cheat-trace findings checked : 5 total artifacts
+    Running processes scored     : 3
+    Services scored              : 1
+
+  This is necessary but not sufficient evidence. See limitations
+  section at the bottom of this report for what this scan cannot
+  detect (DMA cheats at runtime, separately-paired input devices,
+  professionally cleaned machines, etc).
+
+  ----------------------------------------------------------------
+  HISTORICAL findings (logged, did NOT affect verdict)
+  ----------------------------------------------------------------
+  2 finding(s) older than 180 days were demoted by the
+  recency-decay rule. These are visible below in the full report but
+  did not count toward the verdict above. Old artifacts from games or
+  tools the user has long since stopped using should not make a
+  currently-clean machine look dirty.
+
+  Of these, 1 were originally HIGH-severity cheat or input matches.
+  The most-recent timestamps and AgeDays are recorded per finding.
+
+================================================================
+
+================================================================
+  PC FORENSIC CHECK v3.8 - CONSOLIDATED REPORT
+================================================================
+
+  Generated:  2026-05-25 22:36:55
+  Hostname:   BREAD-PC
+  Username:   BradS
+  OS:         Windows 11 (10.0.26200)
+  Admin mode: False
+  Verdict:    CLEAN
+
+  Read-only scan. No system state was modified. No network calls.
+================================================================
+
+================================================================
+  SECTION 1 OF 3 - CHEAT TRACE SCAN
+================================================================
+
+  Summary (recent, within last 180 days - verdict-relevant):
+    HIGH    findings : 0
+    MEDIUM  findings : 0
+    INFO    items    : 3
+    WARN    (access) : 0
+
+  Summary (historical, >180 days old - logged but did NOT affect verdict):
+    Demoted historical findings : 2
+    (Originally HIGH-severity   : 1)
+
+  [INFO/other] [KnownHashes] Hashed 284 executables, checked against 1 known-bad SHA256 sample(s)
+        Source: (scan)
+        Hashed: 284
+        DatabaseSize: 1
+
+  [INFO/other] [ProcessModules] Scanned 6021 DLL modules across all running processes
+        Source: (scan)
+        ModulesScanned: 6021
+
+  [INFO/other] [RecencyDecay] Recency analysis: 0 recent, 2 historical (>180d demoted), 1 unknown-timestamp
+        Source: (summary)
+        ThresholdDays: 180
+        RecentFindings: 0
+        HistoricalFindings: 2
+        UnknownTimestampFindings: 1
+
+  ------------------------------------------------------------
+  HISTORICAL FINDINGS (>180 days old, did NOT affect verdict)
+  ------------------------------------------------------------
+
+  [INFO/input] [Installed] [HISTORICAL was MEDIUM, 2750d old] [xim] XIM Manager 2018
+        Source: Old XIM Manager
+        Pattern: xim
+        Name: XIM Manager 2018
+        InstallDate: 2018-11-04
+        MostRecentTimestamp: 2018-11-04T00:00:00
+        AgeDays: 2750
+        RecencyClass: historical
+        OriginalSeverity: MEDIUM
+
+  [MEDIUM/cheat] [Prefetch] [HISTORICAL was HIGH, 420d old] [engineowning] OLDCHEAT (CoD MW 2019)
+        Source: C:\Windows\Prefetch\OLDCHEAT.EXE-9F8E7D6C.pf
+        Pattern: engineowning
+        FirstSeen: 2024-06-04T22:36:55
+        LastModified: 2025-03-31T22:36:55
+        MostRecentTimestamp: 2025-03-31T22:36:55
+        AgeDays: 420
+        RecencyClass: historical
+        OriginalSeverity: HIGH
+
+================================================================
+  SECTION 2 OF 3 - RUNNING PROCESSES (scored)
+================================================================
+
+  Total processes captured: 3
+    HIGH:   0
+    MEDIUM: 0
+    LOW:    1
+    CLEAN:  2
+
+  Full processes table (sorted by suspicion score):
+
+    CLEAN   PID   4288  explorer.exe                      C:\Windows\explorer.exe
+    CLEAN   PID   1248  svchost.exe                       C:\Windows\System32\svchost.exe
+    LOW     PID  12384  chrome.exe                        C:\Program Files\Google\Chrome\Application\chrome.exe
+
+================================================================
+  SECTION 3 OF 3 - SERVICES (scored)
+================================================================
+
+  Total services captured: 1
+    HIGH:   0
+    MEDIUM: 0
+    LOW:    0
+    CLEAN:  1
+
+  Full services table (sorted by suspicion score):
+
+    CLEAN   Stopped  vgc                               "C:\Program Files\Riot Vanguard\vgc.exe"
+
+================================================================
+  COVERAGE LIMITATIONS
+================================================================
+
+  - DMA cheats cannot be detected at runtime by design (no PC-side footprint). This scan flags DMA development artifacts only.
+  - Input devices configured on a separate machine leave no trace on this PC.
+  - Session duration is recorded in SRUM and requires an ESE database parser. Not extracted here.
+  - Keyword matching only. Sophisticated cleaners can wipe most of these artifacts.
+  - A clean result is necessary but not sufficient.
+
+  Report generated: 2026-05-25 22:36:55

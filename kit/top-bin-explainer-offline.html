@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What is _top.bin? - A visual explainer (offline)</title>
+<meta name="description" content="Offline visual explainer for the _top.bin file flagged by the PC Forensic Check scan.">
+<!-- Fully self-contained. No internet required. All fonts use system fallbacks. -->
+<style>
+:root{
+  --bg:#F5F2EB;--paper:#FBF9F4;--ink:#1A1A1A;--ink-soft:#4A463E;--ink-faint:#8A857C;
+  --rule:#D8D2C7;--rule-strong:#B8B0A0;
+  --high:#6B1E1E;--med:#8A6914;--low:#2E3A4A;--clean:#1F3F2E;
+  --serif:Georgia,'Iowan Old Style','Palatino Linotype','Book Antiqua',Palatino,serif;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,Roboto,'Helvetica Neue',Arial,sans-serif;
+  --mono:ui-monospace,'Cascadia Mono','Segoe UI Mono',Consolas,'Liberation Mono','Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;padding:48px 24px;-webkit-font-smoothing:antialiased}
+.page{max-width:1100px;margin:0 auto;background:var(--paper);padding:56px 56px;border:1px solid var(--rule);box-shadow:0 1px 0 var(--rule),0 4px 24px rgba(0,0,0,.04)}
+
+.eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--high);margin-bottom:8px}
+h1.title{font-family:var(--serif);font-weight:500;font-size:2.8rem;line-height:1.05;letter-spacing:-.018em;margin-bottom:10px}
+h1.title code{font-family:var(--mono);font-style:normal;font-size:2.3rem;color:var(--high);font-weight:500;background:rgba(107,30,30,0.07);padding:2px 14px;border:1px solid rgba(107,30,30,0.3);border-radius:3px;letter-spacing:-.01em}
+.subtitle{font-family:var(--serif);font-style:italic;font-size:1.2rem;color:var(--ink-soft);margin-top:14px;margin-bottom:44px;max-width:780px;line-height:1.5}
+
+section{margin-bottom:64px}
+.section-num{font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;color:var(--high);font-weight:500;margin-bottom:4px;text-transform:uppercase}
+h2{font-family:var(--serif);font-weight:500;font-size:1.65rem;letter-spacing:-.01em;margin-bottom:8px;line-height:1.2}
+.section-rule{height:1px;background:var(--rule);margin:14px 0 28px 0}
+.caption{font-family:var(--serif);font-style:italic;font-size:1.05rem;line-height:1.6;color:var(--ink-soft);max-width:840px;margin-top:18px}
+.caption strong{font-style:normal;font-family:var(--sans);font-weight:600;color:var(--ink)}
+
+.viz{background:#F5F2EB;border:1px solid var(--rule);padding:32px 24px;margin-top:8px;display:flex;align-items:center;justify-content:center;min-height:280px}
+.viz svg{max-width:100%;height:auto;display:block}
+
+/* The big picture */
+.bigpic{padding:36px 16px;min-height:340px}
+
+/* Four files comparison */
+.files-row{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;width:100%;padding:24px 8px}
+.file-card{display:flex;flex-direction:column;align-items:center;text-align:center}
+.file-card svg{margin-bottom:16px}
+.file-card .file-name{font-family:var(--mono);font-size:.82rem;color:var(--ink);font-weight:500;margin-bottom:6px}
+.file-card .file-use{font-family:var(--serif);font-style:italic;font-size:.92rem;color:var(--ink-soft);line-height:1.4}
+.file-card.danger .file-name{color:var(--high)}
+.file-card.danger .file-use{color:var(--high);font-style:normal;font-weight:500}
+
+/* Two-up comparison frame */
+.dual{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%}
+.dual-panel{background:var(--paper);border:1px solid var(--rule);padding:20px;display:flex;flex-direction:column;align-items:center}
+.dual-panel.normal{border-left:4px solid var(--clean)}
+.dual-panel.cheat{border-left:4px solid var(--high)}
+.dual-panel .panel-tag{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;font-weight:600}
+.dual-panel.normal .panel-tag{color:var(--clean)}
+.dual-panel.cheat .panel-tag{color:var(--high)}
+.dual-panel .panel-text{font-family:var(--serif);font-style:italic;font-size:.92rem;color:var(--ink-soft);margin-top:14px;line-height:1.45;text-align:center}
+
+/* Personas */
+.personas{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;width:100%}
+.persona{background:var(--paper);border:1px solid var(--rule);padding:20px 22px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.persona.ok{border-left:4px solid var(--clean)}
+.persona.flag{border-left:4px solid var(--high)}
+.persona svg{margin-bottom:14px}
+.persona .who{font-family:var(--serif);font-size:1.05rem;font-weight:500;margin-bottom:6px}
+.persona .says{font-family:var(--serif);font-style:italic;color:var(--ink-soft);font-size:.92rem;line-height:1.5;margin-bottom:10px}
+.persona .verdict{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600;padding:4px 10px;border-radius:2px;display:inline-block}
+.persona.ok .verdict{background:rgba(31,63,46,0.1);color:var(--clean)}
+.persona.flag .verdict{background:rgba(107,30,30,0.1);color:var(--high)}
+
+/* Final note */
+.endnote{background:rgba(46,58,74,0.05);border:1px solid var(--rule);border-left:4px solid var(--low);padding:24px 28px;margin-top:18px}
+.endnote h3{font-family:var(--serif);font-size:1.2rem;font-weight:500;margin-bottom:10px}
+.endnote p{font-family:var(--serif);font-size:1rem;line-height:1.6;color:var(--ink-soft);margin-bottom:10px}
+.endnote p:last-child{margin-bottom:0}
+
+footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;font-family:var(--mono);font-size:.7rem;color:var(--ink-faint);letter-spacing:.04em}
+
+@media (max-width:760px){
+  body{padding:16px 0}
+  .page{padding:36px 24px;border-left:none;border-right:none}
+  h1.title{font-size:1.9rem}
+  h1.title code{font-size:1.5rem}
+  .files-row{grid-template-columns:repeat(2,1fr)}
+  .dual{grid-template-columns:1fr}
+  .personas{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="eyebrow">PC Forensic Check &middot; Visual Explainer</div>
+  <h1 class="title">What is <code>_top.bin</code>?</h1>
+  <p class="subtitle">A picture-first explanation of one file the scanner cares about &mdash; why it almost never shows up on innocent computers, and what it actually does when it does.</p>
+
+  <!-- ====================================================================== -->
+  <!-- THE BIG PICTURE -->
+  <!-- ====================================================================== -->
+  <section>
+    <div class="section-num">The 30-second version</div>
+    <h2>The whole setup, in one picture</h2>
+    <div class="section-rule"></div>
+
+    <div class="viz bigpic">
+      <svg viewBox="0 0 980 360" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:980px">
+        <!-- LEFT: Cheater's build PC -->
+        <g transform="translate(20,40)">
+          <!-- Monitor -->
+          <rect x="20" y="0" width="180" height="110" rx="4" fill="#1A1A1A" stroke="#3A3530" stroke-width="2"/>
+          <rect x="28" y="8" width="164" height="94" fill="#2A2520"/>
+          <!-- cheat overlay on screen -->
+          <circle cx="60" cy="40" r="4" fill="#6B1E1E"/>
+          <circle cx="95" cy="65" r="4" fill="#6B1E1E"/>
+          <circle cx="145" cy="35" r="4" fill="#6B1E1E"/>
+          <text x="110" y="92" font-family="IBM Plex Mono" font-size="8" fill="#FBF9F4" text-anchor="middle" letter-spacing="1">CHEAT OVERLAY</text>
+          <!-- Stand -->
+          <rect x="100" y="110" width="20" height="8" fill="#3A3530"/>
+          <rect x="85" y="116" width="50" height="4" fill="#3A3530"/>
+          <!-- Tower -->
+          <rect x="50" y="135" width="120" height="160" rx="4" fill="#3A3530" stroke="#1A1A1A" stroke-width="2"/>
+          <rect x="62" y="148" width="96" height="6" rx="1" fill="#5A5550"/>
+          <rect x="62" y="160" width="96" height="24" rx="1" fill="#2A2520"/>
+          <circle cx="110" cy="200" r="4" fill="#1F3F2E"/>
+          <!-- file icon inside tower (representational) -->
+          <g transform="translate(75,220)">
+            <path d="M 5 0 L 40 0 L 55 12 L 55 60 L 5 60 Z" fill="#FBF9F4" stroke="#6B1E1E" stroke-width="1.5"/>
+            <path d="M 40 0 L 40 12 L 55 12" fill="none" stroke="#6B1E1E" stroke-width="1.5"/>
+            <text x="30" y="38" font-family="IBM Plex Mono" font-size="7" fill="#6B1E1E" text-anchor="middle" font-weight="600">_top</text>
+            <text x="30" y="48" font-family="IBM Plex Mono" font-size="7" fill="#6B1E1E" text-anchor="middle" font-weight="600">.bin</text>
+          </g>
+          <text x="110" y="320" font-family="IBM Plex Mono" font-size="10" fill="#4A463E" text-anchor="middle" letter-spacing="1.5" font-weight="600">CHEATER'S PC</text>
+          <text x="110" y="333" font-family="Newsreader" font-style="italic" font-size="11" fill="#8A857C" text-anchor="middle">where the file lives</text>
+        </g>
+
+        <!-- ARROW 1: file becomes card -->
+        <g transform="translate(260,160)">
+          <line x1="0" y1="20" x2="60" y2="20" stroke="#6B1E1E" stroke-width="2" stroke-dasharray="4,3"/>
+          <polygon points="60,15 70,20 60,25" fill="#6B1E1E"/>
+          <text x="35" y="10" font-family="IBM Plex Mono" font-size="8" fill="#6B1E1E" text-anchor="middle" letter-spacing="1">FLASHED</text>
+          <text x="35" y="40" font-family="IBM Plex Mono" font-size="8" fill="#6B1E1E" text-anchor="middle" letter-spacing="1">ONTO</text>
+        </g>
+
+        <!-- CENTER: FPGA card -->
+        <g transform="translate(340,140)">
+          <text x="100" y="-10" font-family="IBM Plex Mono" font-size="10" fill="#4A463E" text-anchor="middle" letter-spacing="1.5" font-weight="600">FPGA CARD</text>
+          <text x="100" y="3" font-family="Newsreader" font-style="italic" font-size="10" fill="#8A857C" text-anchor="middle">a physical circuit board</text>
+          <!-- PCB body -->
+          <rect x="10" y="20" width="180" height="50" fill="#1F3F2E" stroke="#1A1A1A" stroke-width="1.5"/>
+          <!-- chips on board -->
+          <rect x="22" y="28" width="28" height="28" fill="#1A1A1A" stroke="#FBF9F4" stroke-width="0.5"/>
+          <text x="36" y="46" font-family="IBM Plex Mono" font-size="7" fill="#FBF9F4" text-anchor="middle">FPGA</text>
+          <rect x="65" y="32" width="40" height="22" fill="#1A1A1A" stroke="#FBF9F4" stroke-width="0.5"/>
+          <text x="85" y="46" font-family="IBM Plex Mono" font-size="6" fill="#FBF9F4" text-anchor="middle">MEMORY</text>
+          <rect x="120" y="34" width="20" height="18" fill="#1A1A1A"/>
+          <rect x="148" y="34" width="14" height="18" fill="#1A1A1A"/>
+          <circle cx="170" cy="44" r="6" fill="none" stroke="#FBF9F4" stroke-width="1"/>
+          <!-- PCIe contact fingers -->
+          <rect x="30" y="70" width="140" height="10" fill="#C9A961"/>
+          <line x1="40" y1="70" x2="40" y2="80" stroke="#8A6914" stroke-width="0.5"/>
+          <line x1="50" y1="70" x2="50" y2="80" stroke="#8A6914" stroke-width="0.5"/>
+          <line x1="60" y1="70" x2="60" y2="80" stroke="#8A6914" stroke-width="0.5"/>
+          <line x1="70" y1="70" x2="70" y2="80" stroke="#8A6914" stroke-width="0.5"/>
+          <line x1="80" y1="70" x2="80" y2="80" stroke="#8A6914" stroke-width="0.5"/>
+          <line x1="90" y1="70" x2="90" y2="80" stroke="#8A6914" stroke-width="0.5"/>
+          <line x1="100" y1="70" x2="100" y2="80" stroke="#8A6914" stroke-width="0.5"/>
+          <line x1="110" y1="70" x2="110" y2="80" stroke="#8A6914" stroke-width="0.5"/>
+          <line x1="120" y1="70" x2="120" y2="80" stroke="#8A6914" stroke-width="0.5"/>
+          <line x1="130" y1="70" x2="130" y2="80" stroke="#8A6914" stroke-width="0.5"/>
+          <line x1="140" y1="70" x2="140" y2="80" stroke="#8A6914" stroke-width="0.5"/>
+          <line x1="150" y1="70" x2="150" y2="80" stroke="#8A6914" stroke-width="0.5"/>
+          <line x1="160" y1="70" x2="160" y2="80" stroke="#8A6914" stroke-width="0.5"/>
+
+          <!-- USB cable jutting out left -->
+          <rect x="-5" y="38" width="20" height="14" fill="#2A2520"/>
+          <line x1="-30" y1="45" x2="0" y2="45" stroke="#2A2520" stroke-width="3"/>
+          <text x="100" y="105" font-family="Newsreader" font-style="italic" font-size="10" fill="#8A857C" text-anchor="middle">cable goes back to cheater's PC</text>
+          <text x="100" y="120" font-family="Newsreader" font-style="italic" font-size="10" fill="#8A857C" text-anchor="middle">to send stolen data</text>
+        </g>
+
+        <!-- ARROW 2: card into gaming PC -->
+        <g transform="translate(560,160)">
+          <line x1="0" y1="20" x2="60" y2="20" stroke="#6B1E1E" stroke-width="2" stroke-dasharray="4,3"/>
+          <polygon points="60,15 70,20 60,25" fill="#6B1E1E"/>
+          <text x="35" y="10" font-family="IBM Plex Mono" font-size="8" fill="#6B1E1E" text-anchor="middle" letter-spacing="1">PLUGGED</text>
+          <text x="35" y="40" font-family="IBM Plex Mono" font-size="8" fill="#6B1E1E" text-anchor="middle" letter-spacing="1">INTO</text>
+        </g>
+
+        <!-- RIGHT: Gaming PC (victim) -->
+        <g transform="translate(640,40)">
+          <!-- Monitor -->
+          <rect x="60" y="0" width="200" height="120" rx="4" fill="#1A1A1A" stroke="#3A3530" stroke-width="2"/>
+          <rect x="68" y="8" width="184" height="104" fill="#2A2520"/>
+          <!-- game scene on screen -->
+          <rect x="80" y="20" width="160" height="80" fill="#3A3530"/>
+          <rect x="100" y="60" width="20" height="35" fill="#4A463E"/>
+          <rect x="200" y="50" width="14" height="45" fill="#4A463E"/>
+          <text x="160" y="108" font-family="IBM Plex Mono" font-size="7" fill="#FBF9F4" text-anchor="middle" letter-spacing="1">GAME RUNNING NORMALLY</text>
+          <!-- stand -->
+          <rect x="150" y="120" width="20" height="8" fill="#3A3530"/>
+          <rect x="135" y="126" width="50" height="4" fill="#3A3530"/>
+          <!-- Tower with card sticking out back -->
+          <rect x="90" y="145" width="140" height="160" rx="4" fill="#3A3530" stroke="#1A1A1A" stroke-width="2"/>
+          <rect x="105" y="158" width="110" height="6" rx="1" fill="#5A5550"/>
+          <rect x="105" y="170" width="110" height="24" rx="1" fill="#2A2520"/>
+          <circle cx="160" cy="208" r="4" fill="#1F3F2E"/>
+          <!-- the card visible inside (red glow) -->
+          <rect x="105" y="230" width="110" height="20" fill="#1F3F2E" stroke="#6B1E1E" stroke-width="1.5"/>
+          <rect x="112" y="234" width="14" height="12" fill="#1A1A1A"/>
+          <rect x="135" y="234" width="20" height="12" fill="#1A1A1A"/>
+          <text x="180" y="244" font-family="IBM Plex Mono" font-size="6" fill="#6B1E1E" text-anchor="middle" font-weight="600">DMA CARD</text>
+          <text x="160" y="320" font-family="IBM Plex Mono" font-size="10" fill="#4A463E" text-anchor="middle" letter-spacing="1.5" font-weight="600">GAMING PC</text>
+          <text x="160" y="333" font-family="Newsreader" font-style="italic" font-size="11" fill="#8A857C" text-anchor="middle">the target</text>
+        </g>
+
+        <!-- Cable from card -->
+        <path d="M 320 200 Q 280 320 200 350 Q 100 360 60 320" fill="none" stroke="#2A2520" stroke-width="2"/>
+      </svg>
+    </div>
+
+    <p class="caption">A cheater builds <code style="font-family:var(--mono);color:var(--high)">_top.bin</code> on their own PC. They flash it onto an <strong>FPGA card</strong> &mdash; a small custom circuit board. The card plugs into a gaming PC's motherboard. A cable runs back to the cheater's PC. The card silently reads what the game is doing and sends it to the cheater's monitor.</p>
+  </section>
+
+  <!-- ====================================================================== -->
+  <!-- IT'S NOT A NORMAL FILE -->
+  <!-- ====================================================================== -->
+  <section>
+    <div class="section-num">Step 1 &middot; What kind of file is it?</div>
+    <h2>It's not like the other files on your computer</h2>
+    <div class="section-rule"></div>
+
+    <div class="viz">
+      <div class="files-row">
+        <div class="file-card">
+          <svg width="80" height="100" viewBox="0 0 80 100">
+            <path d="M 10 0 L 55 0 L 75 20 L 75 100 L 10 100 Z" fill="#FBF9F4" stroke="#8A857C" stroke-width="2"/>
+            <path d="M 55 0 L 55 20 L 75 20" fill="none" stroke="#8A857C" stroke-width="2"/>
+            <circle cx="42" cy="55" r="11" fill="none" stroke="#8A857C" stroke-width="2"/>
+            <rect x="48" y="40" width="3" height="20" fill="#8A857C"/>
+          </svg>
+          <div class="file-name">song.mp3</div>
+          <div class="file-use">opens in a music app, plays sound</div>
+        </div>
+        <div class="file-card">
+          <svg width="80" height="100" viewBox="0 0 80 100">
+            <path d="M 10 0 L 55 0 L 75 20 L 75 100 L 10 100 Z" fill="#FBF9F4" stroke="#8A857C" stroke-width="2"/>
+            <path d="M 55 0 L 55 20 L 75 20" fill="none" stroke="#8A857C" stroke-width="2"/>
+            <line x1="22" y1="40" x2="62" y2="40" stroke="#8A857C" stroke-width="1.5"/>
+            <line x1="22" y1="50" x2="62" y2="50" stroke="#8A857C" stroke-width="1.5"/>
+            <line x1="22" y1="60" x2="62" y2="60" stroke="#8A857C" stroke-width="1.5"/>
+            <line x1="22" y1="70" x2="50" y2="70" stroke="#8A857C" stroke-width="1.5"/>
+          </svg>
+          <div class="file-name">letter.docx</div>
+          <div class="file-use">opens in Word, shows text</div>
+        </div>
+        <div class="file-card">
+          <svg width="80" height="100" viewBox="0 0 80 100">
+            <path d="M 10 0 L 55 0 L 75 20 L 75 100 L 10 100 Z" fill="#FBF9F4" stroke="#8A857C" stroke-width="2"/>
+            <path d="M 55 0 L 55 20 L 75 20" fill="none" stroke="#8A857C" stroke-width="2"/>
+            <circle cx="32" cy="48" r="5" fill="#8A857C"/>
+            <path d="M 18 75 L 38 55 L 50 65 L 65 50 L 70 75 Z" fill="#8A857C"/>
+          </svg>
+          <div class="file-name">photo.jpg</div>
+          <div class="file-use">opens in Photos, shows a picture</div>
+        </div>
+        <div class="file-card danger">
+          <svg width="80" height="100" viewBox="0 0 80 100">
+            <path d="M 10 0 L 55 0 L 75 20 L 75 100 L 10 100 Z" fill="#FBF9F4" stroke="#6B1E1E" stroke-width="2.5"/>
+            <path d="M 55 0 L 55 20 L 75 20" fill="none" stroke="#6B1E1E" stroke-width="2.5"/>
+            <text x="43" y="50" font-family="IBM Plex Mono" font-size="9" fill="#6B1E1E" text-anchor="middle" font-weight="600">_top</text>
+            <text x="43" y="62" font-family="IBM Plex Mono" font-size="9" fill="#6B1E1E" text-anchor="middle" font-weight="600">.bin</text>
+            <text x="43" y="82" font-family="IBM Plex Mono" font-size="14" fill="#6B1E1E" text-anchor="middle" font-weight="600">!</text>
+          </svg>
+          <div class="file-name">_top.bin</div>
+          <div class="file-use">cannot be opened. cannot be played. only one thing it's for.</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="caption">The first three files <strong>do something for you when you double-click them.</strong> The last one doesn't open in anything. It exists for one purpose only: <strong>to be burned onto a piece of hardware.</strong> Think of it less like a document and more like a Lego instruction manual &mdash; useless on its own, dangerous when followed.</p>
+  </section>
+
+  <!-- ====================================================================== -->
+  <!-- HOW IT'S MADE -->
+  <!-- ====================================================================== -->
+  <section>
+    <div class="section-num">Step 2 &middot; How does it get made?</div>
+    <h2>You can't download one. You have to build it.</h2>
+    <div class="section-rule"></div>
+
+    <div class="viz">
+      <svg viewBox="0 0 940 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:940px">
+        <!-- Step A: Source code -->
+        <g transform="translate(20,40)">
+          <rect x="0" y="0" width="160" height="120" rx="4" fill="#FBF9F4" stroke="#8A857C" stroke-width="1.5"/>
+          <text x="80" y="-10" font-family="IBM Plex Mono" font-size="10" fill="#4A463E" text-anchor="middle" letter-spacing="1.5" font-weight="600">A</text>
+          <!-- code lines -->
+          <line x1="14" y1="22" x2="80" y2="22" stroke="#4A463E" stroke-width="1.5"/>
+          <line x1="22" y1="34" x2="120" y2="34" stroke="#4A463E" stroke-width="1.5"/>
+          <line x1="22" y1="46" x2="100" y2="46" stroke="#4A463E" stroke-width="1.5"/>
+          <line x1="14" y1="58" x2="60" y2="58" stroke="#4A463E" stroke-width="1.5"/>
+          <line x1="22" y1="70" x2="130" y2="70" stroke="#4A463E" stroke-width="1.5"/>
+          <line x1="22" y1="82" x2="90" y2="82" stroke="#4A463E" stroke-width="1.5"/>
+          <line x1="14" y1="94" x2="70" y2="94" stroke="#4A463E" stroke-width="1.5"/>
+          <line x1="22" y1="106" x2="110" y2="106" stroke="#4A463E" stroke-width="1.5"/>
+          <text x="80" y="140" font-family="IBM Plex Sans" font-size="11" fill="#1A1A1A" text-anchor="middle" font-weight="600">Get the recipe</text>
+          <text x="80" y="155" font-family="Newsreader" font-style="italic" font-size="10" fill="#8A857C" text-anchor="middle">download "pcileech-fpga"</text>
+          <text x="80" y="168" font-family="Newsreader" font-style="italic" font-size="10" fill="#8A857C" text-anchor="middle">source code from GitHub</text>
+        </g>
+
+        <!-- arrow -->
+        <g transform="translate(200,90)">
+          <line x1="0" y1="20" x2="36" y2="20" stroke="#8A857C" stroke-width="2"/>
+          <polygon points="36,15 46,20 36,25" fill="#8A857C"/>
+        </g>
+
+        <!-- Step B: Tool processes -->
+        <g transform="translate(260,40)">
+          <rect x="0" y="0" width="180" height="120" rx="4" fill="#2E3A4A" stroke="#1A1A1A" stroke-width="1.5"/>
+          <text x="90" y="-10" font-family="IBM Plex Mono" font-size="10" fill="#4A463E" text-anchor="middle" letter-spacing="1.5" font-weight="600">B</text>
+          <text x="90" y="44" font-family="IBM Plex Mono" font-size="14" fill="#FBF9F4" text-anchor="middle" font-weight="600">Xilinx Vivado</text>
+          <text x="90" y="64" font-family="Newsreader" font-style="italic" font-size="10" fill="#FBF9F4" text-anchor="middle" opacity="0.8">60+ GB of software</text>
+          <text x="90" y="80" font-family="Newsreader" font-style="italic" font-size="10" fill="#FBF9F4" text-anchor="middle" opacity="0.8">3-6 hours to build</text>
+          <!-- gears/spinner indicator -->
+          <circle cx="65" cy="100" r="7" fill="none" stroke="#FBF9F4" stroke-width="1.5"/>
+          <circle cx="90" cy="100" r="7" fill="none" stroke="#FBF9F4" stroke-width="1.5"/>
+          <circle cx="115" cy="100" r="7" fill="none" stroke="#FBF9F4" stroke-width="1.5"/>
+          <text x="90" y="140" font-family="IBM Plex Sans" font-size="11" fill="#1A1A1A" text-anchor="middle" font-weight="600">Build the file</text>
+          <text x="90" y="155" font-family="Newsreader" font-style="italic" font-size="10" fill="#8A857C" text-anchor="middle">special engineering software</text>
+          <text x="90" y="168" font-family="Newsreader" font-style="italic" font-size="10" fill="#8A857C" text-anchor="middle">compiles the recipe</text>
+        </g>
+
+        <!-- arrow -->
+        <g transform="translate(460,90)">
+          <line x1="0" y1="20" x2="36" y2="20" stroke="#8A857C" stroke-width="2"/>
+          <polygon points="36,15 46,20 36,25" fill="#8A857C"/>
+        </g>
+
+        <!-- Step C: The output file -->
+        <g transform="translate(520,40)">
+          <path d="M 60 0 L 110 0 L 130 20 L 130 120 L 60 120 Z" fill="#FBF9F4" stroke="#6B1E1E" stroke-width="2.5"/>
+          <path d="M 110 0 L 110 20 L 130 20" fill="none" stroke="#6B1E1E" stroke-width="2.5"/>
+          <text x="95" y="62" font-family="IBM Plex Mono" font-size="13" fill="#6B1E1E" text-anchor="middle" font-weight="600">_top</text>
+          <text x="95" y="80" font-family="IBM Plex Mono" font-size="13" fill="#6B1E1E" text-anchor="middle" font-weight="600">.bin</text>
+          <text x="95" y="140" font-family="IBM Plex Sans" font-size="11" fill="#1A1A1A" text-anchor="middle" font-weight="600">The output file</text>
+          <text x="95" y="155" font-family="Newsreader" font-style="italic" font-size="10" fill="#8A857C" text-anchor="middle">this is the thing</text>
+          <text x="95" y="168" font-family="Newsreader" font-style="italic" font-size="10" fill="#8A857C" text-anchor="middle">the scanner finds</text>
+        </g>
+
+        <!-- arrow -->
+        <g transform="translate(680,90)">
+          <line x1="0" y1="20" x2="36" y2="20" stroke="#8A857C" stroke-width="2"/>
+          <polygon points="36,15 46,20 36,25" fill="#8A857C"/>
+        </g>
+
+        <!-- Step D: Hardware -->
+        <g transform="translate(740,40)">
+          <rect x="0" y="20" width="180" height="60" fill="#1F3F2E" stroke="#1A1A1A" stroke-width="1.5"/>
+          <rect x="12" y="30" width="22" height="22" fill="#1A1A1A"/>
+          <rect x="46" y="32" width="36" height="18" fill="#1A1A1A"/>
+          <rect x="100" y="34" width="16" height="14" fill="#1A1A1A"/>
+          <rect x="130" y="34" width="12" height="14" fill="#1A1A1A"/>
+          <circle cx="158" cy="42" r="5" fill="none" stroke="#FBF9F4" stroke-width="1"/>
+          <rect x="22" y="80" width="140" height="8" fill="#C9A961"/>
+          <text x="90" y="140" font-family="IBM Plex Sans" font-size="11" fill="#1A1A1A" text-anchor="middle" font-weight="600">Burn it to a card</text>
+          <text x="90" y="155" font-family="Newsreader" font-style="italic" font-size="10" fill="#8A857C" text-anchor="middle">special FPGA hardware</text>
+          <text x="90" y="168" font-family="Newsreader" font-style="italic" font-size="10" fill="#8A857C" text-anchor="middle">$150-400 board</text>
+        </g>
+      </svg>
+    </div>
+
+    <p class="caption">Producing a <code style="font-family:var(--mono);color:var(--high)">_top.bin</code> means: <strong>(A)</strong> downloading specialized source code, <strong>(B)</strong> installing 60+ GB of professional engineering software, <strong>(C)</strong> running a multi-hour compile, then <strong>(D)</strong> buying a custom circuit board to flash it onto. This is not something that happens by accident, or while browsing the web, or by clicking the wrong link.</p>
+  </section>
+
+  <!-- ====================================================================== -->
+  <!-- WHAT THE CARD DOES INSIDE A PC -->
+  <!-- ====================================================================== -->
+  <section>
+    <div class="section-num">Step 3 &middot; What the hardware does once it's installed</div>
+    <h2>It reads the game's memory while no one's looking</h2>
+    <div class="section-rule"></div>
+
+    <div class="viz" style="padding:24px 12px">
+      <svg viewBox="0 0 940 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:940px">
+        <!-- Outer PC case -->
+        <rect x="20" y="20" width="900" height="340" rx="6" fill="#FBF9F4" stroke="#4A463E" stroke-width="2"/>
+        <text x="470" y="14" font-family="IBM Plex Mono" font-size="10" fill="#4A463E" text-anchor="middle" letter-spacing="1.5" font-weight="600">INSIDE THE GAMING PC</text>
+
+        <!-- CPU -->
+        <g transform="translate(80,80)">
+          <rect x="0" y="0" width="160" height="110" rx="4" fill="#2E3A4A" stroke="#1A1A1A" stroke-width="1.5"/>
+          <text x="80" y="40" font-family="IBM Plex Mono" font-size="13" fill="#FBF9F4" text-anchor="middle" font-weight="600">CPU</text>
+          <text x="80" y="62" font-family="Newsreader" font-style="italic" font-size="11" fill="#FBF9F4" text-anchor="middle" opacity="0.8">runs the game</text>
+          <text x="80" y="78" font-family="Newsreader" font-style="italic" font-size="11" fill="#FBF9F4" text-anchor="middle" opacity="0.8">and the anti-cheat</text>
+          <text x="80" y="92" font-family="Newsreader" font-style="italic" font-size="11" fill="#FBF9F4" text-anchor="middle" opacity="0.8">software</text>
+        </g>
+
+        <!-- Anti-cheat shield -->
+        <g transform="translate(120,210)">
+          <path d="M 40 0 L 80 12 L 80 50 Q 80 75 40 90 Q 0 75 0 50 L 0 12 Z" fill="#1F3F2E" stroke="#1A1A1A" stroke-width="1.5"/>
+          <text x="40" y="48" font-family="IBM Plex Mono" font-size="11" fill="#FBF9F4" text-anchor="middle" font-weight="600">ANTI-</text>
+          <text x="40" y="63" font-family="IBM Plex Mono" font-size="11" fill="#FBF9F4" text-anchor="middle" font-weight="600">CHEAT</text>
+          <text x="40" y="108" font-family="Newsreader" font-style="italic" font-size="10" fill="#8A857C" text-anchor="middle">watches the CPU</text>
+        </g>
+
+        <!-- Arrow from CPU to RAM (legitimate game access) -->
+        <g>
+          <line x1="240" y1="135" x2="450" y2="135" stroke="#1F3F2E" stroke-width="2"/>
+          <polygon points="450,130 460,135 450,140" fill="#1F3F2E"/>
+          <text x="345" y="125" font-family="Newsreader" font-style="italic" font-size="11" fill="#1F3F2E" text-anchor="middle">game reads memory normally</text>
+        </g>
+
+        <!-- RAM (memory) -->
+        <g transform="translate(460,80)">
+          <rect x="0" y="0" width="220" height="220" rx="4" fill="#FBF9F4" stroke="#4A463E" stroke-width="1.5"/>
+          <text x="110" y="22" font-family="IBM Plex Mono" font-size="11" fill="#4A463E" text-anchor="middle" letter-spacing="1.5" font-weight="600">MEMORY (RAM)</text>
+          <text x="110" y="38" font-family="Newsreader" font-style="italic" font-size="10" fill="#8A857C" text-anchor="middle">everything the game knows</text>
+          <!-- memory cells -->
+          <rect x="14" y="52" width="92" height="22" rx="2" fill="#F5F2EB" stroke="#B8B0A0" stroke-width="0.5"/>
+          <text x="60" y="68" font-family="IBM Plex Mono" font-size="9" fill="#1A1A1A" text-anchor="middle">enemy position</text>
+          <rect x="114" y="52" width="92" height="22" rx="2" fill="#F5F2EB" stroke="#B8B0A0" stroke-width="0.5"/>
+          <text x="160" y="68" font-family="IBM Plex Mono" font-size="9" fill="#1A1A1A" text-anchor="middle">your health</text>
+          <rect x="14" y="80" width="92" height="22" rx="2" fill="#F5F2EB" stroke="#B8B0A0" stroke-width="0.5"/>
+          <text x="60" y="96" font-family="IBM Plex Mono" font-size="9" fill="#1A1A1A" text-anchor="middle">wall positions</text>
+          <rect x="114" y="80" width="92" height="22" rx="2" fill="#F5F2EB" stroke="#B8B0A0" stroke-width="0.5"/>
+          <text x="160" y="96" font-family="IBM Plex Mono" font-size="9" fill="#1A1A1A" text-anchor="middle">ammo count</text>
+          <rect x="14" y="108" width="92" height="22" rx="2" fill="#F5F2EB" stroke="#B8B0A0" stroke-width="0.5"/>
+          <text x="60" y="124" font-family="IBM Plex Mono" font-size="9" fill="#1A1A1A" text-anchor="middle">enemy health</text>
+          <rect x="114" y="108" width="92" height="22" rx="2" fill="#F5F2EB" stroke="#B8B0A0" stroke-width="0.5"/>
+          <text x="160" y="124" font-family="IBM Plex Mono" font-size="9" fill="#1A1A1A" text-anchor="middle">player names</text>
+          <rect x="14" y="136" width="92" height="22" rx="2" fill="#F5F2EB" stroke="#B8B0A0" stroke-width="0.5"/>
+          <text x="60" y="152" font-family="IBM Plex Mono" font-size="9" fill="#1A1A1A" text-anchor="middle">aim direction</text>
+          <rect x="114" y="136" width="92" height="22" rx="2" fill="#F5F2EB" stroke="#B8B0A0" stroke-width="0.5"/>
+          <text x="160" y="152" font-family="IBM Plex Mono" font-size="9" fill="#1A1A1A" text-anchor="middle">map data</text>
+          <rect x="14" y="164" width="192" height="22" rx="2" fill="#F5F2EB" stroke="#B8B0A0" stroke-width="0.5"/>
+          <text x="110" y="180" font-family="IBM Plex Mono" font-size="9" fill="#1A1A1A" text-anchor="middle">every other detail of the game</text>
+        </g>
+
+        <!-- DMA card sneaking in -->
+        <g transform="translate(720,210)">
+          <rect x="0" y="20" width="180" height="50" fill="#1F3F2E" stroke="#6B1E1E" stroke-width="2"/>
+          <rect x="12" y="30" width="22" height="22" fill="#1A1A1A"/>
+          <text x="23" y="46" font-family="IBM Plex Mono" font-size="7" fill="#FBF9F4" text-anchor="middle">FPGA</text>
+          <rect x="46" y="32" width="36" height="18" fill="#1A1A1A"/>
+          <rect x="100" y="34" width="16" height="14" fill="#1A1A1A"/>
+          <rect x="22" y="70" width="140" height="8" fill="#C9A961"/>
+          <text x="90" y="0" font-family="IBM Plex Mono" font-size="10" fill="#6B1E1E" text-anchor="middle" letter-spacing="1.5" font-weight="600">DMA CARD</text>
+          <text x="90" y="12" font-family="Newsreader" font-style="italic" font-size="10" fill="#6B1E1E" text-anchor="middle">the cheat hardware</text>
+        </g>
+
+        <!-- Sneaky arrow from DMA card directly to RAM (bypass) -->
+        <g>
+          <path d="M 720 225 Q 690 215 680 200 Q 670 185 690 175" fill="none" stroke="#6B1E1E" stroke-width="2.5" stroke-dasharray="5,3"/>
+          <polygon points="685,170 690,182 695,170" fill="#6B1E1E"/>
+          <text x="760" y="180" font-family="IBM Plex Mono" font-size="9" fill="#6B1E1E" text-anchor="middle" letter-spacing="1" font-weight="600">DIRECT ACCESS</text>
+          <text x="760" y="194" font-family="Newsreader" font-style="italic" font-size="10" fill="#6B1E1E" text-anchor="middle">never asks the CPU</text>
+        </g>
+
+        <!-- arrow showing anti-cheat looking wrong way -->
+        <g>
+          <path d="M 200 270 Q 165 250 150 195" fill="none" stroke="#1F3F2E" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.5"/>
+          <text x="240" y="295" font-family="Newsreader" font-style="italic" font-size="9" fill="#4A463E">anti-cheat is watching the CPU side &mdash;</text>
+          <text x="240" y="308" font-family="Newsreader" font-style="italic" font-size="9" fill="#4A463E">it has no way to see what the card is doing</text>
+        </g>
+      </svg>
+    </div>
+
+    <p class="caption">Anti-cheat software (Ricochet, EAC, BattlEye) lives <em>inside</em> the CPU and watches what other software does. But the DMA card doesn't run as software &mdash; it's a separate device that reads memory <strong>directly</strong>, the same way your graphics card does. The anti-cheat literally <strong>cannot see</strong> the card, the same way a security guard watching the front door can't see someone climbing in the back window.</p>
+  </section>
+
+  <!-- ====================================================================== -->
+  <!-- WHAT THE CHEATER SEES -->
+  <!-- ====================================================================== -->
+  <section>
+    <div class="section-num">Step 4 &middot; What this gives the cheater</div>
+    <h2>The game becomes transparent</h2>
+    <div class="section-rule"></div>
+
+    <div class="viz" style="padding:24px 16px">
+      <div class="dual">
+        <!-- Normal player -->
+        <div class="dual-panel normal">
+          <div class="panel-tag">A normal player sees</div>
+          <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:320px">
+            <rect x="0" y="0" width="320" height="200" fill="#2A2520"/>
+            <!-- ground -->
+            <rect x="0" y="150" width="320" height="50" fill="#3A3530"/>
+            <!-- visible wall -->
+            <rect x="120" y="60" width="60" height="120" fill="#4A463E" stroke="#1A1A1A" stroke-width="1.5"/>
+            <!-- another wall -->
+            <rect x="220" y="80" width="50" height="100" fill="#4A463E" stroke="#1A1A1A" stroke-width="1.5"/>
+            <!-- player crosshair -->
+            <line x1="155" y1="100" x2="170" y2="100" stroke="#FBF9F4" stroke-width="1"/>
+            <line x1="160" y1="95" x2="160" y2="110" stroke="#FBF9F4" stroke-width="1"/>
+            <!-- question marks for hidden enemies -->
+            <text x="150" y="115" font-family="Newsreader" font-style="italic" font-size="22" fill="#6B1E1E" opacity="0.4" text-anchor="middle">?</text>
+            <text x="245" y="135" font-family="Newsreader" font-style="italic" font-size="22" fill="#6B1E1E" opacity="0.4" text-anchor="middle">?</text>
+          </svg>
+          <p class="panel-text">Walls block the view. You don't know where the enemy is. Reaction time, sound, and skill decide who wins.</p>
+        </div>
+
+        <!-- DMA cheater -->
+        <div class="dual-panel cheat">
+          <div class="panel-tag">A DMA cheater sees</div>
+          <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:320px">
+            <rect x="0" y="0" width="320" height="200" fill="#2A2520"/>
+            <rect x="0" y="150" width="320" height="50" fill="#3A3530"/>
+            <!-- semi-transparent walls -->
+            <rect x="120" y="60" width="60" height="120" fill="#4A463E" stroke="#1A1A1A" stroke-width="1.5" opacity="0.45"/>
+            <rect x="220" y="80" width="50" height="100" fill="#4A463E" stroke="#1A1A1A" stroke-width="1.5" opacity="0.45"/>
+            <!-- ENEMIES VISIBLE THROUGH WALLS -->
+            <!-- enemy 1 behind wall -->
+            <ellipse cx="150" cy="115" rx="9" ry="14" fill="#6B1E1E"/>
+            <line x1="150" y1="100" x2="150" y2="80" stroke="#6B1E1E" stroke-width="2"/>
+            <text x="150" y="75" font-family="IBM Plex Mono" font-size="8" fill="#6B1E1E" text-anchor="middle" font-weight="600">ENEMY</text>
+            <text x="150" y="64" font-family="IBM Plex Mono" font-size="8" fill="#6B1E1E" text-anchor="middle" font-weight="600">87 HP</text>
+            <!-- enemy 2 behind wall -->
+            <ellipse cx="245" cy="130" rx="9" ry="14" fill="#6B1E1E"/>
+            <line x1="245" y1="116" x2="245" y2="96" stroke="#6B1E1E" stroke-width="2"/>
+            <text x="245" y="91" font-family="IBM Plex Mono" font-size="8" fill="#6B1E1E" text-anchor="middle" font-weight="600">ENEMY</text>
+            <text x="245" y="80" font-family="IBM Plex Mono" font-size="8" fill="#6B1E1E" text-anchor="middle" font-weight="600">100 HP</text>
+            <!-- player crosshair (locked) -->
+            <line x1="142" y1="115" x2="158" y2="115" stroke="#FBF9F4" stroke-width="1"/>
+            <line x1="150" y1="107" x2="150" y2="123" stroke="#FBF9F4" stroke-width="1"/>
+            <circle cx="150" cy="115" r="12" fill="none" stroke="#6B1E1E" stroke-width="1.5"/>
+          </svg>
+          <p class="panel-text">Walls are transparent. Every enemy has a glowing box around them with health, distance, and direction. The crosshair gets pulled to targets automatically.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="caption">The cheater isn't a better player. The cheater has <strong>perfect information</strong> &mdash; they know where every enemy is, how much health they have, and what they're doing, at all times, regardless of walls or line of sight. It is the difference between playing chess and playing chess while seeing the opponent's next three moves.</p>
+  </section>
+
+  <!-- ====================================================================== -->
+  <!-- WHO LEGITIMATELY HAS ONE -->
+  <!-- ====================================================================== -->
+  <section>
+    <div class="section-num">Step 5 &middot; Could it be innocent?</div>
+    <h2>Sometimes &mdash; but only for certain people</h2>
+    <div class="section-rule"></div>
+
+    <div class="viz" style="padding:24px 16px">
+      <div class="personas">
+        <div class="persona ok">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="22" r="10" fill="#1F3F2E"/>
+            <path d="M 12 60 Q 12 38 32 38 Q 52 38 52 60 Z" fill="#1F3F2E"/>
+            <rect x="20" y="48" width="24" height="4" fill="#FBF9F4"/>
+            <text x="32" y="56" font-family="IBM Plex Mono" font-size="6" fill="#FBF9F4" text-anchor="middle">ID</text>
+          </svg>
+          <div class="who">Hardware engineer</div>
+          <div class="says">"I write code for the chips in medical devices. <code style="font-family:var(--mono);font-size:.82rem">_top.bin</code> is what my job outputs every day."</div>
+          <span class="verdict">Innocent</span>
+        </div>
+        <div class="persona ok">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="22" r="10" fill="#1F3F2E"/>
+            <path d="M 12 60 Q 12 38 32 38 Q 52 38 52 60 Z" fill="#1F3F2E"/>
+            <rect x="14" y="8" width="36" height="6" fill="#1F3F2E"/>
+            <polygon points="50,8 60,12 50,16" fill="#1F3F2E"/>
+          </svg>
+          <div class="who">EE student</div>
+          <div class="says">"I'm taking a digital logic course. The university uses Xilinx tools and we build little projects all semester."</div>
+          <span class="verdict">Innocent</span>
+        </div>
+        <div class="persona flag">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="22" r="10" fill="#6B1E1E"/>
+            <path d="M 12 60 Q 12 38 32 38 Q 52 38 52 60 Z" fill="#6B1E1E"/>
+            <rect x="22" y="46" width="20" height="10" fill="#FBF9F4"/>
+            <line x1="26" y1="50" x2="38" y2="50" stroke="#6B1E1E" stroke-width="1.5"/>
+            <line x1="26" y1="53" x2="38" y2="53" stroke="#6B1E1E" stroke-width="1.5"/>
+          </svg>
+          <div class="who">Gamer with one in Downloads</div>
+          <div class="says">"I play Call of Duty. There's a <code style="font-family:var(--mono);font-size:.82rem">_top.bin</code> in my Downloads folder inside something called pcileech-squirrel."</div>
+          <span class="verdict">Not innocent</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="caption">The same file in different hands means different things. Context is everything. A hardware engineer's work folder full of <code style="font-family:var(--mono)">_top.bin</code> files is normal. The same file in a gamer's <code style="font-family:var(--mono)">Downloads</code> folder, inside a folder named after a known DMA-cheat board, is not.</p>
+  </section>
+
+  <!-- ====================================================================== -->
+  <!-- ENDNOTE -->
+  <!-- ====================================================================== -->
+  <section>
+    <div class="section-num">What the scan can and can't tell you</div>
+    <h2>The honest limits</h2>
+    <div class="section-rule"></div>
+
+    <div class="endnote">
+      <h3>Finding one is strong evidence. Not finding one means very little.</h3>
+      <p>If the scan finds a <code style="font-family:var(--mono);background:rgba(107,30,30,0.06);padding:1px 5px">_top.bin</code> on a gamer's computer, the most reasonable conclusion is that someone here was building hardware to cheat. It is still possible to imagine an innocent explanation (an unusual hobbyist, a borrowed PC) &mdash; but those explanations are rare and easy to verify.</p>
+      <p>The reverse is not true. The <em>absence</em> of <code style="font-family:var(--mono);background:rgba(31,63,46,0.08);padding:1px 5px">_top.bin</code> doesn't prove anything. DMA cheats are <strong>designed</strong> so the gaming PC and the building PC can be separate computers. A clean scan on the gaming PC says nothing about whether a development PC exists somewhere else.</p>
+      <p>This explainer covers one specific file. The full forensic scan looks at thirteen different categories of evidence and scores them by confidence. <code style="font-family:var(--mono)">_top.bin</code> is one of the strongest single signals. It is not the only one.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>PC Forensic Check &middot; Visual Explainer for <code>_top.bin</code> &middot; by Bread, with Drownmw</span>
+    <span>top-bin-explainer-offline.html</span>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,160 @@
+================================================================
+  QUICK READ - START HERE
+================================================================
+
+  VERDICT: CAPTURE STACK PRESENT
+
+  No vision-aimbot software, input-adapter configurator, or
+  traditional PC cheats were detected. However, this scan found
+  capture-card software and/or HID-emulation drivers.
+
+  These have legitimate uses (streaming, recording, controller
+  remapping via Steam or DS4Windows). They are disclosed here
+  because they are also components of console-MITM cheat stacks.
+  Their presence alone is not evidence of cheating.
+
+  Reviewer note: if you are auditing for cheat behavior, the
+  absence of any aimbot or adapter software alongside the
+  capture-card stack is the relevant finding.
+
+  Named items:
+    - [Installed] obs studio - [obs studio] OBS Studio
+    - [Installed] elgato - [elgato] Elgato 4K Capture Utility
+    - [Installed] ds4windows - [ds4windows] DS4Windows
+    - [Services] vigembus - [vigembus] ViGEmBus | Virtual Gamepad Emulation Bus | C:\Windows\System32\drivers\ViGEmBus.sys
+    - [Process] obs - obs64.exe (PID 8120)
+    - [Process] ds4windows - DS4Windows.exe (PID 10428)
+    - [Service] vigembus - ViGEmBus (Running)
+
+================================================================
+
+================================================================
+  CONSOLE RIG AUDIT v1.2 - CONSOLIDATED REPORT
+================================================================
+
+  Generated:  2026-05-25 22:36:55
+  Hostname:   BREAD-PC
+  Username:   BradS
+  OS:         Windows 11 (10.0.26200)
+  Admin mode: False
+  Verdict:    CAPTURE STACK PRESENT
+
+  Read-only scan. No system state was modified. No network calls.
+================================================================
+
+================================================================
+  SECTION 1 OF 3 - CHEAT TRACE SCAN
+================================================================
+
+  Summary (recent, within last 180 days - verdict-relevant):
+    HIGH    findings : 0
+    MEDIUM  findings : 4
+    INFO    items    : 2
+    WARN    (access) : 0
+
+  [MEDIUM/dual-use] [Installed] [obs studio] OBS Studio
+        Source: OBS Studio
+        Pattern: obs studio
+        Name: OBS Studio
+        Publisher: OBS Project
+        InstallDate: 2026-02-08
+        Version: 30.1.2
+
+  [MEDIUM/dual-use] [Installed] [elgato] Elgato 4K Capture Utility
+        Source: Elgato 4K Capture Utility
+        Pattern: elgato
+        Name: Elgato 4K Capture Utility
+        Publisher: Corsair Memory, Inc.
+        InstallDate: 2026-04-19
+        Version: 1.6.0
+
+  [MEDIUM/dual-use] [Installed] [ds4windows] DS4Windows
+        Source: DS4Windows
+        Pattern: ds4windows
+        Name: DS4Windows
+        Publisher: Ryochan7
+        InstallDate: 2026-01-15
+        Version: 3.3.3
+
+  [MEDIUM/dual-use] [Services] [vigembus] ViGEmBus | Virtual Gamepad Emulation Bus | C:\Windows\System32\drivers\ViGEmBus.sys
+        Source: ViGEmBus
+        Pattern: vigembus
+        ServiceName: ViGEmBus
+        DisplayName: Virtual Gamepad Emulation Bus
+        ImagePath: C:\Windows\System32\drivers\ViGEmBus.sys
+
+  [INFO/other] [ProcessModules] Scanned 6122 DLL modules across all running processes
+        Source: (scan)
+        ModulesScanned: 6122
+
+  [INFO/other] [RecencyDecay] Recency analysis: 4 recent, 0 historical (>180d demoted), 1 unknown-timestamp
+        Source: (summary)
+        ThresholdDays: 180
+        RecentFindings: 4
+        HistoricalFindings: 0
+        UnknownTimestampFindings: 1
+
+================================================================
+  SECTION 2 OF 3 - RUNNING PROCESSES (scored)
+================================================================
+
+  Total processes captured: 3
+    HIGH:   0
+    MEDIUM: 2
+    LOW:    0
+    CLEAN:  1
+
+  HIGH and MEDIUM processes (full detail):
+
+    [MEDIUM/dual-use] obs64.exe (PID 8120)
+        Path:    C:\Program Files\obs-studio\bin\64bit\obs64.exe
+        Cmd:     "C:\Program Files\obs-studio\bin\64bit\obs64.exe"
+        Reason:  matches 'obs' (dual-use tool)
+        Pattern: obs
+
+    [MEDIUM/dual-use] DS4Windows.exe (PID 10428)
+        Path:    C:\Program Files\DS4Windows\DS4Windows.exe
+        Cmd:     "C:\Program Files\DS4Windows\DS4Windows.exe"
+        Reason:  matches 'ds4windows' (dual-use tool)
+        Pattern: ds4windows
+
+  Full processes table (sorted by suspicion score):
+
+    MEDIUM  PID   8120  obs64.exe                         C:\Program Files\obs-studio\bin\64bit\obs64.exe
+    MEDIUM  PID  10428  DS4Windows.exe                    C:\Program Files\DS4Windows\DS4Windows.exe
+    CLEAN   PID   4288  explorer.exe                      C:\Windows\explorer.exe
+
+================================================================
+  SECTION 3 OF 3 - SERVICES (scored)
+================================================================
+
+  Total services captured: 1
+    HIGH:   0
+    MEDIUM: 1
+    LOW:    0
+    CLEAN:  0
+
+  HIGH and MEDIUM services (full detail):
+
+    [MEDIUM/dual-use] ViGEmBus (Running)
+        Display: Virtual Gamepad Emulation Bus
+        Path:    C:\Windows\System32\drivers\ViGEmBus.sys
+        Mode:    Manual
+        Reason:  matches 'vigembus' (dual-use tool)
+        Pattern: vigembus
+
+  Full services table (sorted by suspicion score):
+
+    MEDIUM  Running  ViGEmBus                          C:\Windows\System32\drivers\ViGEmBus.sys
+
+================================================================
+  COVERAGE LIMITATIONS
+================================================================
+
+  - The CONSOLE itself cannot be scanned. This script can only see the Windows PC connected to the rig. A pure console + TV setup with no PC in the loop cannot be audited this way - use the visual setup checklist (console-setup-checklist.html) instead.
+  - DMA cheats cannot be detected at runtime by design (no PC-side footprint). This scan flags DMA development artifacts only.
+  - Input devices configured on a separate machine and used purely as pass-through leave no trace on this PC.
+  - Keyword matching only. Sophisticated cleaners can wipe most of these artifacts.
+  - A clean result is necessary but not sufficient.
+
+  Report generated: 2026-05-25 22:36:55

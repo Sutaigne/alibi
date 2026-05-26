@@ -1,0 +1,332 @@
+================================================================
+  QUICK READ - START HERE
+================================================================
+
+  VERDICT: CHEATS DETECTED
+
+  This scan found HIGH-confidence indicators of cheat software,
+  HWID spoofers, or DMA-cheat development artifacts on this machine.
+
+  Named items (cheat-confidence):
+    - [Prefetch] engineowning - [engineowning] ENGINEOWNING
+    - [MUICache] rut.gg - [rut.gg] C:\Users\Bob\Downloads\RUT V4 Launcher.exe
+    - [DMA] ? - pcileech firmware build output: pcileech_top.bin
+    - [KnownHashes] RUT AND RUAVT LAUNCHER UPDATED.exe (rut.gg) - [RUT AND RUAVT LAUNCHER UPDATED.exe (rut.gg)] hash match - confirmed cheat sample
+    - [LOLDrivers] ? - VULNERABLE DRIVER - hash confirmed (BYOVD risk): rtcore64.sys
+    - [UserScripts] bcdedit /set testsigning - [bcdedit /set testsigning] ~\Desktop\setup.bat - high-risk command pattern inside script
+    - [UserScripts] MoveMouseRelative - [MoveMouseRelative] ~\Documents\macros\norecoil.lua - mouse-macro / anti-recoil script pattern
+    - [AIVision] aimmy - [aimmy] AI-vision aimbot executable: aimmy.exe
+    - [AIVision] ? - ONNX model co-located with AI-aimbot executable: yolov8n.onnx
+    - [BCD] ? - TEST SIGNING ENABLED - unsigned drivers can load
+    - [Process] engineowning - ENGINEOWNING.exe (PID 9128)
+    - [Service] hidhide - HidHide (Running)
+
+  Also detected (input devices - separate category):
+    - [USB] cronus - [cronus] Cronus Zen
+    - [AppData] ? - Cronus / Titan - 247 files, 38 distinct days
+
+  ----------------------------------------------------------------
+  HISTORICAL findings (logged, did NOT affect verdict)
+  ----------------------------------------------------------------
+  2 finding(s) older than 180 days were demoted by the
+  recency-decay rule. These are visible below in the full report but
+  did not count toward the verdict above. Old artifacts from games or
+  tools the user has long since stopped using should not make a
+  currently-clean machine look dirty.
+
+  Of these, 1 were originally HIGH-severity cheat or input matches.
+  The most-recent timestamps and AgeDays are recorded per finding.
+
+================================================================
+
+================================================================
+  PC FORENSIC CHECK v3.8 - CONSOLIDATED REPORT
+================================================================
+
+  Generated:  2026-05-25 22:36:55
+  Hostname:   BREAD-PC
+  Username:   BradS
+  OS:         Windows 11 (10.0.26200)
+  Admin mode: False
+  Verdict:    CHEATS DETECTED
+
+  Read-only scan. No system state was modified. One outbound network call (loldrivers.io, opt-in).
+================================================================
+
+================================================================
+  SECTION 1 OF 3 - CHEAT TRACE SCAN
+================================================================
+
+  Summary (recent, within last 180 days - verdict-relevant):
+    HIGH    findings : 12
+    MEDIUM  findings : 4
+    INFO    items    : 4
+    WARN    (access) : 2
+
+  Summary (historical, >180 days old - logged but did NOT affect verdict):
+    Demoted historical findings : 2
+    (Originally HIGH-severity   : 1)
+
+  [HIGH/cheat] [AIVision] [aimmy] AI-vision aimbot executable: aimmy.exe
+        Source: C:\Users\Bob\source\aimmy\aimmy.exe
+        Pattern: aimmy
+        FileName: aimmy.exe
+        FullPath: C:\Users\Bob\source\aimmy\aimmy.exe
+        SizeBytes: 18223104
+        Created: 2026-05-07T22:36:55
+        LastWrite: 2026-05-23T22:36:55
+
+  [HIGH/cheat] [AIVision] ONNX model co-located with AI-aimbot executable: yolov8n.onnx
+        Source: C:\Users\Bob\source\aimmy\yolov8n.onnx
+        FileName: yolov8n.onnx
+        FullPath: C:\Users\Bob\source\aimmy\yolov8n.onnx
+        SizeBytes: 12405633
+        CoLocated: C:\Users\Bob\source\aimmy\aimmy.exe
+        Created: 2026-05-07T22:36:55
+        LastWrite: 2026-05-07T22:36:55
+
+  [HIGH/input] [AppData] Cronus / Titan - 247 files, 38 distinct days
+        Source: C:\Users\Bob\AppData\Local\ConsoleTuner
+        Label: Cronus / Titan
+        Directory: C:\Users\Bob\AppData\Local\ConsoleTuner
+        FileCount: 247
+        DistinctActivityDays: 38
+        ActivitySpanDays: 95
+        OldestWrite: 2026-02-19T22:36:55
+        NewestWrite: 2026-05-24T22:36:55
+
+  [HIGH/cheat] [BCD] TEST SIGNING ENABLED - unsigned drivers can load
+        Source: testsigning
+
+  [HIGH/cheat] [DMA] pcileech firmware build output: pcileech_top.bin
+        Source: C:\Users\Bob\source\pcileech-fpga-build\pcileech_top.bin
+        FileName: pcileech_top.bin
+        FullPath: C:\Users\Bob\source\pcileech-fpga-build\pcileech_top.bin
+        Created: 2026-05-04T22:36:55
+
+  [HIGH/cheat] [KnownHashes] [RUT AND RUAVT LAUNCHER UPDATED.exe (rut.gg)] hash match - confirmed cheat sample
+        Source: C:\Users\Bob\Downloads\RUT AND RUAVT LAUNCHER UPDATED.exe
+        Pattern: RUT AND RUAVT LAUNCHER UPDATED.exe (rut.gg)
+        SHA256: b1b89dedcff0c502d605a707e550b1565224b5949e778168ac45f01b8171160f
+        FileName: RUT AND RUAVT LAUNCHER UPDATED.exe
+        FullPath: C:\Users\Bob\Downloads\RUT AND RUAVT LAUNCHER UPDATED.exe
+        SizeBytes: 8421376
+        LastWrite: 2026-05-20T22:36:55
+        KnownSampleOf: RUT AND RUAVT LAUNCHER UPDATED.exe (rut.gg)
+        HashSource: Hybrid Analysis sandbox report
+
+  [HIGH/cheat] [LOLDrivers] VULNERABLE DRIVER - hash confirmed (BYOVD risk): rtcore64.sys
+        Source: C:\Users\Bob\AppData\Local\Temp\rtcore64.sys
+        DeviceName: RTCore64
+        Manufacturer: MSI
+        IsSigned: True
+        FileName: rtcore64.sys
+        FilePath: C:\Users\Bob\AppData\Local\Temp\rtcore64.sys
+        LOLDrivers_Id: 0c9b1b21-5e26-4e0e-8baa-2bbb4ce4f0bd
+        LOLDrivers_Category: vulnerable
+        LOLDrivers_Tags: rtcore64.sys,rtcore32.sys
+        LOLDrivers_MatchBy: SHA256
+        SHA256: 01aa278b07b58dc46c84bd0b1b5c8e9ee4e62ea0bf7a695862444af32e87f1fd
+        LOLDrivers_URL: https://www.loldrivers.io/drivers/0c9b1b21-5e26-4e0e-8baa-2bbb4ce4f0bd/
+
+  [HIGH/cheat] [MUICache] [rut.gg] C:\Users\Bob\Downloads\RUT V4 Launcher.exe
+        Source: HKCU\...\MuiCache
+        Pattern: rut.gg
+        Value: C:\Users\Bob\Downloads\RUT V4 Launcher.exe
+        Data: RUT and RUAVT
+        LastWrite: 2026-05-20T22:36:55
+
+  [HIGH/cheat] [Prefetch] [engineowning] ENGINEOWNING
+        Source: C:\Windows\Prefetch\ENGINEOWNING.EXE-1A2B3C4D.pf
+        Pattern: engineowning
+        FirstSeen: 2026-05-11T22:36:55
+        LastModified: 2026-05-23T22:36:55
+
+  [HIGH/input] [USB] [cronus] Cronus Zen
+        Source: VID_2E24&PID_1000
+        Pattern: cronus
+        FriendlyName: Cronus Zen
+        VID_PID: VID_2E24&PID_1000
+        FirstInstall: 2026-01-25T22:36:55
+        LastArrival: 2026-05-24T22:36:55
+        LastRemoval: 2026-05-25T18:36:55
+
+  [HIGH/cheat] [UserScripts] [bcdedit /set testsigning] ~\Desktop\setup.bat - high-risk command pattern inside script
+        Source: C:\Users\Bob\Desktop\setup.bat
+        Pattern: bcdedit /set testsigning
+        MatchKind: high-risk command in script
+        FileName: setup.bat
+        FullPath: C:\Users\Bob\Desktop\setup.bat
+        SizeBytes: 412
+        LastWrite: 2026-05-17T22:36:55
+
+  [HIGH/cheat] [UserScripts] [MoveMouseRelative] ~\Documents\macros\norecoil.lua - mouse-macro / anti-recoil script pattern
+        Source: C:\Users\Bob\Documents\macros\norecoil.lua
+        Pattern: MoveMouseRelative
+        MatchKind: mouse-macro / anti-recoil script
+        FileName: norecoil.lua
+        FullPath: C:\Users\Bob\Documents\macros\norecoil.lua
+        SizeBytes: 1847
+        LastWrite: 2026-05-22T22:36:55
+
+  [MEDIUM/dual-use] [DLLInject] Injector activity: xenos64.dll @ 2026-05-14T22:36:55
+        Source: Sysmon EID 7
+        Source: Sysmon EID 7
+        Timestamp: 2026-05-14T22:36:55
+        ImageLoaded: C:\Users\Bob\source\xenos\xenos64.dll
+        TargetProcess: explorer.exe
+        ProcessId: 4288
+
+  [MEDIUM/dual-use] [Drivers] UNSIGNED: obscure_helper
+        Source: obscure_helper
+        DeviceName: obscure_helper
+        Manufacturer: Unknown
+        IsSigned: False
+        FileName: obscure_helper.sys
+        FilePath: C:\Windows\System32\drivers\obscure_helper.sys
+
+  [MEDIUM/dual-use] [Installed] [cheatengine] Cheat Engine 7.5
+        Source: Cheat Engine 7.5
+        Pattern: cheatengine
+        Name: Cheat Engine 7.5
+        Publisher: Dark Byte
+        InstallDate: 2026-03-12
+        Version: 7.5
+
+  [MEDIUM/dual-use] [ObscuredNames] Obscured filename: raw hex name (deadbeef12345678.exe)
+        Source: C:\Users\Bob\Downloads\deadbeef12345678.exe
+        FileName: deadbeef12345678.exe
+        FullPath: C:\Users\Bob\Downloads\deadbeef12345678.exe
+        Pattern: raw hex name (deadbeef12345678.exe)
+        SizeBytes: 1204800
+        LastWrite: 2026-05-21T22:36:55
+
+  [WARN/other] [BAM] Access denied
+        Source: HKLM\SYSTEM\CurrentControlSet\Services\bam\State\UserSettings
+
+  [WARN/other] [ShimCache] Access denied
+        Source: HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\AppCompatCache
+
+  [INFO/other] [AIVision] ONNX model present (no aimbot constellation): resnet50.onnx
+        Source: C:\Users\Bob\Documents\ml-class\resnet50.onnx
+        FileName: resnet50.onnx
+        FullPath: C:\Users\Bob\Documents\ml-class\resnet50.onnx
+        SizeBytes: 102400000
+        Created: 2026-04-13T22:36:55
+        LastWrite: 2026-04-15T22:36:55
+
+  [INFO/other] [KnownHashes] Hashed 312 executables, checked against 1 known-bad SHA256 sample(s)
+        Source: (scan)
+        Hashed: 312
+        DatabaseSize: 1
+
+  [INFO/other] [ProcessModules] Scanned 8412 DLL modules across all running processes
+        Source: (scan)
+        ModulesScanned: 8412
+
+  [INFO/other] [RecencyDecay] Recency analysis: 19 recent, 4 historical (>180d demoted), 2 unknown-timestamp
+        Source: (summary)
+        ThresholdDays: 180
+        RecentFindings: 19
+        HistoricalFindings: 4
+        UnknownTimestampFindings: 2
+
+  ------------------------------------------------------------
+  HISTORICAL FINDINGS (>180 days old, did NOT affect verdict)
+  ------------------------------------------------------------
+
+  [INFO/input] [Installed] [HISTORICAL was MEDIUM, 2750d old] [xim] XIM Manager 2018
+        Source: Old XIM Manager
+        Pattern: xim
+        Name: XIM Manager 2018
+        InstallDate: 2018-11-04
+        MostRecentTimestamp: 2018-11-04T00:00:00
+        AgeDays: 2750
+        RecencyClass: historical
+        OriginalSeverity: MEDIUM
+
+  [MEDIUM/cheat] [Prefetch] [HISTORICAL was HIGH, 420d old] [engineowning] OLDCHEAT (CoD MW 2019)
+        Source: C:\Windows\Prefetch\OLDCHEAT.EXE-9F8E7D6C.pf
+        Pattern: engineowning
+        FirstSeen: 2024-06-04T22:36:55
+        LastModified: 2025-03-31T22:36:55
+        MostRecentTimestamp: 2025-03-31T22:36:55
+        AgeDays: 420
+        RecencyClass: historical
+        OriginalSeverity: HIGH
+
+================================================================
+  SECTION 2 OF 3 - RUNNING PROCESSES (scored)
+================================================================
+
+  Total processes captured: 5
+    HIGH:   1
+    MEDIUM: 1
+    LOW:    1
+    CLEAN:  2
+
+  HIGH and MEDIUM processes (full detail):
+
+    [HIGH/cheat] ENGINEOWNING.exe (PID 9128)
+        Path:    C:\Users\Bob\AppData\Local\engineowning\EO.exe
+        Cmd:     "C:\Users\Bob\AppData\Local\engineowning\EO.exe" --loader
+        Reason:  matches 'engineowning' (cheat keyword)
+        Pattern: engineowning
+
+    [MEDIUM/dual-use] cheatengine-x86_64.exe (PID 7416)
+        Path:    C:\Program Files\Cheat Engine 7.5\cheatengine-x86_64.exe
+        Cmd:     "C:\Program Files\Cheat Engine 7.5\cheatengine-x86_64.exe"
+        Reason:  matches 'cheatengine' (dual-use tool)
+        Pattern: cheatengine
+
+  Full processes table (sorted by suspicion score):
+
+    HIGH    PID   9128  ENGINEOWNING.exe                  C:\Users\Bob\AppData\Local\engineowning\EO.exe
+    MEDIUM  PID   7416  cheatengine-x86_64.exe            C:\Program Files\Cheat Engine 7.5\cheatengine-x86_64.exe
+    CLEAN   PID   4288  explorer.exe                      C:\Windows\explorer.exe
+    CLEAN   PID   1248  svchost.exe                       C:\Windows\System32\svchost.exe
+    LOW     PID  12384  chrome.exe                        C:\Program Files\Google\Chrome\Application\chrome.exe
+
+================================================================
+  SECTION 3 OF 3 - SERVICES (scored)
+================================================================
+
+  Total services captured: 3
+    HIGH:   1
+    MEDIUM: 1
+    LOW:    0
+    CLEAN:  1
+
+  HIGH and MEDIUM services (full detail):
+
+    [HIGH/cheat] HidHide (Running)
+        Display: HidHide Service
+        Path:    C:\Program Files\Nefarius Software Solutions\HidHide\x64\HidHideClient.exe
+        Mode:    Auto
+        Reason:  matches 'hidhide' (cheat keyword)
+        Pattern: hidhide
+
+    [MEDIUM/dual-use] ViGEmBus (Running)
+        Display: Virtual Gamepad Emulation Bus
+        Path:    C:\Windows\System32\drivers\ViGEmBus.sys
+        Mode:    Manual
+        Reason:  matches 'vigembus' (dual-use tool)
+        Pattern: vigembus
+
+  Full services table (sorted by suspicion score):
+
+    HIGH    Running  HidHide                           C:\Program Files\Nefarius Software Solutions\HidHide\x64\HidHideClient.exe
+    CLEAN   Stopped  vgc                               "C:\Program Files\Riot Vanguard\vgc.exe"
+    MEDIUM  Running  ViGEmBus                          C:\Windows\System32\drivers\ViGEmBus.sys
+
+================================================================
+  COVERAGE LIMITATIONS
+================================================================
+
+  - DMA cheats cannot be detected at runtime by design (no PC-side footprint). This scan flags DMA development artifacts only.
+  - Input devices configured on a separate machine leave no trace on this PC.
+  - Session duration is recorded in SRUM and requires an ESE database parser. Not extracted here.
+  - Keyword matching only. Sophisticated cleaners can wipe most of these artifacts.
+  - A clean result is necessary but not sufficient.
+
+  Report generated: 2026-05-25 22:36:55

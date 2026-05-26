@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pc-check"
+version = "3.8.0"
+description = "Read-only Windows forensic kit demonstrating absence of cheat software (Python parity port)."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "Bread" },
+    { name = "Drownmw" },
+]
+keywords = ["forensics", "windows", "anti-cheat", "audit"]
+classifiers = [
+    "Environment :: Console",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Topic :: Security",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[project.scripts]
+pc-check = "pc_check.forensic_scan:main"
+pc-check-console-rig = "pc_check.console_rig_audit:main"
+
+[project.urls]
+Homepage = "https://github.com/Bread-and-Drownmw/pc-check"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+pc_check = ["py.typed", "visual_styles.css", "visual_scripts.js"]

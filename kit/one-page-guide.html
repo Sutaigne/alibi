@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PC Forensic Check - One-Page Guide</title>
+<meta name="description" content="Complete one-page guide to the PC Forensic Check kit: what it is, what's in it, how to run it, how to read the report, safety attestation, and honest limits.">
+<style>
+:root{
+  --bg:#F5F2EB;--paper:#FBF9F4;--ink:#1A1A1A;--ink-soft:#4A463E;--ink-faint:#8A857C;
+  --rule:#D8D2C7;--rule-strong:#B8B0A0;
+  --high:#6B1E1E;--med:#8A6914;--low:#2E3A4A;--clean:#1F3F2E;
+  --serif:Georgia,'Iowan Old Style','Palatino Linotype','Book Antiqua',Palatino,serif;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,Roboto,'Helvetica Neue',Arial,sans-serif;
+  --mono:ui-monospace,'Cascadia Mono','Segoe UI Mono',Consolas,'Liberation Mono','Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;padding:48px 24px;-webkit-font-smoothing:antialiased}
+.page{max-width:1100px;margin:0 auto;background:var(--paper);padding:56px 56px;border:1px solid var(--rule);box-shadow:0 1px 0 var(--rule),0 4px 24px rgba(0,0,0,.04)}
+
+.eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--high);margin-bottom:8px}
+h1.title{font-family:var(--serif);font-weight:500;font-size:2.6rem;line-height:1.05;letter-spacing:-.018em;margin-bottom:10px}
+.subtitle{font-family:var(--serif);font-style:italic;font-size:1.18rem;color:var(--ink-soft);margin-top:14px;margin-bottom:32px;max-width:780px;line-height:1.5}
+
+.toc{padding:18px 24px;background:rgba(46,58,74,0.04);border:1px solid var(--rule);margin-bottom:48px;font-family:var(--mono);font-size:.78rem}
+.toc-label{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:10px;font-weight:600}
+.toc ul{list-style:none;display:flex;flex-wrap:wrap;gap:18px 28px}
+.toc a{color:var(--ink);text-decoration:none;border-bottom:1px dotted var(--rule-strong)}
+.toc a:hover{color:var(--high);border-bottom-color:var(--high)}
+
+section{margin-bottom:64px}
+.section-num{font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;color:var(--high);font-weight:500;margin-bottom:4px;text-transform:uppercase}
+h2{font-family:var(--serif);font-weight:500;font-size:1.65rem;letter-spacing:-.01em;margin-bottom:8px;line-height:1.2}
+.section-rule{height:1px;background:var(--rule);margin:14px 0 28px 0}
+.caption{font-family:var(--serif);font-style:italic;font-size:1.05rem;line-height:1.6;color:var(--ink-soft);max-width:840px;margin-top:18px}
+.caption strong{font-style:normal;font-family:var(--sans);font-weight:600;color:var(--ink)}
+.lead{font-family:var(--serif);font-size:1.1rem;line-height:1.6;color:var(--ink);max-width:840px;margin-bottom:18px}
+
+.viz{background:#F5F2EB;border:1px solid var(--rule);padding:32px 24px;margin-top:8px;display:flex;align-items:center;justify-content:center}
+.viz svg{max-width:100%;height:auto;display:block}
+
+/* Hero flow */
+.hero-flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:8px;align-items:center;width:100%;max-width:920px}
+.hero-step{background:var(--paper);border:1px solid var(--rule);padding:20px 16px;text-align:center;border-radius:4px}
+.hero-step.highlight{border:2px solid var(--high);background:rgba(107,30,30,0.04)}
+.hero-step svg{margin:0 auto 8px}
+.hero-step .label{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:4px;font-weight:600}
+.hero-step .name{font-family:var(--serif);font-size:1rem;font-weight:500;line-height:1.3}
+.hero-arrow{color:var(--ink-faint);font-family:var(--mono);font-size:1.4rem;font-weight:300}
+
+/* Files split */
+.files-split{display:grid;grid-template-columns:1fr 1fr;gap:24px;width:100%}
+.files-col{background:var(--paper);border:1px solid var(--rule);padding:24px 26px}
+.files-col.you{border-left:4px solid var(--high)}
+.files-col.engine{border-left:4px solid var(--low)}
+.files-col .col-label{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px;font-weight:600}
+.files-col.you .col-label{color:var(--high)}
+.files-col.engine .col-label{color:var(--low)}
+.files-col h3{font-family:var(--serif);font-size:1.15rem;font-weight:500;margin-bottom:16px;line-height:1.3}
+.file-item{padding:10px 0;border-bottom:1px dotted var(--rule)}
+.file-item:last-child{border-bottom:none}
+.file-name{font-family:var(--mono);font-size:.86rem;color:var(--ink);font-weight:500;margin-bottom:3px}
+.file-purpose{font-family:var(--serif);font-style:italic;font-size:.92rem;color:var(--ink-soft);line-height:1.45}
+
+/* Steps */
+.steps-list{display:grid;grid-template-columns:1fr;gap:14px;width:100%}
+.step{display:grid;grid-template-columns:60px 1fr;gap:20px;padding:18px 22px;border:1px solid var(--rule);background:var(--paper);align-items:center}
+.step-num{font-family:var(--mono);font-size:1.8rem;color:var(--high);font-weight:500;line-height:1;text-align:center}
+.step-body h3{font-family:var(--serif);font-size:1.1rem;font-weight:500;margin-bottom:6px;line-height:1.3}
+.step-body p{font-family:var(--sans);font-size:.94rem;line-height:1.55;color:var(--ink-soft)}
+.step-body code{font-family:var(--mono);font-size:.86rem;background:rgba(46,58,74,0.05);padding:1px 5px;border-radius:2px}
+
+/* Report sample */
+.sample-block{background:var(--paper);border:1px solid var(--rule);padding:20px 24px;margin-bottom:18px;font-family:var(--mono);font-size:.78rem;color:var(--ink);line-height:1.5;white-space:pre-wrap;overflow-x:auto}
+.sample-block.high{border-left:4px solid var(--high)}
+.sample-block.section{border-left:4px solid var(--low)}
+.sample-header{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:10px;font-weight:600}
+
+/* Verdict tier glossary */
+.verdicts{display:grid;grid-template-columns:1fr;gap:10px;width:100%}
+.verdict-row{display:grid;grid-template-columns:200px 1fr;gap:18px;padding:14px 20px;border:1px solid var(--rule);background:var(--paper);align-items:center}
+.verdict-tag{font-family:var(--mono);font-size:.78rem;font-weight:600;letter-spacing:.04em;padding:6px 10px;border-radius:2px;text-align:center}
+.verdict-tag.red{background:rgba(107,30,30,0.08);color:var(--high)}
+.verdict-tag.amber{background:rgba(138,105,20,0.08);color:var(--med)}
+.verdict-tag.green{background:rgba(31,63,46,0.08);color:var(--clean)}
+.verdict-desc{font-family:var(--sans);font-size:.92rem;line-height:1.5;color:var(--ink)}
+
+/* Security guarantees */
+.guarantees{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%}
+.guarantee{padding:18px 22px;border:1px solid var(--rule);background:var(--paper);border-left:4px solid var(--clean);display:flex;gap:14px;align-items:flex-start}
+.guarantee-icon{flex-shrink:0;width:24px;height:24px;background:var(--clean);color:#FBF9F4;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:1rem}
+.guarantee-body h4{font-family:var(--serif);font-size:1.02rem;font-weight:500;margin-bottom:4px;line-height:1.3}
+.guarantee-body p{font-family:var(--sans);font-size:.88rem;line-height:1.5;color:var(--ink-soft)}
+.guarantee-body code{font-family:var(--mono);font-size:.82rem;background:rgba(46,58,74,0.05);padding:1px 5px;border-radius:2px}
+
+/* Verify cards */
+.verify-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;margin-top:18px}
+.verify-card{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--low);padding:18px 20px}
+.verify-card .num{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;color:var(--low);margin-bottom:6px;font-weight:600}
+.verify-card h4{font-family:var(--serif);font-size:1rem;font-weight:500;margin-bottom:6px;line-height:1.3}
+.verify-card p{font-family:var(--sans);font-size:.86rem;line-height:1.5;color:var(--ink-soft)}
+.verify-card code{font-family:var(--mono);font-size:.8rem;background:rgba(46,58,74,0.06);padding:1px 5px;border-radius:2px}
+
+/* Limits split */
+.limits-split{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%}
+.limits-col{background:var(--paper);border:1px solid var(--rule);padding:22px 26px}
+.limits-col.catches{border-left:4px solid var(--clean)}
+.limits-col.misses{border-left:4px solid var(--high)}
+.limits-col .col-label{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;font-weight:600}
+.limits-col.catches .col-label{color:var(--clean)}
+.limits-col.misses .col-label{color:var(--high)}
+.limits-col h3{font-family:var(--serif);font-size:1.12rem;font-weight:500;margin-bottom:14px;line-height:1.3}
+.limits-col ul{list-style:none;padding:0;margin:0}
+.limits-col li{font-family:var(--sans);font-size:.92rem;line-height:1.5;padding:7px 0 7px 24px;position:relative;border-bottom:1px dotted var(--rule)}
+.limits-col li:last-child{border-bottom:none}
+.limits-col.catches li::before{content:"\2713";position:absolute;left:0;top:7px;font-family:var(--mono);font-size:1rem;color:var(--clean);font-weight:700}
+.limits-col.misses li::before{content:"\2715";position:absolute;left:0;top:7px;font-family:var(--mono);font-size:1rem;color:var(--high);font-weight:700}
+
+.closing{padding:24px 30px;background:rgba(46,58,74,0.05);border:1px solid var(--rule);border-left:6px solid var(--low);margin-top:24px}
+.closing p{font-family:var(--serif);font-size:1.18rem;line-height:1.45;color:var(--ink)}
+.closing p strong{font-style:normal;font-family:var(--sans);font-weight:600}
+
+footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;font-family:var(--mono);font-size:.7rem;color:var(--ink-faint);letter-spacing:.04em}
+
+@media (max-width:760px){
+  body{padding:16px 0}
+  .page{padding:36px 24px;border-left:none;border-right:none}
+  h1.title{font-size:1.9rem}
+  .hero-flow{grid-template-columns:1fr;gap:12px}
+  .hero-arrow{transform:rotate(90deg);padding:4px 0;text-align:center}
+  .files-split,.limits-split,.guarantees{grid-template-columns:1fr}
+  .verify-row{grid-template-columns:1fr}
+  .verdict-row{grid-template-columns:1fr;gap:8px}
+  .step{grid-template-columns:1fr;gap:8px}
+  .step-num{text-align:left}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="eyebrow">PC Forensic Check &middot; One-Page Guide</div>
+  <h1 class="title">Everything you need to know</h1>
+  <p class="subtitle">What this is, what's in the folder, how to run it, how to read the report, why it's safe, and what it can and can't catch &mdash; all in one page.</p>
+
+  <div class="toc">
+    <div class="toc-label">Jump to</div>
+    <ul>
+      <li><a href="#what">1. What this is</a></li>
+      <li><a href="#files">2. What's in the files</a></li>
+      <li><a href="#how">3. How to use it</a></li>
+      <li><a href="#reading">4. Reading the report</a></li>
+      <li><a href="#safety">5. Why it's safe</a></li>
+      <li><a href="#limits">6. Honest limits</a></li>
+    </ul>
+  </div>
+
+  <!-- ================================================================== -->
+  <!-- SECTION 1: WHAT THIS IS -->
+  <!-- ================================================================== -->
+  <section id="what">
+    <div class="section-num">1 &middot; What this is</div>
+    <h2>A read-only Windows scanner that produces credible proof</h2>
+    <div class="section-rule"></div>
+
+    <p class="lead">Someone asked you to demonstrate that your gaming setup isn't running cheats. This kit lets you do that. You run a scan on your machine. It writes four files to your Desktop. You send those files. The reviewer reads them and decides for themselves.</p>
+
+    <div class="viz">
+      <div class="hero-flow">
+        <div class="hero-step">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <rect x="8" y="14" width="48" height="32" rx="3" fill="#3A3530" stroke="#1A1A1A" stroke-width="2"/>
+            <rect x="14" y="20" width="36" height="20" fill="#2A2520"/>
+            <rect x="22" y="48" width="20" height="3" fill="#3A3530"/>
+            <rect x="14" y="51" width="36" height="3" fill="#3A3530"/>
+          </svg>
+          <div class="label">Step 1</div>
+          <div class="name">Your gaming<br>PC</div>
+        </div>
+        <div class="hero-arrow">&rarr;</div>
+        <div class="hero-step highlight">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <path d="M 12 6 L 44 6 L 56 18 L 56 58 L 12 58 Z" fill="#FBF9F4" stroke="#6B1E1E" stroke-width="2"/>
+            <path d="M 44 6 L 44 18 L 56 18" fill="none" stroke="#6B1E1E" stroke-width="2"/>
+            <text x="34" y="36" font-family="IBM Plex Mono" font-size="8" fill="#6B1E1E" text-anchor="middle" font-weight="600">Run</text>
+            <text x="34" y="46" font-family="IBM Plex Mono" font-size="8" fill="#6B1E1E" text-anchor="middle" font-weight="600">scan.bat</text>
+          </svg>
+          <div class="label">Step 2</div>
+          <div class="name">Double-click<br>the launcher</div>
+        </div>
+        <div class="hero-arrow">&rarr;</div>
+        <div class="hero-step">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <path d="M 10 6 L 32 6 L 40 14 L 40 50 L 10 50 Z" fill="#FBF9F4" stroke="#1F3F2E" stroke-width="1.5"/>
+            <path d="M 32 6 L 32 14 L 40 14" fill="none" stroke="#1F3F2E" stroke-width="1.5"/>
+            <line x1="16" y1="22" x2="34" y2="22" stroke="#1F3F2E" stroke-width="1"/>
+            <line x1="16" y1="27" x2="30" y2="27" stroke="#8A857C" stroke-width="0.8"/>
+            <line x1="16" y1="32" x2="34" y2="32" stroke="#8A857C" stroke-width="0.8"/>
+            <path d="M 24 14 L 46 14 L 54 22 L 54 58 L 24 58 Z" fill="#FBF9F4" stroke="#1F3F2E" stroke-width="1.5"/>
+            <path d="M 46 14 L 46 22 L 54 22" fill="none" stroke="#1F3F2E" stroke-width="1.5"/>
+            <line x1="30" y1="30" x2="48" y2="30" stroke="#1F3F2E" stroke-width="1"/>
+            <line x1="30" y1="35" x2="44" y2="35" stroke="#8A857C" stroke-width="0.8"/>
+            <line x1="30" y1="40" x2="48" y2="40" stroke="#8A857C" stroke-width="0.8"/>
+          </svg>
+          <div class="label">Step 3</div>
+          <div class="name">Reports appear<br>on your Desktop</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="caption">PC Forensic Check is <strong>read-only</strong>. It does not connect to the internet. It does not install anything. It does not change any system setting. It runs once, writes the report files, and exits. Total runtime: about 2-3 minutes.</p>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- SECTION 2: WHAT'S IN THE FILES -->
+  <!-- ================================================================== -->
+  <section id="files">
+    <div class="section-num">2 &middot; What's in the files</div>
+    <h2>Two things you touch. Everything else is the engine.</h2>
+    <div class="section-rule"></div>
+
+    <p class="lead">When you open the folder, you see three things: a text file telling you what to do, a launcher to double-click, and a "kit" subfolder containing everything that runs behind the scenes. You only ever interact with the first two.</p>
+
+    <div class="files-split">
+      <div class="files-col you">
+        <div class="col-label">You interact with these</div>
+        <h3>Top level</h3>
+        <div class="file-item">
+          <div class="file-name">START HERE.txt</div>
+          <div class="file-purpose">A short readable intro. Open it first if you want to know what you're looking at before clicking anything.</div>
+        </div>
+        <div class="file-item">
+          <div class="file-name">Run scan.bat</div>
+          <div class="file-purpose">The launcher. Right-click &rarr; Run as administrator. Both scans run automatically. The window shows progress and stays open at the end so you can read the summary.</div>
+        </div>
+        <div class="file-item">
+          <div class="file-name">kit\</div>
+          <div class="file-purpose">The engine subfolder. You don't need to open anything in here &mdash; the launcher handles it. Reference docs live here for the reviewer if they want them.</div>
+        </div>
+      </div>
+      <div class="files-col engine">
+        <div class="col-label">Inside the kit\ subfolder</div>
+        <h3>The engine + reference docs</h3>
+        <div class="file-item">
+          <div class="file-name">forensic-common.ps1</div>
+          <div class="file-purpose">The shared scan engine. ~900 lines of plain PowerShell. Contains every keyword the scan looks for and every utility function.</div>
+        </div>
+        <div class="file-item">
+          <div class="file-name">forensic-scan.ps1</div>
+          <div class="file-purpose">Runs the PC-mode scan. Looks for PC-side cheats, DMA artifacts, HWID spoofers.</div>
+        </div>
+        <div class="file-item">
+          <div class="file-name">console-rig-audit.ps1</div>
+          <div class="file-purpose">Runs the console-rig-mode scan. Looks for console-MITM cheat stacks (vision aimbots, input adapters).</div>
+        </div>
+        <div class="file-item">
+          <div class="file-name">generate-visual-companion(-console).ps1</div>
+          <div class="file-purpose">Renders the .txt reports into HTML visuals so they're easier to read.</div>
+        </div>
+        <div class="file-item">
+          <div class="file-name">pc-check-safety-card.html</div>
+          <div class="file-purpose">Safety attestation. Open this if you're the reviewer and want a one-page verification of what the scan does and doesn't do.</div>
+        </div>
+        <div class="file-item">
+          <div class="file-name">README.txt + other explainers</div>
+          <div class="file-purpose">Reference documentation, deeper explainers for specific topics (DMA, console lockdown, etc.).</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="caption">Every <code>.ps1</code> file in <code>kit\</code> is plain text. Right-click any of them and Open with &rarr; Notepad to read every line the scan runs. There is no compiled binary, no installer, no obfuscation.</p>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- SECTION 3: HOW TO -->
+  <!-- ================================================================== -->
+  <section id="how">
+    <div class="section-num">3 &middot; How to use it</div>
+    <h2>Four steps, no decisions.</h2>
+    <div class="section-rule"></div>
+
+    <div class="steps-list">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>Download and unzip the folder</h3>
+          <p>Put it anywhere &mdash; Desktop, Downloads, a USB stick. The folder structure must stay intact (the <code>Run scan.bat</code> looks for the <code>kit\</code> subfolder next to it).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Right-click <code>Run scan.bat</code> &rarr; "Run as administrator"</h3>
+          <p>Windows will show a UAC prompt asking for admin permission. Click <strong>YES</strong>. The scan needs admin to read several Windows forensic sources (Prefetch, BAM, USB history, etc.). Without admin most of these come back blank, and the report is too incomplete to be useful.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>Wait about 2-3 minutes</h3>
+          <p>Both scans run automatically &mdash; first the PC-mode scan, then the console-rig-mode scan. The black window shows progress messages. Do not close it.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h3>Send the four output files</h3>
+          <p>When the scan finishes the window stays open with a "FINAL SCAN SUMMARY" block showing both verdicts. Four files appear on your Desktop:</p>
+          <p style="font-family:var(--mono);font-size:.86rem;margin-top:8px;background:rgba(46,58,74,0.05);padding:10px 14px;border-radius:2px">
+            PCForensicCheck_&lt;timestamp&gt;.txt<br>
+            PCForensicCheck_&lt;timestamp&gt;_visual.html<br>
+            ConsoleRigAudit_&lt;timestamp&gt;.txt<br>
+            ConsoleRigAudit_&lt;timestamp&gt;_visual.html
+          </p>
+          <p style="margin-top:8px">Send the <code>.txt</code> files (or the <code>.html</code> visuals &mdash; both contain the same data) to whoever asked.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="caption">There is no menu, no configuration, no decisions. The launcher runs both modes automatically because <strong>most setups benefit from both</strong>. If you're a pure PC gamer the console report will be CLEAN (expected); if you're a pure console gamer with a PC in your rig the PC report will be CLEAN (also expected). The relevant report is whichever has findings.</p>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- SECTION 4: READING THE REPORT -->
+  <!-- ================================================================== -->
+  <section id="reading">
+    <div class="section-num">4 &middot; Reading the report</div>
+    <h2>What the .txt and .html files actually contain</h2>
+    <div class="section-rule"></div>
+
+    <p class="lead">Each report has the same structure. The first thing you see is a <strong>QUICK READ block</strong> at the top with the verdict and named items. Below that are three detailed sections: cheat-trace findings, scored running processes, and scored services. The <code>_visual.html</code> companion shows the same data as charts and tables.</p>
+
+    <p class="sample-header">What the top of every .txt looks like:</p>
+    <div class="sample-block high">================================================================
+  QUICK READ - START HERE
+================================================================
+
+  VERDICT: CLEAN
+
+  No HIGH or MEDIUM matches against the cheat / input-device /
+  dual-use keyword database.
+
+  Scope of this scan:
+    Cheat-trace findings checked : 1247 total artifacts
+    Running processes scored     : 232
+    Services scored              : 491
+
+  This is necessary but not sufficient evidence. See limitations
+  section at the bottom of this report for what this scan cannot
+  detect.
+
+================================================================</div>
+
+    <p class="sample-header">What an individual finding looks like (if any are flagged):</p>
+    <div class="sample-block section">  [HIGH/cheat] [Prefetch] [pcileech] PCILEECH.EXE-A1B2C3D4.pf
+        Source: C:\Windows\Prefetch\PCILEECH.EXE-A1B2C3D4.pf
+        FirstSeen: 2025-12-04T18:22:10
+        LastModified: 2026-04-11T03:15:42
+        Pattern: pcileech</div>
+
+    <p class="caption">Each finding says: severity (HIGH/MEDIUM), category (cheat/input/dual-use), what scan source matched it (Prefetch, BAM, USB, etc.), what keyword pattern matched, where the evidence was found on disk or in the registry, and any relevant timestamps.</p>
+
+    <h3 style="font-family:var(--serif);font-size:1.3rem;font-weight:500;margin-top:36px;margin-bottom:14px">The verdict tier glossary</h3>
+
+    <div class="verdicts">
+      <div class="verdict-row">
+        <span class="verdict-tag red">CHEATS DETECTED</span>
+        <span class="verdict-desc">PC-mode found a HIGH-confidence keyword match for a cheat brand, HWID spoofer, or DMA artifact. The report names exactly what and where.</span>
+      </div>
+      <div class="verdict-row">
+        <span class="verdict-tag red">INPUT DEVICES DETECTED</span>
+        <span class="verdict-desc">PC-mode found HIGH-confidence matches for XIM / Cronus / ReaSnow / KMBox / reWASD configurator software. Whether these are cheats depends on the game's rules.</span>
+      </div>
+      <div class="verdict-row">
+        <span class="verdict-tag red">MITM CHEAT STACK DETECTED</span>
+        <span class="verdict-desc">Console-rig-mode found the canonical console-cheat fingerprint: vision-aimbot software, input-adapter configurators, or DMA artifacts on the rig PC.</span>
+      </div>
+      <div class="verdict-row">
+        <span class="verdict-tag amber">CAPTURE STACK PRESENT</span>
+        <span class="verdict-desc">Console-rig-mode found capture-card software (Elgato, OBS) or HID-emulation drivers (ViGEmBus, DS4Windows) but no aimbot or adapter software. Usually means: legit streamer setup, not a cheater.</span>
+      </div>
+      <div class="verdict-row">
+        <span class="verdict-tag amber">UNSURE</span>
+        <span class="verdict-desc">No HIGH matches but at least one MEDIUM. Typically dual-use tools (Cheat Engine, x64dbg, BleachBit) or binaries in user-writable locations the allowlist doesn't recognize. Needs human review.</span>
+      </div>
+      <div class="verdict-row">
+        <span class="verdict-tag green">CLEAN</span>
+        <span class="verdict-desc">No HIGH and no MEDIUM matches. The report still includes the full process and service tables for transparency. A clean scan is necessary but not sufficient (see Section 6).</span>
+      </div>
+    </div>
+
+    <p class="caption" style="margin-top:24px">The <code>_visual.html</code> companion shows the same data as a single-page browser report &mdash; with a colored verdict header, stacked-bar charts of HIGH / MEDIUM / LOW / CLEAN counts across processes and services, a flagged-items table, and an activity timeline if dated events are present. Same information, easier to scan visually.</p>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- SECTION 5: SAFETY -->
+  <!-- ================================================================== -->
+  <section id="safety">
+    <div class="section-num">5 &middot; Why it's safe</div>
+    <h2>What the scan does, doesn't do, and how you can verify any of it</h2>
+    <div class="section-rule"></div>
+
+    <p class="lead">The scan is not malware. It's not "a script that does stuff to your computer." It's a read-only forensic inspection that produces text output. Here are the six guarantees, each one independently verifiable.</p>
+
+    <div class="guarantees">
+      <div class="guarantee">
+        <div class="guarantee-icon">&#10003;</div>
+        <div class="guarantee-body">
+          <h4>Read-only</h4>
+          <p>The scan never modifies a file, registry key, service, driver, or system setting. It only <strong>reads</strong>.</p>
+        </div>
+      </div>
+      <div class="guarantee">
+        <div class="guarantee-icon">&#10003;</div>
+        <div class="guarantee-body">
+          <h4>One opt-in network call, nothing else</h4>
+          <p>The only outbound call is the <strong>LOLDrivers</strong> cross-reference (loldrivers.io) for BYOVD detection &mdash; you press Y to allow it, anything else to skip. No telemetry, no phone-home, no cloud upload. Nothing about your PC is sent.</p>
+        </div>
+      </div>
+      <div class="guarantee">
+        <div class="guarantee-icon">&#10003;</div>
+        <div class="guarantee-body">
+          <h4>Plain text source</h4>
+          <p>Every <code>.ps1</code> file is plain PowerShell. Open any of them in Notepad and read every line. No compiled binary, no installer.</p>
+        </div>
+      </div>
+      <div class="guarantee">
+        <div class="guarantee-icon">&#10003;</div>
+        <div class="guarantee-body">
+          <h4>Fair to old artifacts</h4>
+          <p>Findings older than <strong>180 days</strong> are logged in the report but don't bump the verdict. Someone who cheated in another game years ago and is now scanning a clean current rig shouldn't get the same result as a present-day cheater. Historical findings appear in their own section so the reviewer can still see them and make their own call.</p>
+        </div>
+      </div>
+      <div class="guarantee">
+        <div class="guarantee-icon">&#10003;</div>
+        <div class="guarantee-body">
+          <h4>No installation</h4>
+          <p>Doesn't install anything, doesn't add startup entries, doesn't create services, doesn't drop files in <code>System32</code> or <code>Program Files</code>.</p>
+        </div>
+      </div>
+      <div class="guarantee">
+        <div class="guarantee-icon">&#10003;</div>
+        <div class="guarantee-body">
+          <h4>Single output location</h4>
+          <p>The only files written are the four reports on your Desktop. Two <code>.txt</code> and two <code>_visual.html</code>. Nothing else, anywhere.</p>
+        </div>
+      </div>
+      <div class="guarantee">
+        <div class="guarantee-icon">&#10003;</div>
+        <div class="guarantee-body">
+          <h4>No background process</h4>
+          <p>Runs once for ~2-3 minutes, writes the reports, exits. No scheduled task, no service, no startup entry. The window closes when you close it.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--serif);font-size:1.3rem;font-weight:500;margin-top:36px;margin-bottom:8px">Verify it yourself in 60 seconds</h3>
+
+    <div class="verify-row">
+      <div class="verify-card">
+        <div class="num">METHOD 1</div>
+        <h4>Open the source</h4>
+        <p>Right-click <code>kit\forensic-scan.ps1</code> &rarr; Open with &rarr; Notepad. Search for <code>Invoke-Web</code>, <code>Remove-Item</code>, or <code>Set-ItemProperty</code>. You won't find any.</p>
+      </div>
+      <div class="verify-card">
+        <div class="num">METHOD 2</div>
+        <h4>Watch network traffic</h4>
+        <p>Open Task Manager &rarr; Performance &rarr; Ethernet (or Wi-Fi). Run the scan. The Send graph stays at zero kbps for the entire scan.</p>
+      </div>
+      <div class="verify-card">
+        <div class="num">METHOD 3</div>
+        <h4>Check the output</h4>
+        <p>The four reports are the <strong>only</strong> things the scan creates. Open the <code>.txt</code> in Notepad. Every line is human-readable.</p>
+      </div>
+    </div>
+
+    <p class="caption" style="margin-top:24px">Final commitment: <strong>if something the scan does isn't visible in the source, the scan doesn't do it.</strong> There is no hidden behavior. The full attestation lives at <code>kit\pc-check-safety-card.html</code>.</p>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- SECTION 6: HONEST LIMITS -->
+  <!-- ================================================================== -->
+  <section id="limits">
+    <div class="section-num">6 &middot; Honest limits</div>
+    <h2>What it can and can't catch</h2>
+    <div class="section-rule"></div>
+
+    <p class="lead">No forensic tool is comprehensive. The scan catches a lot of things. It also genuinely cannot detect some others, by design. Both sides matter for the reviewer to interpret the result correctly.</p>
+
+    <div class="limits-split">
+      <div class="limits-col catches">
+        <div class="col-label">What it WILL catch</div>
+        <h3>Across 22 Windows forensic sources</h3>
+        <ul>
+          <li>Cheat brands by name (EngineOwning, PhantomOverlay, rut.gg, etc.)</li>
+          <li>HWID spoofers (Sync, TraceX, SlothyTech, HidHide)</li>
+          <li>DMA-cheat development artifacts (<code>_top.bin</code>, pcileech FPGA outputs)</li>
+          <li>Input adapters (XIM, Cronus, ReaSnow, KMBox, reWASD)</li>
+          <li>Vision aimbots (AimMMO, AimFlux, NoRecoilZ, AimSync)</li>
+          <li>LUA / AutoHotkey anti-recoil scripts (Logitech G HUB and Razer Synapse macros)</li>
+          <li>Cheat-named Lua scripts in user folders (aimbot.lua, esp.lua, bhop.lua, etc.)</li>
+          <li>DLLs injected into running game processes</li>
+          <li>Historical DLL-injection events (Sysmon EID 7, Security EID 4688, Prefetch &mdash; Xenos, Extreme Injector, Syringe, etc.)</li>
+          <li>DDoS / network-attack tools (LOIC, HOIC, slowloris, GoldenEye, torshammer, hulk, rudy, ufonet)</li>
+          <li>BYOVD &mdash; vulnerable and malicious drivers (opt-in LOLDrivers cross-reference against loldrivers.io; how DMA and kernel-level cheats most often get ring-0 access)</li>
+          <li>PC-side AI-vision aimbots (Aimmy, sunone_aimbot, RootKit AI-Aimbot, Zelesis NEO, Unibot, Embedded-AI Pi) &mdash; the up-and-coming category that runs locally with YOLO/ONNX models + virtual HID</li>
+          <li>Per-game cheat brands &mdash; CS2 (Neverlose, Memesense, Fatality, Primordial, Skeet, Onetap, Aimware, Axion), Apex (Kernaim, CosmoCheats), Tarkov (Phantom EFT, CheatVault), Rust (Cobra, Atomic, Cheater.Ninja), R6 (HyperForce), Marvel Rivals (Marvel Maxim, EloCarry)</li>
+          <li>Branded DMA hardware vendors beyond raw pcileech &mdash; Atomic, Captain, Leet, Lurker, Suspect, Phoenix Labs, Squirrel, Enigma X-1, MVP, HackDMA, ZDMA, Captain Fuser</li>
+          <li>Obscured filenames (hex, numeric, ultra-short)</li>
+          <li>Known-bad SHA256 hashes (curated database)</li>
+          <li>Anti-cheat-killer batch scripts (<code>taskkill /f /im EasyAntiCheat</code>)</li>
+          <li>Defender-disabler patterns inside .bat / .ps1 files</li>
+          <li>Driver-signing bypass flags (<code>bcdedit /set testsigning</code>)</li>
+          <li>USB device history with first-install / last-use timestamps</li>
+          <li>Anti-forensic patterns (event-log clearing, shadow-copy deletion)</li>
+        </ul>
+      </div>
+      <div class="limits-col misses">
+        <div class="col-label">What it WON'T catch</div>
+        <h3>Real architectural blind spots</h3>
+        <ul>
+          <li>The console itself (PS5 / Xbox cannot be scanned &mdash; consoles are locked-down by design)</li>
+          <li>DMA cheats at runtime &mdash; the cheat hardware lives on a separate physical device and never touches your PC</li>
+          <li>Input devices configured on a separate machine and used purely as pass-through</li>
+          <li>Modified controllers with internal macro chips (visual inspection only)</li>
+          <li>Cheats brand-new enough to not be in the keyword database yet</li>
+          <li>Machines professionally cleaned with commercial anti-forensic tools</li>
+          <li>Cheats running under a different user account or service identity that admin can't enumerate</li>
+          <li>Session-only cheats that loaded into memory and exited without leaving disk artifacts</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="closing">
+      <p><strong>A clean scan is necessary, not sufficient.</strong> It raises the cost of cheating undetected substantially &mdash; most cheats leave artifacts, and the scan finds them. But it does not lower that cost to zero. The reviewer should weigh this result against everything else they know about the player.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>PC Forensic Check &middot; One-Page Guide &middot; by Bread, with Drownmw</span>
+    <span>kit\one-page-guide.html</span>
+  </footer>
+
+</div>
+</body>
+</html>

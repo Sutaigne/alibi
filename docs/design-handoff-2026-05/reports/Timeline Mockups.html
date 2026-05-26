@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>pc-check · timeline mockup explorations</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<style>
+/* ───────── shared tokens (pulled from the report design system) ───────── */
+.tl-mock {
+  --bg:        #08080a;
+  --panel:     #0f0f13;
+  --panel-2:   #14141a;
+  --panel-hi:  #1a1a22;
+  --rule:      #1f1f27;
+  --rule-2:    #2a2a34;
+  --rule-3:    #3a3a46;
+  --ink:       #f5f5f4;
+  --ink-2:     #d6d3d1;
+  --ink-3:     #a8a29e;
+  --ink-4:     #78716c;
+  --ink-5:     #4a4845;
+  --hi:        #ff5757;
+  --hi-edge:   rgba(255, 87, 87, 0.42);
+  --md:        #f5b53a;
+  --md-edge:   rgba(245, 181, 58, 0.40);
+  --wn:        #9a958d;
+  --info:      #6b6660;
+  --accent:    #7dd3fc;
+
+  width: 100%; height: 100%;
+  padding: 22px 24px 20px;
+  background: var(--panel);
+  color: var(--ink);
+  font: 13px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+.tl-mock * { box-sizing: border-box; }
+.tl-mock h1 {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+.tl-mock .tag {
+  display: inline-block;
+  font-family: ui-monospace, monospace;
+  font-size: 10.5px; font-weight: 700;
+  letter-spacing: 0.10em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 2px;
+  background: var(--accent); color: var(--bg);
+  margin-right: 10px;
+}
+.tl-mock .desc {
+  color: var(--ink-3); font-size: 12.5px; line-height: 1.55;
+  max-width: 80ch; margin: 0 0 14px;
+}
+.tl-mock .desc b { color: var(--ink-2); font-weight: 600; }
+.tl-mock .desc code { font-family: ui-monospace, monospace; font-size: 11px; color: var(--ink-2); background: var(--bg); padding: 1px 5px; border-radius: 2px; }
+.tl-mock svg { display: block; width: 100%; height: auto; flex: 1; }
+.tl-mock .axis text { fill: var(--ink-5); font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.04em; }
+.tl-mock .axis text.lbl-abs { fill: var(--ink-4); }
+.tl-mock .axis-rule { stroke: var(--rule); stroke-width: 1; }
+.tl-mock .axis-tick { stroke: var(--rule-2); stroke-width: 1; stroke-dasharray: 1 5; }
+.tl-mock .lane-rule { stroke: var(--rule); stroke-dasharray: 1 4; stroke-width: 1; }
+.tl-mock .lane-label { fill: var(--ink-4); font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; }
+.tl-mock .today-line { stroke: var(--accent); stroke-width: 1.5; opacity: 0.85; }
+.tl-mock .today-label { fill: var(--accent); font-family: ui-monospace, monospace; font-size: 10.5px; font-weight: 700; }
+.tl-mock .props {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 18px;
+  font-family: ui-monospace, monospace;
+  font-size: 11.5px;
+  color: var(--ink-3);
+}
+.tl-mock .props .pro { color: var(--ink-2); }
+.tl-mock .props .pro::before { content: "+ "; color: var(--accent); }
+.tl-mock .props .con::before { content: "− "; color: var(--md); }
+
+/* dot/cell styles per mockup */
+.tl-mock .dot.HIGH   { fill: var(--hi); }
+.tl-mock .dot.MEDIUM { fill: var(--md); }
+.tl-mock .dot.WARN   { fill: var(--wn); }
+.tl-mock .dot.INFO   { fill: var(--ink-4); }
+.tl-mock .dot.archived { opacity: 0.55; }
+.tl-mock .dot.archived.stroked { stroke: var(--ink-4); stroke-width: 1; stroke-dasharray: 1 1.5; }
+.tl-mock .cell.HIGH   { fill: var(--hi); }
+.tl-mock .cell.MEDIUM { fill: var(--md); }
+.tl-mock .cell.WARN   { fill: var(--wn); }
+.tl-mock .cell.INFO   { fill: var(--ink-5); }
+.tl-mock .cell.archived { opacity: 0.5; }
+.tl-mock .label { fill: var(--ink-3); font-family: ui-monospace, monospace; font-size: 9.5px; }
+.tl-mock .density-glow { fill: var(--hi); opacity: 0.10; }
+</style>
+</head>
+<body style="margin:0; background:#08080a;">
+<script type="text/babel">
+const { DesignCanvas, DCSection, DCArtboard } = window;
+
+// ─────────────────────────────────────────────────────────────
+// Shared dataset · same data as the cheats report
+// ─────────────────────────────────────────────────────────────
+const DATA = [
+  { d:0,   lane:'HIGH',   cat:'USB',           lbl:'Cronus removed' },
+  { d:1,   lane:'HIGH',   cat:'AppData',       lbl:'Cronus AppData' },
+  { d:2,   lane:'HIGH',   cat:'Prefetch',      lbl:'ENGINEOWNING lm' },
+  { d:3,   lane:'HIGH',   cat:'UserScripts',   lbl:'norecoil.lua' },
+  { d:5,   lane:'HIGH',   cat:'KnownHashes',   lbl:'RUT hash' },
+  { d:5,   lane:'HIGH',   cat:'MUICache',      lbl:'MUI rut.gg' },
+  { d:8,   lane:'HIGH',   cat:'UserScripts',   lbl:'setup.bat' },
+  { d:11,  lane:'MEDIUM', cat:'DLLInject',     lbl:'xenos inject' },
+  { d:4,   lane:'MEDIUM', cat:'ObscuredNames', lbl:'deadbeef.exe' },
+  { d:14,  lane:'HIGH',   cat:'Prefetch',      lbl:'EO prefetch fs' },
+  { d:18,  lane:'HIGH',   cat:'AIVision',      lbl:'aimmy+onnx' },
+  { d:21,  lane:'HIGH',   cat:'DMA',           lbl:'pcileech.bin' },
+  { d:40,  lane:'INFO',   cat:'AIVision',      lbl:'resnet50' },
+  { d:74,  lane:'MEDIUM', cat:'Installed',     lbl:'Cheat Engine' },
+  { d:95,  lane:'HIGH',   cat:'AppData',       lbl:'Cronus oldest' },
+  { d:120, lane:'HIGH',   cat:'USB',           lbl:'Cronus install' },
+  { d:420, lane:'HIGH',   cat:'Prefetch',      lbl:'OLDCHEAT', archived:true },
+  { d:2750,lane:'MEDIUM', cat:'Installed',     lbl:'XIM 2018',  archived:true },
+];
+
+// log-scale projection: d ∈ [0, 3000] → x ∈ [X_RIGHT, X_LEFT]
+const X_LEFT = 80, X_RIGHT = 1140;
+const D_MAX = 3000;
+function xLog(d) {
+  return X_RIGHT - (X_RIGHT - X_LEFT) * Math.log(d + 1) / Math.log(D_MAX + 1);
+}
+
+// Axis ticks at human-meaningful intervals
+const AXIS_TICKS = [
+  { d: 0,    lbl: 'today',  abs: '0d' },
+  { d: 1,    lbl: '−1d',    abs: '' },
+  { d: 3,    lbl: '−3d',    abs: '' },
+  { d: 7,    lbl: '−1w',    abs: '' },
+  { d: 14,   lbl: '−2w',    abs: '' },
+  { d: 30,   lbl: '−1mo',   abs: '' },
+  { d: 90,   lbl: '−3mo',   abs: '' },
+  { d: 180,  lbl: '−6mo',   abs: '180d' },
+  { d: 365,  lbl: '−1yr',   abs: '' },
+  { d: 730,  lbl: '−2yr',   abs: '' },
+  { d: 1825, lbl: '−5yr',   abs: '' },
+];
+
+// shared axis component
+function Axis({ y = 220 }) {
+  return (
+    <g className="axis">
+      <line className="axis-rule" x1={X_LEFT} x2={X_RIGHT} y1={y} y2={y}></line>
+      {AXIS_TICKS.map((t, i) => (
+        <g key={i}>
+          <line className="axis-tick" x1={xLog(t.d)} x2={xLog(t.d)} y1={20} y2={y}></line>
+          <text x={xLog(t.d)} y={y + 14} textAnchor="middle">{t.lbl}</text>
+        </g>
+      ))}
+      {/* today beam */}
+      <line className="today-line" x1={X_RIGHT} x2={X_RIGHT} y1={20} y2={y + 4}></line>
+      <text className="today-label" x={X_RIGHT} y={14} textAnchor="end">today · 2026-05-25</text>
+    </g>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════
+// MOCKUP A · Pure log + collision stacking
+// Each lane is a baseline; dots that would overlap stack vertically
+// upward, shrinking as they go.  Single horizontal lane per severity.
+// ═════════════════════════════════════════════════════════════
+function MockA() {
+  const lanes = { HIGH: 56, MEDIUM: 100, WARN: 140, INFO: 180 };
+  const STACK_DX = 9; // px collision threshold
+  const STACK_DY = 9; // px stack offset
+  // Build sorted-by-x list, position with collision detection per lane
+  const sorted = [...DATA].sort((a, b) => xLog(b.d) - xLog(a.d)); // most recent first
+  const placed = {};
+  const dots = sorted.map((o, i) => {
+    const xRaw = xLog(o.d);
+    const stack = placed[o.lane] = placed[o.lane] || [];
+    // find existing entries within STACK_DX
+    const nearby = stack.filter(p => Math.abs(p.x - xRaw) < STACK_DX);
+    const k = nearby.length;
+    const y = lanes[o.lane] - k * STACK_DY;
+    const r = Math.max(2.5, 5.5 - k * 0.75);
+    stack.push({ x: xRaw, y, r });
+    return { ...o, x: xRaw, y, r, stackIdx: k };
+  });
+  return (
+    <div className="tl-mock">
+      <h1><span className="tag">A</span>Pure log · collision-stack</h1>
+      <p className="desc">
+        True logarithmic <b>log(daysAgo + 1)</b> scale across the whole 8-year window. Four flat severity lanes.
+        Overlapping dots <b>stack upward</b> with a shrink (5.5px → 2.5px) so density at <code>day 5</code> reads as
+        a small column rather than overlapping discs. Archived items keep their dashed outline.
+      </p>
+      <svg viewBox="0 0 1200 240" preserveAspectRatio="xMidYMid meet">
+        <Axis y={220} />
+        {/* lane centerlines */}
+        {Object.entries(lanes).map(([k, y]) => (
+          <g key={k}>
+            <line className="lane-rule" x1={X_LEFT} x2={X_RIGHT} y1={y} y2={y}></line>
+            <text className="lane-label" x={6} y={y + 4}>{k}</text>
+          </g>
+        ))}
+        {/* faint density glow under the dense recent stack */}
+        <rect className="density-glow" x={xLog(7)} y={20} width={X_RIGHT - xLog(7)} height={200} />
+        {/* dots */}
+        {dots.map((o, i) => (
+          <circle key={i}
+            className={`dot ${o.lane} ${o.archived ? 'archived stroked' : ''}`}
+            cx={o.x.toFixed(1)} cy={o.y.toFixed(1)} r={o.r.toFixed(1)}>
+            <title>{`d=${o.d} · ${o.cat} · ${o.lbl}${o.archived ? ' (archived)' : ''}`}</title>
+          </circle>
+        ))}
+      </svg>
+      <div className="props">
+        <span className="pro">honest log-scale data density</span>
+        <span className="pro">stacking shows clusters at-a-glance</span>
+        <span className="pro">archived dots in same coord system, no fold</span>
+        <span className="con">stack can't be labelled in-place</span>
+      </div>
+    </div>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════
+// MOCKUP B · Log + severity column histogram
+// Discretize log-x into N bins.  Each bin is a vertical column
+// of small severity-colored cells stacked from the baseline.
+// Bin width is uniform in log-space, so older bins represent
+// wider time periods.  Stack height = count of findings in bin.
+// ═════════════════════════════════════════════════════════════
+function MockB() {
+  // 30 log-spaced bins from d=0 to d=D_MAX
+  const N_BINS = 36;
+  const bins = Array.from({ length: N_BINS }, () => []);
+  // each finding → bin index
+  DATA.forEach(o => {
+    const t = Math.log(o.d + 1) / Math.log(D_MAX + 1);   // 0..1
+    let idx = Math.floor((1 - t) * N_BINS);
+    if (idx >= N_BINS) idx = N_BINS - 1;
+    if (idx < 0) idx = 0;
+    bins[idx].push(o);
+  });
+  // bin x position: from xRight - i*width to xLeft
+  const binWidth = (X_RIGHT - X_LEFT) / N_BINS;
+  // sort each bin: HIGH first (so HIGH stacks on top)
+  const SEV = { HIGH: 0, MEDIUM: 1, WARN: 2, INFO: 3 };
+  bins.forEach(b => b.sort((a, c) => SEV[a.lane] - SEV[c.lane]));
+  const CELL_H = 8;
+  const BASE_Y = 200;
+  return (
+    <div className="tl-mock">
+      <h1><span className="tag">B</span>Log bins · severity-stack histogram</h1>
+      <p className="desc">
+        Log-spaced bins (36 buckets, equal in log-time). Each bucket is a <b>vertical stack</b> of severity-colored
+        cells (HIGH on top, INFO on bottom). Stack height <b>is</b> the density — recent buckets are tall, archived
+        buckets are short.  No lanes; severity is encoded by cell color + stack order.
+      </p>
+      <svg viewBox="0 0 1200 240" preserveAspectRatio="xMidYMid meet">
+        <Axis y={216} />
+        <line className="axis-rule" x1={X_LEFT} x2={X_RIGHT} y1={BASE_Y} y2={BASE_Y}></line>
+        {/* bins */}
+        {bins.map((bin, i) => {
+          if (bin.length === 0) return null;
+          // bin's right edge in svg x
+          const xR = X_RIGHT - i * binWidth;
+          const xL = xR - binWidth + 2;
+          return (
+            <g key={i}>
+              {bin.map((o, j) => (
+                <rect key={j}
+                  className={`cell ${o.lane} ${o.archived ? 'archived' : ''}`}
+                  x={xL} y={BASE_Y - (j + 1) * CELL_H}
+                  width={binWidth - 2} height={CELL_H - 1} rx="1">
+                  <title>{`d=${o.d} · ${o.cat} · ${o.lbl}`}</title>
+                </rect>
+              ))}
+              {bin.length >= 3 && (
+                <text className="label" x={xR - binWidth / 2} y={BASE_Y - bin.length * CELL_H - 4} textAnchor="middle">{bin.length}</text>
+              )}
+            </g>
+          );
+        })}
+        {/* severity legend at top-right */}
+        <g transform="translate(820, 24)">
+          <rect className="cell HIGH"   x="0"   y="0" width="14" height="8" rx="1"></rect><text className="label" x="20"  y="7">HIGH</text>
+          <rect className="cell MEDIUM" x="70"  y="0" width="14" height="8" rx="1"></rect><text className="label" x="90"  y="7">MED</text>
+          <rect className="cell WARN"   x="130" y="0" width="14" height="8" rx="1"></rect><text className="label" x="150" y="7">WARN</text>
+          <rect className="cell INFO"   x="190" y="0" width="14" height="8" rx="1"></rect><text className="label" x="210" y="7">INFO</text>
+          <text className="label archived" x="252" y="7" style={{ opacity: 0.5 }}>archived</text>
+          <rect className="cell HIGH archived" x="300" y="0" width="14" height="8" rx="1"></rect>
+        </g>
+      </svg>
+      <div className="props">
+        <span className="pro">density is structural — no manual tuning</span>
+        <span className="pro">scales to 100+ findings without overlap</span>
+        <span className="pro">histogram silhouette tells the story instantly</span>
+        <span className="con">individual finding identity is lost in stack</span>
+      </div>
+    </div>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════
+// MOCKUP C · Log axis + collapsed archived strip
+// Live timeline (0-180d) gets the bulk of the canvas with lanes
+// and labels. Archived (>180d) collapses into a narrow strip on
+// the far left, stacked tightly with a count badge.  A clear
+// fold marker separates them.
+// ═════════════════════════════════════════════════════════════
+function MockC() {
+  // live: 0..180 → log-mapped to x ∈ [240..1140] (78% of width)
+  // archived: any d > 180 → stacked into the strip at x ∈ [80..220]
+  const LIVE_LEFT = 240, LIVE_RIGHT = 1140;
+  const ARCH_LEFT = 80,  ARCH_RIGHT = 220;
+  function xLive(d) { return LIVE_RIGHT - (LIVE_RIGHT - LIVE_LEFT) * Math.log(d + 1) / Math.log(180 + 1); }
+  const lanes = { HIGH: 60, MEDIUM: 102, WARN: 140, INFO: 178 };
+  // stack archived items, ordered by age
+  const archived = DATA.filter(o => o.archived).sort((a, b) => b.d - a.d);
+
+  // collision-stack the live items
+  const STACK_DX = 8, STACK_DY = 9;
+  const sortedLive = DATA.filter(o => !o.archived).sort((a, b) => xLive(b.d) - xLive(a.d));
+  const placed = {};
+  const liveDots = sortedLive.map(o => {
+    const xRaw = xLive(o.d);
+    const stack = placed[o.lane] = placed[o.lane] || [];
+    const nearby = stack.filter(p => Math.abs(p.x - xRaw) < STACK_DX);
+    const k = nearby.length;
+    const y = lanes[o.lane] - k * STACK_DY;
+    const r = Math.max(2.5, 5.5 - k * 0.6);
+    stack.push({ x: xRaw, y, r });
+    return { ...o, x: xRaw, y, r };
+  });
+
+  // archived strip ticks
+  const ARCH_TICKS = [
+    { d: 365,  lbl: '1yr' },
+    { d: 730,  lbl: '2yr' },
+    { d: 1825, lbl: '5yr' },
+  ];
+  return (
+    <div className="tl-mock">
+      <h1><span className="tag">C</span>Log live · collapsed archive strip</h1>
+      <p className="desc">
+        Recent (≤180d) gets <b>78%</b> of the width with a smooth log curve. Older artifacts collapse into a narrow
+        <b> archive strip</b> on the left — same log compression, but stacked vertically to save horizontal space.
+        A hatched fold separates the two coord systems explicitly.  The strip can hold dozens of historicals before
+        running out of vertical room.
+      </p>
+      <svg viewBox="0 0 1200 240" preserveAspectRatio="xMidYMid meet">
+        {/* ─── LIVE ZONE ─── */}
+        {/* density wash under the recent cluster */}
+        <rect x={xLive(7)} y={20} width={LIVE_RIGHT - xLive(7)} height={196} fill="var(--hi)" opacity="0.06"></rect>
+        {/* lane rules */}
+        {Object.entries(lanes).map(([k, y]) => (
+          <g key={k}>
+            <line className="lane-rule" x1={LIVE_LEFT} x2={LIVE_RIGHT} y1={y} y2={y}></line>
+            <text className="lane-label" x={LIVE_RIGHT + 6} y={y + 4}>{k}</text>
+          </g>
+        ))}
+        {/* live axis */}
+        <g className="axis">
+          <line className="axis-rule" x1={LIVE_LEFT} x2={LIVE_RIGHT} y1={216} y2={216}></line>
+          {[
+            { d: 0,    lbl: 'today' },
+            { d: 1,    lbl: '−1d' },
+            { d: 3,    lbl: '−3d' },
+            { d: 7,    lbl: '−1w' },
+            { d: 14,   lbl: '−2w' },
+            { d: 30,   lbl: '−1mo' },
+            { d: 90,   lbl: '−3mo' },
+            { d: 180,  lbl: '−6mo' },
+          ].map((t, i) => (
+            <g key={i}>
+              <line className="axis-tick" x1={xLive(t.d)} x2={xLive(t.d)} y1={20} y2={216}></line>
+              <text x={xLive(t.d)} y={230} textAnchor="middle">{t.lbl}</text>
+            </g>
+          ))}
+        </g>
+        {/* live dots */}
+        {liveDots.map((o, i) => (
+          <circle key={i}
+            className={`dot ${o.lane}`}
+            cx={o.x.toFixed(1)} cy={o.y.toFixed(1)} r={o.r.toFixed(1)}>
+            <title>{`d=${o.d} · ${o.cat} · ${o.lbl}`}</title>
+          </circle>
+        ))}
+        {/* today beam */}
+        <line className="today-line" x1={LIVE_RIGHT} x2={LIVE_RIGHT} y1={20} y2={220}></line>
+        <text className="today-label" x={LIVE_RIGHT} y={14} textAnchor="end">today</text>
+
+        {/* ─── FOLD ─── */}
+        <defs>
+          <pattern id="foldhatchC" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="var(--ink-5)" strokeWidth="1.5" opacity="0.6"></line>
+          </pattern>
+        </defs>
+        <rect x={ARCH_RIGHT - 2} y={20} width="14" height="196" fill="url(#foldhatchC)"></rect>
+        <line x1={ARCH_RIGHT - 2} y1={20} x2={ARCH_RIGHT - 2} y2={216} stroke="var(--ink-4)" strokeWidth="1"></line>
+        <line x1={ARCH_RIGHT + 12} y1={20} x2={ARCH_RIGHT + 12} y2={216} stroke="var(--ink-4)" strokeWidth="1"></line>
+
+        {/* ─── ARCHIVED STRIP ─── */}
+        <text x={(ARCH_LEFT + ARCH_RIGHT) / 2} y={14} textAnchor="middle"
+              style={{ fill: 'var(--ink-3)', fontFamily: 'ui-monospace, monospace', fontSize: 10.5, letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 700 }}>archive · {archived.length}</text>
+        {/* archive lanes — narrower / no labels */}
+        {Object.values(lanes).map((y, idx) => (
+          <line key={idx} className="lane-rule" x1={ARCH_LEFT} x2={ARCH_RIGHT - 4} y1={y} y2={y}
+                style={{ opacity: 0.4 }}></line>
+        ))}
+        {/* archived stacked dots (positioned by lane) */}
+        {archived.map((o, i) => {
+          const x = ARCH_RIGHT - 14 - (i * 18);
+          return (
+            <g key={i}>
+              <circle
+                className={`dot ${o.lane} archived stroked`}
+                cx={x} cy={lanes[o.lane]} r="3.5">
+                <title>{`d=${o.d} · ${o.cat} · ${o.lbl}`}</title>
+              </circle>
+              <text x={x} y={lanes[o.lane] + 16} textAnchor="middle"
+                    style={{ fill: 'var(--ink-5)', fontFamily: 'ui-monospace, monospace', fontSize: 9 }}>
+                {o.d >= 365 ? `${Math.round(o.d / 365)}y` : `${o.d}d`}
+              </text>
+            </g>
+          );
+        })}
+        {/* archive ticks below */}
+        {ARCH_TICKS.map((t, i) => (
+          <text key={i} className="label" x={ARCH_LEFT + (i + 0.5) * ((ARCH_RIGHT - 4 - ARCH_LEFT) / 3)}
+                y={230} textAnchor="middle">{t.lbl}</text>
+        ))}
+      </svg>
+      <div className="props">
+        <span className="pro">honest log within each zone</span>
+        <span className="pro">explicit visual fold = no axis-scale ambiguity</span>
+        <span className="pro">archive scales independently</span>
+        <span className="con">two coord systems · slightly more to learn</span>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <DesignCanvas>
+      <DCSection id="mockups" title="Timeline mockups">
+        <DCArtboard id="mock-a" label="A · Pure log + collision-stack"           width={1240} height={520}><MockA /></DCArtboard>
+        <DCArtboard id="mock-b" label="B · Log bins + severity-stack histogram"  width={1240} height={520}><MockB /></DCArtboard>
+        <DCArtboard id="mock-c" label="C · Log live + collapsed archive strip"   width={1240} height={520}><MockC /></DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.body.appendChild(document.createElement('div'))).render(<App />);
+</script>
+</body>
+</html>

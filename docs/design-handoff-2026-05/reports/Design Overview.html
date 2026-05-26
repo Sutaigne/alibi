@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>pc-check · design overview</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<style>
+  body { margin: 0; background: #08080a; color: #f5f5f4; font-family: ui-sans-serif, system-ui, sans-serif; }
+  .note {
+    padding: 8px 12px;
+    background: #0f0f13;
+    border: 1px solid #2a2a34;
+    border-radius: 4px;
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+    color: #a8a29e;
+    line-height: 1.55;
+  }
+  .note b { color: #f5f5f4; font-weight: 600; }
+  .note .red    { color: #ff5757; }
+  .note .amber  { color: #f5b53a; }
+  .note .green  { color: #4ade80; }
+  .note ul { margin: 6px 0 0; padding-left: 18px; }
+  .note li { padding: 1px 0; }
+  iframe.report {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #08080a;
+  }
+</style>
+</head>
+<body>
+<script type="text/babel">
+const { DesignCanvas, DCSection, DCArtboard } = window;
+
+function NoteRed() {
+  return (
+    <div className="note">
+      <b className="red">VERDICT · CHEATS DETECTED</b> · the rich case.<br/>
+      The dense path: every aspect of the design system fires.
+      <ul>
+        <li><b>Verdict band</b> + composite readout + 11 named-items grid (jump-to-finding).</li>
+        <li><b>Timeline</b> with density skyline, recency-zone tinting, fresh-dot pulse, hover scrub.</li>
+        <li><b>Score-distribution donut</b> (this view) + category signal map (which scanners fired).</li>
+        <li><b>Finding cards</b> with severity rail, hover cross-link to process / service rows.</li>
+        <li><b>Historical block</b> at the bottom — dashed border, hatched rail, plainly demoted.</li>
+      </ul>
+    </div>
+  );
+}
+function NoteAmber() {
+  return (
+    <div className="note">
+      <b className="amber">VERDICT · CAPTURE STACK PRESENT</b> · the streamer-disclosure case.<br/>
+      Same shell, amber tone. Adds two things the red case doesn’t need:
+      <ul>
+        <li><b>Reviewer note</b> inside the verdict explaining why this is <em>not</em> a cheat verdict.</li>
+        <li><b>“Not detected”</b> green-dot grid — explicit positive signals (no aimbot, no Cronus, no DMA, etc.).</li>
+        <li>Timeline shows the four MEDIUM dots spread across the half-year — not the recency spike of the red case.</li>
+      </ul>
+    </div>
+  );
+}
+function NoteGreen() {
+  return (
+    <div className="note">
+      <b className="green">VERDICT · CLEAN</b> · the empty case.<br/>
+      Same shell, green tone. The body’s job is reassurance, not evidence.
+      <ul>
+        <li><b>“What was scanned”</b> — 18 green-dot tiles, each a detector that ran and matched nothing.</li>
+        <li>Timeline renders empty: <span className="green">— no findings in the 180-day window —</span> spans the lane area.</li>
+        <li>Findings list collapses to an explicit <b>empty-state callout</b> + the 4 scan-summary INFO items.</li>
+        <li>Coverage limitations get extra emphasis (“necessary but not sufficient”).</li>
+      </ul>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <DesignCanvas>
+      <DCSection id="reports" title="Verdict states">
+        <DCArtboard id="pc-cheats"     label="PC · CHEATS DETECTED (red)"     width={1280} height={4600}>
+          <iframe className="report" src="report-pc-cheats-detected.html" title="PC cheats detected"></iframe>
+        </DCArtboard>
+        <DCArtboard id="console-amber" label="CONSOLE-RIG · CAPTURE STACK PRESENT (amber)" width={1280} height={3400}>
+          <iframe className="report" src="report-console-capture-stack.html" title="Console rig capture stack"></iframe>
+        </DCArtboard>
+        <DCArtboard id="pc-clean"      label="PC · CLEAN (green)"             width={1280} height={2800}>
+          <iframe className="report" src="report-pc-clean.html" title="PC clean"></iframe>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="design-notes" title="Design notes">
+        <DCArtboard id="note-red"    label="rich case notes"           width={520} height={360}><NoteRed /></DCArtboard>
+        <DCArtboard id="note-amber"  label="streamer case notes"       width={520} height={360}><NoteAmber /></DCArtboard>
+        <DCArtboard id="note-green"  label="clean case notes"          width={520} height={360}><NoteGreen /></DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.body.appendChild(document.createElement('div'))).render(<App />);
+</script>
+</body>
+</html>

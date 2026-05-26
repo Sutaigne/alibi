@@ -1,0 +1,35 @@
+# Local-machine harness state (Claude Code / agents)
+.claude/
+
+# Python build / venv / caches
+python/**/__pycache__/
+python/**/*.pyc
+python/**/*.pyo
+python/**/*.egg-info/
+python/build/
+python/dist/
+python/.venv/
+python/venv/
+python/.pytest_cache/
+python/.mypy_cache/
+python/.ruff_cache/
+
+# Editor / OS junk
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Generated scan outputs (these land on the user's Desktop in real use; the
+# repo carries deliberate synthetic examples under python/examples/).
+PCForensicCheck_*.txt
+PCForensicCheck_*_visual.html
+ConsoleRigAudit_*.txt
+ConsoleRigAudit_*_visual.html
+
+# Temp summary files written by the unified launcher
+*pc-check-pc.summary
+*pc-check-console.summary
+*pc-check-loldb.json

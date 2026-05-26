@@ -1,0 +1,69 @@
+================================================================
+  PC FORENSIC CHECK - START HERE
+================================================================
+
+This folder lets you produce credible proof your gaming setup
+isn't running cheats. You run a scan on your machine, two .txt
+reports (plus HTML visuals) appear on your Desktop, you send
+them to whoever asked.
+
+
+HOW TO USE
+==========
+
+  1. Right-click "Run scan.bat"
+  2. Pick "Run as administrator"
+  3. Click YES on the UAC prompt
+  4. Wait about 2-3 minutes (scans both PC and console-rig sides)
+  5. Check your Desktop for the four output files:
+       PCForensicCheck_<timestamp>.txt           the PC report
+       PCForensicCheck_<timestamp>_visual.html   visual of the PC report
+       ConsoleRigAudit_<timestamp>.txt           the console-rig report
+       ConsoleRigAudit_<timestamp>_visual.html   visual of the console report
+  6. Send the .txt files (or the .html visuals - both work) to
+     whoever asked.
+
+
+WHY TWO SCANS?
+==============
+
+One scan looks at your PC as a PC gamer's machine (PC cheats, DMA
+artifacts, HWID spoofers, etc.). The other scan looks at it as a
+console-rig PC (capture-card software, vision aimbots, input-
+adapter configurators like XIM/Cronus/ReaSnow). Running both
+covers every scenario this PC could be involved in.
+
+If you only play on PC, the console-rig report will be CLEAN -
+that's expected. If you only play on console with a PC in the
+rig, the PC report will be CLEAN. Either way, the relevant report
+is the one with findings.
+
+
+REQUIREMENTS
+============
+
+  - Windows 10 or 11.
+  - You must run as administrator (UAC prompt). Without admin,
+    the scan loses access to several forensic sources (Prefetch,
+    BAM, USB history, driver-signing flags, ShimCache, full
+    process module list). Half the report would say "Access
+    denied" - the scan won't run without admin.
+  - About 1 MB of free disk space for the reports.
+  - No internet connection needed. The scan never makes one.
+
+
+SAFETY IN ONE LINE
+==================
+
+Every scan is read-only. Nothing leaves your machine. All scripts
+in the "kit" subfolder are plain text - open any .ps1 in Notepad
+and read every line. Search for "Invoke-Web" or "Remove-Item" -
+you won't find any. For the full safety attestation, open:
+
+  kit\pc-check-safety-card.html
+
+
+--------------------------------------------------------------
+  Author: Bread
+  Contributor: Drownmw
+--------------------------------------------------------------

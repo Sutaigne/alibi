@@ -1,0 +1,56 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python:
+    name: python parity port
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: python
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Compile all modules (parse check)
+        run: python -m compileall -q src
+      - name: Import smoke test
+        run: |
+          python -c "import sys; sys.path.insert(0, 'src'); import pc_check.keywords, pc_check.utils, pc_check.recency, pc_check.scanners, pc_check.snapshots, pc_check.loldrivers, pc_check.reports, pc_check.visual_companion, pc_check.forensic_scan, pc_check.console_rig_audit; print('imports OK')"
+      - name: Install and run pytest
+        run: |
+          python -m pip install -e .[dev]
+          pytest -q
+      - name: Render example reports
+        run: python examples/generate_example.py
+
+  powershell:
+    name: powershell parse-check
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse-check every .ps1
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem -Path kit, ready-to-flash -Recurse -Filter '*.ps1' -ErrorAction SilentlyContinue
+          $hadError = $false
+          foreach ($f in $files) {
+            $tokens = $null; $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile($f.FullName, [ref]$tokens, [ref]$errors) | Out-Null
+            if ($errors.Count -gt 0) {
+              Write-Host ("FAIL {0}" -f $f.FullName) -ForegroundColor Red
+              $errors | ForEach-Object { Write-Host ("    line {0}: {1}" -f $_.Extent.StartLineNumber, $_.Message) }
+              $hadError = $true
+            } else {
+              Write-Host ("ok   {0}" -f $f.FullName)
+            }
+          }
+          if ($hadError) { exit 1 }
