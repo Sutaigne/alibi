@@ -32,7 +32,7 @@
   ALIBI (CONSOLE-RIG MODE) v4.0 - CONSOLIDATED REPORT
 ================================================================
 
-  Generated:  2026-05-25 23:37:29
+  Generated:  2026-05-25 23:48:18
   Hostname:   BREAD-PC
   Username:   BradS
   OS:         Windows 11 (10.0.26200)
@@ -157,4 +157,4 @@
   - Keyword matching only. Sophisticated cleaners can wipe most of these artifacts.
   - A clean result is necessary but not sufficient.
 
-  Report generated: 2026-05-25 23:37:29
+  Report generated: 2026-05-25 23:48:18

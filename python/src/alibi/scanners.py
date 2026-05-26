@@ -94,8 +94,29 @@ def _iso_from_ctime(stat: os.stat_result | None) -> str:
 DEFAULT_MAX_DEPTH = 8  # cap recursion below user roots (avoids node_modules /
                        # Steam game trees blowing up wall time)
 
+# Dependency-cache directory names that scanners should NEVER recurse into.
+# These exist on any developer's machine; legitimate ML envs, npm projects,
+# Python virtualenvs, etc. all surface here. A real cheat artifact lives in
+# a hand-organized user folder, never in a dep cache — skipping is
+# detection-neutral and the single biggest perf win for ML-heavy users.
+DEP_CACHE_DIRS: frozenset[str] = frozenset(s.lower() for s in (
+    "node_modules", ".git", ".hg", ".svn",
+    "site-packages",
+    "venv", ".venv", "env", "envs",
+    "__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache", ".tox",
+    "anaconda3", "miniconda3", "conda",
+    ".cache", ".npm", ".yarn",
+    ".next", ".nuxt",
+    ".cargo", ".rustup",
+))
 
-def _safe_walk(root: str, *, max_depth: int | None = DEFAULT_MAX_DEPTH) -> Iterable[tuple[str, list[str], list[str]]]:
+
+def _safe_walk(
+    root: str,
+    *,
+    max_depth: int | None = DEFAULT_MAX_DEPTH,
+    skip_dep_caches: bool = True,
+) -> Iterable[tuple[str, list[str], list[str]]]:
     if not os.path.isdir(root):
         return
     root_norm = root.replace("\\", "/").rstrip("/")
@@ -105,6 +126,9 @@ def _safe_walk(root: str, *, max_depth: int | None = DEFAULT_MAX_DEPTH) -> Itera
             cur_depth = len(dirpath.replace("\\", "/").rstrip("/").split("/")) - base_depth
             if cur_depth >= max_depth:
                 dirnames.clear()  # don't descend further
+        if skip_dep_caches:
+            # Prune dep-cache dirs in place. os.walk respects mutations to dirnames.
+            dirnames[:] = [d for d in dirnames if d.lower() not in DEP_CACHE_DIRS]
         yield dirpath, dirnames, filenames
 
 
@@ -115,9 +139,10 @@ def _enumerate_files(
     max_size_mb: int | None = None,
     cap: int | None = None,
     max_depth: int | None = DEFAULT_MAX_DEPTH,
+    skip_dep_caches: bool = True,
 ) -> list[tuple[str, os.stat_result]]:
     out: list[tuple[str, os.stat_result]] = []
-    for dirpath, _dirnames, filenames in _safe_walk(root, max_depth=max_depth):
+    for dirpath, _dirnames, filenames in _safe_walk(root, max_depth=max_depth, skip_dep_caches=skip_dep_caches):
         for name in filenames:
             if ext_lower is not None:
                 lo = name.lower()
@@ -1498,10 +1523,16 @@ def scan_ai_vision_artifacts(engine: Engine) -> None:
     arduino_hits: list[tuple[str, os.stat_result]] = []
     py_dep_hits: list[tuple[str, int]] = []
 
+    # Hard caps on the .exe/.py walk in particular — ML-heavy users can have
+    # tens of thousands of Python scripts across virtualenvs. We don't need to
+    # scan them all to find a named-brand aimbot binary. Dep-cache dirs are
+    # already pruned in _safe_walk.
+    EXE_PY_CAP = 800
+    PY_DEP_CAP = 150
     for root in roots:
         onnx_files.extend(_enumerate_files(root, ext_lower=(".onnx",), cap=200))
         # Brand-name executables / py scripts.
-        for full, st in _enumerate_files(root, ext_lower=(".exe", ".py"), max_size_mb=200):
+        for full, st in _enumerate_files(root, ext_lower=(".exe", ".py"), max_size_mb=200, cap=EXE_PY_CAP):
             hit = match_keyword(f"{os.path.basename(full)} {os.path.dirname(full)}",
                                 VISION_AIMBOT_AI_PC)
             if hit:
@@ -1520,7 +1551,7 @@ def scan_ai_vision_artifacts(engine: Engine) -> None:
             if _ARDUINO_HID_RE.search(content):
                 arduino_hits.append((full, st))
         # Python ML dependency markers.
-        for full, _st in _enumerate_files(root, ext_lower=("requirements.txt", "pyproject.toml", ".cfg"), cap=200):
+        for full, _st in _enumerate_files(root, ext_lower=("requirements.txt", "pyproject.toml", ".cfg"), cap=PY_DEP_CAP):
             base = os.path.basename(full).lower()
             if base not in ("requirements.txt", "pyproject.toml") and not base.endswith(".cfg"):
                 continue

@@ -1715,7 +1715,17 @@ function Scan-AIVisionArtifacts {
     #     a user-writable dir = MEDIUM (could be ML hobby OR aimbot dev)
     #   - ONNX + named brand executable in same dir tree = HIGH cheat
     #   - ONNX + Arduino sketch with HID descriptor = HIGH cheat
+    #
+    # v4.1.1 perf: skips dependency-cache directories where actual aimbots
+    # would never live (node_modules, site-packages, .venv, conda envs, etc.).
+    # An ML-heavy user can have hundreds of thousands of files in those caches
+    # — walking them was the single biggest contributor to AIVision wall time.
     Write-Host '  [*] AI-vision aimbot artifacts (ONNX / YOLO / external HID)...' -ForegroundColor DarkGray
+
+    # Skip these directory NAMES (matched as path segments, case-insensitive).
+    # A real AI-aimbot constellation lives in a hand-organized user folder,
+    # not in a dependency cache. Skipping these is detection-neutral.
+    $excludePattern = '(?i)\\(node_modules|\.git|\.hg|\.svn|site-packages|\.venv|venv|env|envs|__pycache__|\.pytest_cache|\.mypy_cache|\.ruff_cache|\.tox|anaconda3|miniconda3|conda|\.cache|\.npm|\.yarn|\.next|\.nuxt|\.cargo|\.rustup|dist-info)\\'
 
     $roots = @(
         "$env:USERPROFILE\Documents", "$env:USERPROFILE\Desktop",
@@ -1729,10 +1739,17 @@ function Scan-AIVisionArtifacts {
     $arduinoHits = [System.Collections.Generic.List[object]]::new()
     $pyDepHits = [System.Collections.Generic.List[object]]::new()
 
+    # Hard caps on the .exe/.py walk in particular — ML-heavy users can have
+    # tens of thousands of Python scripts across virtualenvs. We don't need
+    # to scan them all to find a named-brand aimbot binary.
+    $exePyCapPerRoot = 800
+    $pyDepCapPerRoot = 150
+
     foreach ($root in $roots) {
         # ONNX models (YOLO weights). Cap recursion depth implicitly via cap on results.
         try {
             Get-ChildItem $root -Recurse -File -Depth 8 -Filter '*.onnx' -ErrorAction SilentlyContinue |
+                Where-Object { $_.FullName -notmatch $excludePattern } |
                 Select-Object -First 200 |
                 ForEach-Object { [void]$onnxFiles.Add($_) }
         } catch {}
@@ -1740,7 +1757,8 @@ function Scan-AIVisionArtifacts {
         # Named-brand executables (HIGH on their own).
         try {
             Get-ChildItem $root -Recurse -File -Depth 8 -Include '*.exe','*.py' -ErrorAction SilentlyContinue |
-                Where-Object { $_.Length -lt 200MB } |
+                Where-Object { $_.FullName -notmatch $excludePattern -and $_.Length -lt 200MB } |
+                Select-Object -First $exePyCapPerRoot |
                 ForEach-Object {
                     $hit = Match-Keyword "$($_.Name) $($_.DirectoryName)" $VisionAimbot_AI_PC
                     if ($hit) {
@@ -1762,6 +1780,7 @@ function Scan-AIVisionArtifacts {
         # paired with the ONNX/Python side of the constellation.
         try {
             Get-ChildItem $root -Recurse -File -Depth 8 -Filter '*.ino' -ErrorAction SilentlyContinue |
+                Where-Object { $_.FullName -notmatch $excludePattern } |
                 Select-Object -First 100 |
                 ForEach-Object {
                     try {
@@ -1777,7 +1796,8 @@ function Scan-AIVisionArtifacts {
         # site-packages dirs naming aimbot-typical libraries.
         try {
             Get-ChildItem $root -Recurse -File -Depth 8 -Include 'requirements.txt','pyproject.toml','*.cfg' -ErrorAction SilentlyContinue |
-                Select-Object -First 200 |
+                Where-Object { $_.FullName -notmatch $excludePattern } |
+                Select-Object -First $pyDepCapPerRoot |
                 ForEach-Object {
                     try {
                         $content = Get-Content $_.FullName -Raw -ErrorAction Stop
