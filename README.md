@@ -7,7 +7,7 @@ Two scan modes share one engine:
 - **PC mode** — for PC gamers auditing their own gaming PC
 - **Console-rig mode** — for console gamers auditing a PC connected to their console rig
 
-Author: **Bread** ([@Sutaigne](https://github.com/Sutaigne)). Contributor: **Drownmw**.
+Author: **Bread#3266221** ([@Sutaigne](https://github.com/Sutaigne)). Contributor: **Drownmw**.
 
 > **Reviewer?** Someone handed you a report and is asking you to believe it? Read [**`docs/for-reviewers.md`**](./docs/for-reviewers.md) first. It walks you through verifying the kit, reading the verdict, and what `CLEAN` does and does not rule out. The verification chain starts with [`HASHES.txt`](./HASHES.txt).
 
