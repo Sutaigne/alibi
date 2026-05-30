@@ -45,6 +45,6 @@ ee99a784feae23033ca496247ec772e1332bfdb36d0b31e2d6bf390e26f3c9f2 *python/src/ali
 
 # --- repo-root attestation files ---
 bf0cf7f07367a8062ab175cb789d69d7c30665628c621c8a4702a796dd9c7f1a *README.md
-9e2389723ae75b14dea74d9c61d74711eaaa70ef34081aa2cd5574a38985f3e6 *SECURITY.md
+e5e8b9a6d947a103c669abf6646a1840d234c9188c8ee77ac2912105d464eb3c *SECURITY.md
 08cc5d577a2e8eafc5887c65b712c90746df4f47e4dfa8dec48af4d8436b06d6 *LICENSE
 71f3f4179a8337ef32bc8bc6feddf63afeda3d2a03ab3a2eda97ac205e1f3e6f *docs/for-reviewers.md

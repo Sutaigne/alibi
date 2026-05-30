@@ -47,7 +47,11 @@ A forensic anti-cheat scanner is, byte-for-byte, hard to tell apart from the thi
 - the literal high-risk command strings it scans a suspect machine for — e.g. `powershell -encodedcommand`, `iex (new-object net.webclient`, driver-signing-bypass flags (`forensic-common.ps1`);
 - `.bat` launchers that self-elevate (`-Verb RunAs`) and run unsigned PowerShell (`-ExecutionPolicy Bypass`), because a downloaded, unsigned script won't run otherwise.
 
-Signature and heuristic engines — and especially **SmartScreen reputation**, which blocks *new, unsigned, rarely-downloaded* files regardless of content — score those exactly as they'd score the real thing. The result is a false positive at download or extract time. None of it is an infection, and you can prove that:
+Signature and heuristic engines — and especially **SmartScreen reputation**, which blocks *new, unsigned, rarely-downloaded* files regardless of content — score those exactly as they'd score the real thing. The result is a false positive at download or extract time.
+
+The detection you're most likely to see is **`Trojan:Script/Wacatac.B!ml`** on the GitHub ZIP download. The `!ml` suffix means it's a cloud machine-learning verdict, not a confirmed signature — `Wacatac.B!ml` is a well-known generic ML false positive that fires on many legitimate scripts and tools. An offline Defender signature scan of the same files returns clean, which is the tell. This false positive has been reported to Microsoft for reclassification.
+
+None of it is an infection, and you can prove that:
 
 - **Hashes.** Every shipped file's SHA256 is in [`HASHES.txt`](./HASHES.txt). Compare what you received against it.
 - **VirusTotal.** Upload the ZIP to [virustotal.com](https://www.virustotal.com) for a ~70-engine second opinion.
