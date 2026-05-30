@@ -44,7 +44,7 @@ a13e61f66e80d05984b505442afd1a17f7a45d578cffc94c9d4b9a05ca76b85c *python/src/ali
 ee99a784feae23033ca496247ec772e1332bfdb36d0b31e2d6bf390e26f3c9f2 *python/src/alibi/visual_companion.py
 
 # --- repo-root attestation files ---
-b278d8249a12ac4ae8d73f82b4782a0c37203b3b214da1258e01e8fc834b1b8c *README.md
-8cc93207410fb81ed6b7bdcf6ffb2c0cec7aed1469fd276bf7a1252b781f8aa3 *SECURITY.md
+bf0cf7f07367a8062ab175cb789d69d7c30665628c621c8a4702a796dd9c7f1a *README.md
+9e2389723ae75b14dea74d9c61d74711eaaa70ef34081aa2cd5574a38985f3e6 *SECURITY.md
 08cc5d577a2e8eafc5887c65b712c90746df4f47e4dfa8dec48af4d8436b06d6 *LICENSE
 71f3f4179a8337ef32bc8bc6feddf63afeda3d2a03ab3a2eda97ac205e1f3e6f *docs/for-reviewers.md
