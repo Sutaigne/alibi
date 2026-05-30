@@ -9,7 +9,7 @@
 
   Scope of this scan:
     Cheat-trace findings checked : 5 total artifacts
-    Running processes scored     : 3
+    Running processes scored     : 4
     Services scored              : 1
 
   This is necessary but not sufficient evidence. See limitations
@@ -20,14 +20,11 @@
   ----------------------------------------------------------------
   HISTORICAL findings (logged, did NOT affect verdict)
   ----------------------------------------------------------------
-  2 finding(s) older than 180 days were demoted by the
+  1 finding(s) older than 180 days were demoted by the
   recency-decay rule. These are visible below in the full report but
   did not count toward the verdict above. Old artifacts from games or
   tools the user has long since stopped using should not make a
   currently-clean machine look dirty.
-
-  Of these, 1 were originally HIGH-severity cheat or input matches.
-  The most-recent timestamps and AgeDays are recorded per finding.
 
 ================================================================
 
@@ -35,7 +32,7 @@
   ALIBI v4.0 - CONSOLIDATED REPORT
 ================================================================
 
-  Generated:  2026-05-25 23:48:18
+  Generated:  2026-05-26 02:14:11
   Hostname:   BREAD-PC
   Username:   BradS
   OS:         Windows 11 (10.0.26200)
@@ -53,11 +50,14 @@
     HIGH    findings : 0
     MEDIUM  findings : 0
     INFO    items    : 3
-    WARN    (access) : 0
+    WARN    (access) : 1
 
   Summary (historical, >180 days old - logged but did NOT affect verdict):
-    Demoted historical findings : 2
-    (Originally HIGH-severity   : 1)
+    Demoted historical findings : 1
+    (Originally HIGH-severity   : 0)
+
+  [WARN/other] [BAM] Access denied
+        Source: HKLM\SYSTEM\CurrentControlSet\Services\bam\State\UserSettings
 
   [INFO/other] [KnownHashes] Hashed 284 executables, checked against 1 known-bad SHA256 sample(s)
         Source: (scan)
@@ -80,7 +80,7 @@
   ------------------------------------------------------------
 
   [INFO/input] [Installed] [HISTORICAL was MEDIUM, 2750d old] [xim] XIM Manager 2018
-        Source: Old XIM Manager
+        Source: XIM Manager 2018
         Pattern: xim
         Name: XIM Manager 2018
         InstallDate: 2018-11-04
@@ -89,30 +89,21 @@
         RecencyClass: historical
         OriginalSeverity: MEDIUM
 
-  [MEDIUM/cheat] [Prefetch] [HISTORICAL was HIGH, 420d old] [engineowning] OLDCHEAT (CoD MW 2019)
-        Source: C:\Windows\Prefetch\OLDCHEAT.EXE-9F8E7D6C.pf
-        Pattern: engineowning
-        FirstSeen: 2024-06-04T23:48:18
-        LastModified: 2025-03-31T23:48:18
-        MostRecentTimestamp: 2025-03-31T23:48:18
-        AgeDays: 420
-        RecencyClass: historical
-        OriginalSeverity: HIGH
-
 ================================================================
   SECTION 2 OF 3 - RUNNING PROCESSES (scored)
 ================================================================
 
-  Total processes captured: 3
+  Total processes captured: 4
     HIGH:   0
     MEDIUM: 0
-    LOW:    1
+    LOW:    2
     CLEAN:  2
 
   Full processes table (sorted by suspicion score):
 
     CLEAN   PID   4288  explorer.exe                      C:\Windows\explorer.exe
     CLEAN   PID   1248  svchost.exe                       C:\Windows\System32\svchost.exe
+    LOW     PID   8472  steam.exe                         C:\Program Files (x86)\Steam\steam.exe
     LOW     PID  12384  chrome.exe                        C:\Program Files\Google\Chrome\Application\chrome.exe
 
 ================================================================
@@ -127,7 +118,7 @@
 
   Full services table (sorted by suspicion score):
 
-    CLEAN   Stopped  vgc                               "C:\Program Files\Riot Vanguard\vgc.exe"
+    CLEAN   Running  vgc                               "C:\Program Files\Riot Vanguard\vgc.exe"
 
 ================================================================
   COVERAGE LIMITATIONS
@@ -139,4 +130,4 @@
   - Keyword matching only. Sophisticated cleaners can wipe most of these artifacts.
   - A clean result is necessary but not sufficient.
 
-  Report generated: 2026-05-25 23:48:18
+  Report generated: 2026-05-26 02:14:11

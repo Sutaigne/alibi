@@ -1,114 +1,191 @@
-# NEXT SESSION — open issues from 2026-05-26
+# NEXT SESSION — open items after v4.2.0 visual companion ship
 
-This is a fresh-session pickup doc. Two real bugs surfaced at the very end of the previous session, while Brad was field-testing `v4.1.5`. **Read this first**, then `docs/handoff.md` for full project context, then the relevant source files.
+Fresh-session pickup doc. The previous session (committed in `e8ec1f3`)
+landed the v4.2.0 PowerShell visual-companion port to the dark-tactical
+design, added the new **Activity by pattern** lifecycle section, fixed
+several rendering bugs, and tightened scanner keyword matching to drop a
+class of false positives. Two carryover issues from the v4.1.5 field
+test remain — one of which (Issue 1) was deliberately deferred when Brad
+chose to pursue Issue 2 first.
 
-Repo: https://github.com/Sutaigne/alibi · current tag: `v4.1.5`
+**Read this first**, then `docs/handoff.md` for project context, then
+`git show e8ec1f3 --stat` to see exactly what shipped.
+
+Repo: https://github.com/Sutaigne/alibi · current tip: `e8ec1f3` (untagged)
 
 ---
 
-## Issue 1 — "It ran multiple scans"
+## Issue 1 — "It ran multiple scans" (CLOSED 2026-05-26 — not a code bug)
 
-**Symptom:** Brad double-clicked `Run scan.bat` (the unified launcher at repo root) and saw the kit run **more than the expected pair** of scans (PC mode + console-rig mode). Exact count unclear.
+**Status:** Closed. Diagnosis below.
 
-**Possible causes (ranked by likelihood):**
+**Diagnostic run on Brad's Desktop on 2026-05-26** produced two recent
+launches:
 
-1. **UAC self-elevation loop.** `Run scan.bat` checks `NET SESSION`, if non-admin it calls `powershell.exe ... Start-Process -FilePath '%~f0' -Verb RunAs` to spawn an elevated copy of itself, then `exit /b`. If the elevated copy somehow re-enters the elevation branch (e.g. `NET SESSION` failing intermittently inside the elevated process for some reason), it would re-spawn another elevated copy of itself — infinite loop possible. Worth verifying that the elevated instance reliably passes the admin check on Brad's machine.
-2. **`Run scan.bat` was accidentally double-clicked.** Each click spawns its own independent UAC + scan flow. The kit doesn't prevent concurrent launches.
-3. **The v4.1.5 self-elevation messaging change broke something.** v4.1.5 added a long explanatory text block before the elevation. Possible the new block contains a character that breaks cmd parsing and causes weird control flow. Worth diffing v4.1.4 vs v4.1.5 of `Run scan.bat` and looking for `&`, `(`, `)`, `|`, `^`, `>` inside the new echo block.
+- **Run 1 (5/25 23:41 → 23:56):** PC #1 (23:41:54 → 23:47:42, 572 KB)
+  → Rig #1 (23:47:43 → 23:53:35, 577 KB) → PC #2 (23:51:34 → 23:56:27,
+  567 KB). PC #2 started 9 min 40 s after Run 1 began, **during** Rig #1.
+- **Run 2 (5/26 00:18 → 00:19):** 1 PC + 1 Rig, perfectly sequential.
+  Clean.
 
-**Diagnosis to run first in next session:**
+**Why the three v4.1.5-bug hypotheses are all ruled out:**
+
+1. *Inline fall-through (parens / echo-block parser regression).* If the
+   non-admin parent had run inline alongside the elevated child, PC #2
+   would start at ~23:41:54, not 23:51:34.
+2. *Non-admin partial scan in the parent window.* PC #2 weighs 567 KB —
+   essentially identical to PC #1's 572 KB. That's a full elevated scan,
+   not a permission-denied stub.
+3. *UAC self-elevation loop.* A loop wouldn't space launches 10 minutes
+   apart, and each iteration would need a UAC prompt the user couldn't
+   miss.
+
+**Actual cause:** A second `Run scan.bat` launch around 23:51:30. UAC
+prompted again, was approved, and a fresh elevated copy started PC #2 in
+parallel with the still-running Rig #1. Whether that second launch was
+an accidental re-click *or* a deliberate impatient re-launch isn't
+resolvable from the data alone, and the distinction matters less than
+it sounds: both point at the same latent UX defect.
+
+The v4.1.5 echo regression hypothesis from the earlier handoff is
+falsified by this data. `Run scan.bat` is structurally sound; the cmd
+parser correctly balances `(takes ~1-3 minutes)` inside the if-block,
+and the byte dump showed no hidden chars.
+
+**Latent UX defect to consider for a future iteration.** Phase 2
+(`console-rig-audit.ps1`) emits no progress output for ~5 minutes
+during the LOLDrivers fetch + filesystem walks. To a user watching the
+launcher window after Phase 1's flurry of activity, the window looks
+dead. That's the condition under which a reasonable person re-launches
+"just in case it stalled" — exactly the failure shape this issue
+reports. Two cheap mitigations, either is sufficient:
+
+- Periodic dot/heartbeat output from the long-running scans
+  (`Write-Host -NoNewline '.'` every 5–10 s during slow sections), so
+  the window visibly isn't dead.
+- A `Run scan.bat` lockfile guard: if another scan is already running,
+  show "a scan is already in progress in window <PID>" and exit instead
+  of starting a parallel scan.
+
+Neither is blocking; both would prevent the only failure mode the field
+test surfaced. Reopen if symptom recurs *and* matches a different
+pattern (near-simultaneous launches, repeated UAC prompts, or PC #2
+weighing much less than PC #1).
+
+---
+
+## Issue 3 — Field test v4.2.0 on Brad's real machine (NEW)
+
+The v4.2.0 work is verified by unit tests + a synthetic .txt smoke test
++ a re-render of Brad's last saved `PCForensicCheck_20260525_185106.txt`
+(which is from a scan run BEFORE the keyword-tightening fix landed, so
+its false-positive findings are baked in). **A fresh end-to-end scan has
+not been run with v4.2.0 yet.**
+
+**What to confirm on the fresh scan:**
+
+- Scanner keyword tightening actually drops the `hoic`→`CHOICE.EXE` and
+  `hping`→`PATHPING.EXE` `[HIGH]/[NetAttack]` findings.
+- With those false positives gone, `totalCheatHigh` should drop to 0 on
+  Brad's machine, and the verdict tier should fall through from `CHEATS
+  DETECTED` (the false-positive-driven verdict in the old .txt) to
+  `INPUT DEVICES DETECTED` (the accurate tier for his XIM / reWASD /
+  HidHide stack).
+- Lifecycle section should render 6 tracks (`XIM MATRIX`, `XIM (other)`,
+  `Cronus Zen Studio`, `reWASD`, `HidHide`, plus whatever else is
+  current).
+- Named-items block should show ALL HIGH input-device patterns in
+  `main` (not `also`) because the verdict is no longer cheat-driven.
+- Today-beam on the lifecycle SVG should render on the right edge
+  (SVG-coord fix verified in synthetic data).
+
+**Run:**
 
 ```powershell
-# 1. Count actual report files on Brad's Desktop with timestamps
-Get-ChildItem $env:USERPROFILE\Desktop -Filter 'AlibiReport_*.txt' |
-    Sort-Object LastWriteTime |
-    Select-Object Name, LastWriteTime
-
-Get-ChildItem $env:USERPROFILE\Desktop -Filter 'AlibiRigReport_*.txt' |
-    Sort-Object LastWriteTime |
-    Select-Object Name, LastWriteTime
+# As admin
+& "D:\Claude\Projects\PC Check\Run scan.bat"
+# Or just the PC-mode driver if Run scan.bat is still under suspicion (Issue 1):
+& "D:\Claude\Projects\PC Check\scanner\forensic-scan.ps1"
 ```
 
-If there are more than 2 files (1 PC + 1 console-rig) per scan attempt, that confirms multiple-scan execution. The timestamps will show whether they're back-to-back (=self-elevation loop) or spaced (=user clicked twice).
-
-**Suggested fix path:**
-
-- **Best:** Remove self-elevation entirely. Replace with a check at the top: if not admin, print clear "RIGHT-CLICK `Run scan.bat` AND PICK 'Run as administrator'" message, pause, exit. No `Start-Process -Verb RunAs`. No second window. No possible loop. The trade-off: one extra user action (right-click), but zero risk of re-entry and the user never sees the two-window pattern that confused them in v4.1.5.
-- **Acceptable:** Keep self-elevation but add a `--already-elevated` sentinel flag that the elevated copy passes to itself, and refuse to re-elevate if that flag is set. Belt-and-suspenders.
+The HTML auto-opens in the default browser. Compare against the
+pre-v4.2.0 `PCForensicCheck_20260525_185106_visual_NEW.html` on the
+Desktop for a before/after visual.
 
 ---
 
-## Issue 2 — "It also ran the old UI"
+## Issue 4 — HASHES.txt regeneration (DONE 2026-05-26)
 
-**Symptom:** The HTML companion that opened in Brad's browser at the end of the scan was rendered in the **old v3.x cream/serif design**, NOT the new dark-tactical readout (the one shipped in v4.0 from the design handoff bundle).
+Regenerated against the current working tree. `sha256sum -c HASHES.txt`
+verifies all 37 shipped files OK.
 
-**Root cause — confirmed by code inspection:**
+Net changes vs the pre-v4.2.0 file:
 
-The new dark-tactical design was **only** ported to the Python parity port. Look at the file tree:
-
-```
-python/src/alibi/
-├── visual_companion.py        ← NEW dark-tactical renderer (v4.0)
-├── visual_styles.css          ← 1300 lines of design tokens
-└── visual_scripts.js          ← 350 lines of vanilla-JS interactivity
-
-scanner/                       ← PowerShell side (canonical)
-├── generate-visual-companion.ps1         ← STILL the v3.x design
-└── generate-visual-companion-console.ps1 ← STILL the v3.x design
-```
-
-When `Run scan.bat` runs (the canonical PowerShell path), it calls `scanner/forensic-scan.ps1` which calls `scanner/generate-visual-companion.ps1` — that .ps1 has its own embedded HTML template using the OLD cream/serif design (the v3.x "Neon Forensics" / safety-card look). It also carries its own duplicate keyword arrays — explicitly flagged as tech debt in `docs/handoff.md`:
-
-> | Visual-companion .ps1 duplication | `generate-visual-companion.ps1` and `generate-visual-companion-console.ps1` each carry their own embedded keyword arrays. The v3.8 expansion added 7 more arrays that had to be hand-mirrored into the visual companion. Drift risk is growing. Next time these need updating: extract parser + SVG renderer + HTML template into `visual-companion-common.ps1` and have both visual-companion drivers dot-source it.
-
-That tech-debt note was written before we even started the v4.0 design work. It anticipated exactly this problem.
-
-**Suggested fix path:**
-
-1. Move `python/src/alibi/visual_styles.css` and `visual_scripts.js` up to `scanner/` (or a new `assets/` folder) so both PS and Python can read them as shared resources. Update the Python `_load_resource` to point at the new location.
-2. Create `scanner/visual-companion-common.ps1` that:
-   - Reads the shared CSS + JS files at runtime
-   - Defines a `Render-AlibiHtml` function that mirrors `python/src/alibi/visual_companion.py :: render_html()` exactly — same section order, same finding-card markup, same timeline math, same donut math, same named-items grid
-   - Lives next to `forensic-common.ps1` and is dot-sourced by both `generate-visual-companion.ps1` and `generate-visual-companion-console.ps1`
-3. Rewrite `generate-visual-companion.ps1` and `generate-visual-companion-console.ps1` as thin shims that parse the .txt report into the finding / process / service objects, then call `Render-AlibiHtml` and write the file. The OLD inline HTML templates get deleted.
-4. Verify byte-for-byte (or near-byte-for-byte) parity between the HTML the PS side emits and what the Python side emits. The existing three reference HTMLs in `docs/design-handoff-2026-05/reports/` are the spec.
-
-Reference files to mirror against:
-- **Design spec:** `docs/design-handoff-2026-05/README.md` (the high-fidelity handoff doc, ~28 KB)
-- **Python implementation:** `python/src/alibi/visual_companion.py` (~750 lines)
-- **Live preview of expected output:** https://sutaigne.github.io/alibi/
-
-The Python port is the source of truth for the visual now. The PS port has been lagging.
+- **Modified hashes:** `scanner/forensic-common.ps1` (bounded matching),
+  `scanner/generate-visual-companion.ps1` and
+  `scanner/generate-visual-companion-console.ps1` (60-line shims
+  replacing the old 800+/900+ line renderers),
+  `python/src/alibi/scanners.py`, `python/src/alibi/utils.py`,
+  `python/src/alibi/visual_companion.py`.
+- **Added:** `scanner/visual-companion-common.ps1`,
+  `scanner/visual_styles.css`, `scanner/visual_scripts.js`.
+- **Removed:** `python/src/alibi/visual_styles.css`,
+  `python/src/alibi/visual_scripts.js` (moved to `scanner/`).
 
 ---
 
-## Status of this session's other shipped work — keep / build on
+## What v4.2.0 shipped — keep / build on
 
-These are stable and don't need rework:
+These are stable and don't need rework unless field-test surfaces issues:
 
-| Version | What landed | Status |
-|---|---|---|
-| v4.0.0 | Repo rename `pc-check` → `alibi`. Python package rename `pc_check` → `alibi`. Console scripts `alibi` / `alibi-rig`. Output filenames `AlibiReport_*.txt`. | Stable |
-| v4.0.0 | `HASHES.txt`, `SECURITY.md`, `docs/for-reviewers.md`, private vulnerability reporting, GitHub Pages preview at https://sutaigne.github.io/alibi/ | Stable |
-| v4.0.0 | Fix falsified "no Invoke-Web" copy in `scanner/alibi-safety-card.html` + `one-page-guide.html` + `START HERE.txt` + root `README.md` | Stable |
-| v4.0.0 | README CoD-primary framing, Activision ID `Bread#3266221` labeled, timeline correction (project predates May 22 by 10+ days, original name "CheatChecks") | Stable |
-| v4.1.0 | Repo restructure: `kit/` → `scanner/`, `ready-to-flash/` collapsed into repo root. Whole-tree speed pass (event log MaxEvents caps, depth limits). Per-scanner timing in `Invoke-AllScans` / `invoke_all_scans`. | Stable |
-| v4.1.1 | First AIVision dep-cache exclude attempt — turned out to be incomplete, see v4.1.4 | Superseded |
-| v4.1.2 | Auto-open HTML in browser at scan completion. `-SkipBrowserOpen` / `--no-open-browser` flags on individual drivers; unified launcher passes them and opens just one tab. | Mostly stable; see Issue 2 |
-| v4.1.3 | Sharper FINAL SCAN SUMMARY block in both launchers. Clipboard copy of all four paths via `clip.exe`. | Stable |
-| v4.1.4 | **Real** AIVision fix: new `Get-PrunedFiles` helper in `scanner/forensic-common.ps1`. .NET `DirectoryInfo.EnumerateDirectories` with name-pruning BEFORE recursing. Applied to AIVision + Lua + UserScripts + ObscuredNames + KnownHashes. Verified end-to-end: AIVision 33.87s, total 92.92s on Brad's machine. | Stable |
-| v4.1.5 | Self-elevation messaging clarified. `explorer.exe` relay for browser open (avoids admin-token leak to Chrome/Edge). | **See Issue 1** — messaging may have introduced multi-scan bug; verify the .bat parses cleanly. |
+| Component | Status |
+|---|---|
+| `scanner/visual-companion-common.ps1` (~1100 lines, parser + dark-tactical renderer mirroring `python/src/alibi/visual_companion.py`) | Stable, unit-tested |
+| `scanner/generate-visual-companion.ps1` + `-console.ps1` (60-line shims; old 800+/900+ line v3.x renderers replaced) | Stable |
+| Activity-by-pattern lifecycle section in both Python and PS renderers | Stable |
+| Track-key fallback (`Pattern → Label → DisplayName → DeviceName`) so AppData/USB findings get their own tracks | Stable |
+| Named-items verdict-aware routing (`CHEATS DETECTED` splits input to "also"; other verdicts route all HIGH to main) | Stable |
+| Named-items dedup by Pattern with "+N" corroborating-source chip | Stable |
+| SVG coord InvariantCulture F1 formatting (replaced `{0:N1}` that broke at X≥1000 in en-US locale) | Stable |
+| `match_keyword(..., bounded=True)` / `Match-Keyword -Bounded` for short generic keywords; applied to `scan_network_attack_tools` and `scan_lua_scripts` (Python + PS) | Stable, 21 tests pass (hoic↛CHOICE, hping↛PATHPING, esp↛FDResPub, loader↛RTSSHooksLoader64, anticheat↛EasyAntiCheat) |
+| Shared `scanner/visual_styles.css` and `scanner/visual_scripts.js` (moved up from `python/src/alibi/`, Python loader updated) | Stable |
+| `visual-companion-common.ps1` + matching python entry in scanner self-exclusion lists | Stable |
 
 ---
 
-## Other low-priority items still open
+## Low-priority items still open
 
-These were noted in earlier session work but not addressed:
-
-- **Self-detection meta-quirk.** The scanner finds its OWN keyword strings (`engineowning`, `rut.gg`, etc.) embedded in `scanner/forensic-common.ps1` and `python/src/alibi/keywords.py`. When Brad runs the scan on his own dev machine, this triggers a HIGH cheat finding pointing at his repo source. Real reviewers running it on a stranger's machine won't hit this. Worth a follow-up tweak: in `Scan-UserScriptContents` and `Scan-KnownHashes`, scope-skip any directory tree containing a `scanner/forensic-common.ps1` (or any directory matching `alibi*` or `pc-check*`).
-- **Auto-zip of reports** — deliberately parked. Brad's stance: the .txt should stay individually shareable. Don't ship without re-discussion.
-- **Browser-history scanner.** `$CheatMarketplaceDomains` (40 reseller domains) sits inert in `forensic-common.ps1` waiting for a future `Scan-BrowserHistory` with hit-threshold logic. Design notes are in `docs/handoff.md` under "Recommended next moves."
-- **`$KnownCheatHashes` backfill.** Currently 1 entry (RUT v4 launcher SHA256). More candidates worth hashing if samples are obtainable: Two2nd / Tomware / Cynical CoD launchers (Activision-C&D'd Feb 2025), DMA vendor firmware images, Aimmy / Sunone release binaries.
+- **Track-label truncation.** Lifecycle SVG track labels are capped at
+  14 characters with `...` (so "Cronus Zen Studio" displays as
+  "CRONUS ZEN ST..."). Bumping to ~18 chars or sliding `left_pad`
+  from 180 to 220 fits common names without truncation. Minor.
+- **Named-items chip cleanup.** The "InstalledSoftware +3" chip format
+  is informative but visually dense. Could simplify to "+3" or
+  "(4 sources)" as a separate sub-element. Subjective polish.
+- **Reference HTMLs aren't updated.**
+  `docs/design-handoff-2026-05/reports/report-pc-*.html` predate v4.0's
+  log-scale timeline AND the new v4.2 lifecycle section. They're frozen
+  design specs. Regenerating from the current Python renderer would
+  update the spec to match what ships. Useful for parity checks, not
+  blocking.
+- **Self-detection meta-quirk.** Scanner running on Brad's dev machine
+  finds its OWN keyword strings (`engineowning`, `rut.gg`, etc.)
+  embedded in `scanner/forensic-common.ps1` and
+  `python/src/alibi/keywords.py`. Triggers HIGH cheat findings pointing
+  at the repo source. Reviewers running on a stranger's machine won't
+  hit this. Worth a scope-skip in `Scan-UserScriptContents` and
+  `Scan-KnownHashes` for any directory tree containing
+  `scanner/forensic-common.ps1` (or any directory matching `alibi*` or
+  `pc-check*`).
+- **Auto-zip of reports** — deliberately parked. Don't ship without
+  re-discussion.
+- **Browser-history scanner.** `$CheatMarketplaceDomains` (40 reseller
+  domains) sits inert in `forensic-common.ps1` waiting for a future
+  `Scan-BrowserHistory` with hit-threshold logic.
+- **`$KnownCheatHashes` backfill.** Still 1 entry (RUT v4 launcher
+  SHA256). More candidates worth hashing if samples are obtainable:
+  Two2nd / Tomware / Cynical CoD launchers (Activision-C&D'd Feb 2025),
+  DMA vendor firmware images, Aimmy / Sunone release binaries.
 
 ---
 
@@ -116,11 +193,13 @@ These were noted in earlier session work but not addressed:
 
 1. **This file** (`docs/NEXT_SESSION.md`)
 2. `docs/handoff.md` — full project history, design rationale
-3. `docs/for-reviewers.md` — reviewer-side workflow (what reports mean, how to verify)
-4. `scanner/forensic-common.ps1` — the engine (the `Get-PrunedFiles` helper at the top is recent; understand it before touching)
-5. `python/src/alibi/visual_companion.py` — the canonical new visual implementation (the PS side should be brought into parity with this)
-6. `Run scan.bat` — the unified launcher; needs the most-recent attention for Issue 1
-7. `scanner/generate-visual-companion.ps1` — the PS-side HTML generator that needs to be rewritten or replaced for Issue 2
+3. `git show e8ec1f3 --stat` — what just shipped in v4.2.0
+4. `scanner/visual-companion-common.ps1` — the new shared module
+   (parser + renderer + scoring + bounded keyword matching)
+5. `python/src/alibi/visual_companion.py` — canonical Python renderer
+   (the PS module mirrors this 1:1)
+6. `scanner/forensic-common.ps1` — `Match-Keyword` now has a `-Bounded`
+   switch; `Score-NetworkBlob` and the Lua-script loop use it
 
 ---
 

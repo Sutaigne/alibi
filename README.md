@@ -26,7 +26,6 @@ Author: **Bread** — Activision ID `Bread#3266221`, GitHub [@Sutaigne](https://
 ├── scanner/                  ← the .ps1 scanner files (the engine)
 ├── python/                   ← Python parity port (alternative implementation)
 ├── docs/                     ← reviewer guide, dev history, design source
-├── archive/                  ← old builds, kept for provenance
 ├── README.md / SECURITY.md / HASHES.txt / LICENSE
 ```
 
@@ -50,6 +49,25 @@ alibi-rig
 ```
 
 Python 3.10+ required. Pure stdlib (except an opt-in `urllib` call to [loldrivers.io](https://www.loldrivers.io) for BYOVD detection).
+
+## If the download is blocked as a virus
+
+`alibi` is an anti-cheat *scanner*, so by design it ships the very patterns antivirus hunts for: a plaintext list of cheat-brand names (`aimbot`, `wallhack`, `pcileech`, …) and the literal attack-command strings it looks for on a suspect machine (e.g. `iex (new-object net.webclient`). SmartScreen and some AV engines score those bytes — on a brand-new, unsigned, low-download-count file — as "suspicious," even though every file is plain, readable source. **This is a known false positive, not a real infection.** You can confirm that yourself: every shipped file's SHA256 is in [`HASHES.txt`](./HASHES.txt), and uploading the ZIP to [VirusTotal](https://www.virustotal.com) shows it clean across ~70 engines.
+
+Two separate things you may hit, and the fix for each:
+
+**1. "Virus detected" — the browser refuses to download.** This is SmartScreen reputation, not a confirmed threat. In Edge/Chrome: open the browser's **Downloads** list → the blocked item → **Keep** (Edge: ⋯ → *Keep* → *Keep anyway*). Then verify against `HASHES.txt`.
+
+**2. "Access to the compressed (zipped) folder is denied" when extracting.** This is the *Mark of the Web* — Windows tags every internet download, and the built-in extractor then refuses. It is unrelated to any virus, and affects clean downloads too. Remove the tag in one line:
+
+```powershell
+Unblock-File .\alibi-main.zip       # strip the internet tag
+Expand-Archive .\alibi-main.zip     # now extracts cleanly
+```
+
+Or: right-click the ZIP → **Properties** → tick **Unblock** → **OK**, then extract. (7-Zip ignores the tag entirely.)
+
+The full explanation — why a defensive tool trips antivirus, how to report the false positive to Microsoft, and what we do (and deliberately don't do) to reduce it — is in [`SECURITY.md`](./SECURITY.md#antivirus--smartscreen-false-positives).
 
 ## What it detects
 
@@ -84,7 +102,7 @@ The `_visual.html` files are fully self-contained (inline CSS + JS, no external 
 This kit's whole value is being readable by a reviewer who has no reason to trust the author. Therefore:
 
 - All source is plain `.ps1` / `.py` / `.css` / `.js` / `.html`. Nothing is minified, compiled, or obfuscated.
-- No binaries are shipped (the historical zips in `archive/` are PowerShell source).
+- No binaries are shipped, and no opaque archives — version history lives in git, not in committed ZIPs.
 - No external dependencies at runtime beyond Python 3.10+ stdlib (Python port) or the PowerShell that ships with Windows.
 - No telemetry, no analytics, no tracking.
 - Exactly one outbound network call (LOLDrivers BYOVD cross-reference) exists, prompts the user with Y/N before running, skipped by default with `-SkipLOLDrivers` / `--skip-loldrivers`, and is explicitly disclosed in every report.
