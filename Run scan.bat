@@ -10,70 +10,122 @@ REM  Author: Bread
 REM  Contributor: Drownmw
 REM ========================================================================
 
+REM --- Black-box run log on the Desktop. If this window ever closes early,
+REM     this file shows exactly how far the launcher got. ---
+set "RUNLOG=%USERPROFILE%\Desktop\alibi-run.log"
+>"%RUNLOG%" echo [start] %DATE% %TIME%
+>>"%RUNLOG%" echo [start] self=%~f0
+>>"%RUNLOG%" echo [start] cwd=%CD%
+
 REM --- Clear any stale summary files from a previous run ---
 del "%TEMP%\alibi-pc.summary" 2>nul
 del "%TEMP%\alibi-console.summary" 2>nul
+>>"%RUNLOG%" echo [step] cleared stale summaries
 
-REM --- Require admin. Self-elevate if needed; fail clean if declined. ---
-NET SESSION >nul 2>&1
-if %errorLevel% NEQ 0 (
+REM --- Require admin. We do NOT silently self-elevate any more: that hidden
+REM     re-launch (Start-Process -Verb RunAs) closed this window to open a new
+REM     one, which is exactly the "appeared and vanished" behavior. Instead we
+REM     detect non-admin and show a clear message that STAYS on screen. ---
+net session >nul 2>&1
+set "ADMINRC=!errorLevel!"
+>>"%RUNLOG%" echo [admin] net-session-errorlevel=!ADMINRC!  0-means-admin
+if "!ADMINRC!" NEQ "0" (
+    cls
     echo.
     echo   ============================================================
-    echo    Alibi - admin elevation required
+    echo     Alibi needs to run as administrator
     echo   ============================================================
     echo.
-    echo   This scan needs administrator permission.
-    echo   A Windows UAC prompt will appear in a moment.
+    echo     This window is NOT elevated, so the scan cannot read the
+    echo     Windows forensic sources it needs.
     echo.
-    echo   AFTER you click YES:
-    echo     - THIS window will close.
-    echo     - A NEW elevated window will open.
-    echo     - The scan runs in that new window (takes ~1-3 minutes).
-    echo     - When done, your browser will open the report and the
-    echo       file paths will be on your clipboard.
+    echo     To fix it ^(about 5 seconds^):
+    echo       1.  Close this window.
+    echo       2.  RIGHT-CLICK   "Run scan.bat"
+    echo       3.  Choose   "Run as administrator"
+    echo       4.  Click YES on the Windows prompt.
     echo.
-    echo   The two-window pattern is normal Windows UAC behavior, not
-    echo   a re-run of the scan. Watch the NEW window for progress.
+    echo     The window will then stay open and show live progress.
     echo.
-    powershell.exe -NoProfile -Command "try { Start-Process -FilePath '%~f0' -Verb RunAs -ErrorAction Stop } catch { exit 1 }"
-    if !errorLevel! NEQ 0 (
-        echo.
-        echo   ============================================================
-        echo    Admin permission was declined.
-        echo   ============================================================
-        echo.
-        echo   The scan requires admin to access several Windows forensic
-        echo   sources. Without admin most come back as "Access denied"
-        echo   and the resulting report is too incomplete to be useful.
-        echo.
-        echo   To run the scan: close this window, RIGHT-CLICK
-        echo   "Run scan.bat" and pick "Run as administrator".
-        echo.
-        pause
-    )
+    echo   ============================================================
+    echo.
+    >>"%RUNLOG%" echo [admin] NOT elevated - showed instructions, exiting cleanly
+    echo     Press any key to close this window.
+    pause >nul
     exit /b
 )
+>>"%RUNLOG%" echo [admin] elevated OK - proceeding to scan
 
-set "KIT=%~dp0scanner"
+set "KIT=%~dp0alibi-engine\scanner"
+
+REM --- Optional online driver-safety check. Asked ONCE here, up front, with a
+REM     10-second auto-skip, so the scan itself never blocks on a hidden prompt. ---
+set "LOL=-SkipLOLDrivers"
+cls
+echo.
+echo   ============================================================
+echo     Optional:  online driver-safety check
+echo   ============================================================
+echo.
+echo     Alibi can also cross-check your drivers against a public
+echo     list of known-vulnerable / malicious drivers (loldrivers.io).
+echo     This is the ONE optional network call. It sends NOTHING about
+echo     your PC - it only downloads a public list.
+echo.
+echo     The scan produces a valid report either way.
+echo     Skips automatically in 10 seconds if you do nothing.
+echo.
+choice /C YN /N /T 10 /D N /M "   Include the online driver check?  [Y/N]: "
+if errorlevel 2 ( set "LOL=-SkipLOLDrivers" ) else ( set "LOL=-FetchLOLDrivers" )
+>>"%RUNLOG%" echo [choice] LOL=!LOL!
 
 cls
 echo.
 echo   ============================================================
-echo    Alibi  -  Full Scan Suite
-echo    Total time: about 2-3 minutes. Window will stay open.
+echo     ALIBI IS RUNNING  -  you did everything right
 echo   ============================================================
 echo.
-echo   [Phase 1 of 2]  Alibi
+echo     [ OK ]  Launched as administrator
+echo     [ OK ]  Scanner files found
+echo     [ OK ]  Scan started
+echo.
+echo     What happens now:
+echo       - Two scans run back to back: first this PC, then the
+echo         console-rig side.
+echo       - This takes about 1 to 3 minutes total.
+echo       - Steps print below as they run. It is normal for a
+echo         step to pause for a few seconds - it is NOT frozen.
+echo       - KEEP THIS WINDOW OPEN. It will clearly say when it is
+echo         finished and list your files.
+echo.
+echo   ============================================================
+echo     [ 1 of 2 ]  Scanning this PC ...   (please wait)
 echo   ------------------------------------------------------------
 echo.
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%KIT%\forensic-scan.ps1" -SkipBrowserOpen
+>>"%RUNLOG%" echo [scan1] launching forensic-scan.ps1 %LOL%
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%KIT%\forensic-scan.ps1" %LOL% -SkipBrowserOpen
+>>"%RUNLOG%" echo [scan1] forensic-scan.ps1 returned !errorLevel!
+echo.
+if exist "%TEMP%\alibi-pc.summary" (
+    echo     [ OK ]  PC scan finished.
+) else (
+    echo     [FAIL]  PC scan did not finish - details are above.
+)
 
 echo.
 echo   ============================================================
-echo   [Phase 2 of 2]  Alibi (console-rig mode)
+echo     [ 2 of 2 ]  Scanning the console-rig side ...   (please wait)
 echo   ------------------------------------------------------------
 echo.
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%KIT%\console-rig-audit.ps1" -SkipBrowserOpen
+>>"%RUNLOG%" echo [scan2] launching console-rig-audit.ps1 %LOL%
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%KIT%\console-rig-audit.ps1" %LOL% -SkipBrowserOpen
+>>"%RUNLOG%" echo [scan2] console-rig-audit.ps1 returned !errorLevel!
+echo.
+if exist "%TEMP%\alibi-console.summary" (
+    echo     [ OK ]  Console-rig scan finished.
+) else (
+    echo     [FAIL]  Console-rig scan did not finish - details are above.
+)
 
 REM --- Read summary files written by each .ps1 ---
 set "PC_VERDICT=(scan did not complete)"
@@ -114,11 +166,24 @@ if defined CONSOLE_TXT set "CONSOLE_HTML=!CONSOLE_TXT:.txt=_visual.html!"
 
 echo.
 echo.
-echo   ############################################################
-echo   ##                                                        ##
-echo   ##              FINAL SCAN SUMMARY                        ##
-echo   ##                                                        ##
-echo   ############################################################
+set "ALL_OK=1"
+if not exist "%TEMP%\alibi-pc.summary" set "ALL_OK=0"
+if not exist "%TEMP%\alibi-console.summary" set "ALL_OK=0"
+if "!ALL_OK!"=="1" (
+    echo   ############################################################
+    echo   ##                                                        ##
+    echo   ##      [ OK ]   SCAN COMPLETE  -  everything worked      ##
+    echo   ##                                                        ##
+    echo   ############################################################
+) else (
+    echo   ############################################################
+    echo   ##                                                        ##
+    echo   ##   [FAIL]  FINISHED WITH PROBLEMS - read details above  ##
+    echo   ##                                                        ##
+    echo   ############################################################
+)
+echo.
+echo   ------------------------- SUMMARY --------------------------
 echo.
 echo    Alibi  (PC mode)
 echo    --------------------------------------------------------
@@ -157,7 +222,7 @@ REM     straight into Discord / email / a ticket comment. ---
     if defined CONSOLE_HTML echo Console .html: !CONSOLE_HTML!
     echo.
     echo Verify the kit at: https://github.com/Sutaigne/alibi
-    echo                    Reviewer guide: docs/for-reviewers.md
+    echo                    Reviewer guide: alibi-engine/docs/for-reviewers.md
     echo                    Kit integrity:  HASHES.txt
 ) | clip
 
@@ -174,9 +239,10 @@ echo        Or drag the files themselves from your Desktop.
 echo.
 echo     3. Tell the reviewer to verify the kit before trusting
 echo        the report: github.com/Sutaigne/alibi/blob/main/HASHES.txt
-echo        Reviewer guide: docs/for-reviewers.md in the same repo.
+echo        Reviewer guide: alibi-engine/docs/for-reviewers.md in the same repo.
 echo.
 echo   ============================================================
+>>"%RUNLOG%" echo [end] reached final summary - run complete
 echo.
 echo    Press any key to close this window.
 pause >nul

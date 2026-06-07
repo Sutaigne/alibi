@@ -34,6 +34,7 @@
 param(
     [string]$OutputPath,
     [switch]$SkipLOLDrivers,    # opt-out of the LOLDrivers (loldrivers.io) network fetch
+    [switch]$FetchLOLDrivers,   # opt-IN without prompting (launcher asks once up-front)
     [switch]$SkipBrowserOpen    # don't auto-open the HTML companion at end (unified
                                 # launcher passes this so we don't spam two tabs)
 )
@@ -155,7 +156,7 @@ Write-Host ''
 # ============================================================================
 # Reused by Scan-Drivers from parent scope. Cached for 1h so running PC scan
 # + console-rig scan back-to-back only prompts once.
-$LOLDb = Resolve-LOLDriversDB -SkipLOLDrivers:$SkipLOLDrivers
+$LOLDb = Resolve-LOLDriversDB -SkipLOLDrivers:$SkipLOLDrivers -FetchLOLDrivers:$FetchLOLDrivers
 
 # ============================================================================
 # Run the scan

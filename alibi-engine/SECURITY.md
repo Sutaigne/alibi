@@ -53,7 +53,7 @@ The detection you're most likely to see is **`Trojan:Script/Wacatac.B!ml`** on t
 
 None of it is an infection, and you can prove that:
 
-- **Hashes.** Every shipped file's SHA256 is in [`HASHES.txt`](./HASHES.txt). Compare what you received against it.
+- **Hashes.** Every shipped file's SHA256 is in [`HASHES.txt`](../HASHES.txt). Compare what you received against it.
 - **VirusTotal.** Upload the ZIP to [virustotal.com](https://www.virustotal.com) for a ~70-engine second opinion.
 - **The source.** Everything is plain text. The "suspicious" strings are detection signatures, sitting in readable arrays you can audit line by line.
 

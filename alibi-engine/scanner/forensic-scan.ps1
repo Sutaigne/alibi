@@ -29,6 +29,7 @@
 param(
     [string]$OutputPath,
     [switch]$SkipLOLDrivers,    # opt-out of the LOLDrivers (loldrivers.io) network fetch
+    [switch]$FetchLOLDrivers,   # opt-IN without prompting (launcher asks once up-front)
     [switch]$SkipBrowserOpen    # don't auto-open the HTML companion at end (unified
                                 # launcher passes this so we don't spam two tabs)
 )
@@ -104,7 +105,7 @@ Write-Host ''
 # $LOLDb is read by Scan-Drivers from parent scope. Setting it to $null
 # (the default if user declines or -SkipLOLDrivers is passed) disables the
 # cross-reference; Scan-Drivers still runs its keyword + unsigned checks.
-$LOLDb = Resolve-LOLDriversDB -SkipLOLDrivers:$SkipLOLDrivers
+$LOLDb = Resolve-LOLDriversDB -SkipLOLDrivers:$SkipLOLDrivers -FetchLOLDrivers:$FetchLOLDrivers
 
 # ============================================================================
 # Run the standard scan sequence (defined in forensic-common.ps1)

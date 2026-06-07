@@ -13,7 +13,7 @@ Author: **Bread** — Activision ID `Bread#3266221`, GitHub [@Sutaigne](https://
 
 > The Activision ID is intentional: this kit was built by an active CoD player, and reviewers can verify that in-game. If you're auditing a CoD rig, you should be able to look up the kit's author the same way you'd look up the person whose machine you're scanning.
 
-> **Reviewer?** Someone handed you a report and is asking you to believe it? Read [**`docs/for-reviewers.md`**](./docs/for-reviewers.md) first. It walks you through verifying the kit, reading the verdict, and what `CLEAN` does and does not rule out. The verification chain starts with [`HASHES.txt`](./HASHES.txt).
+> **Reviewer?** Someone handed you a report and is asking you to believe it? Read [**`docs/for-reviewers.md`**](./docs/for-reviewers.md) first. It walks you through verifying the kit, reading the verdict, and what `CLEAN` does and does not rule out. The verification chain starts with [`HASHES.txt`](../HASHES.txt).
 
 ## Quick start
 
@@ -52,7 +52,7 @@ Python 3.10+ required. Pure stdlib (except an opt-in `urllib` call to [loldriver
 
 ## If the download is blocked as a virus
 
-`alibi` is an anti-cheat *scanner*, so by design it ships the very patterns antivirus hunts for: a plaintext list of cheat-brand names (`aimbot`, `wallhack`, `pcileech`, …) and the literal attack-command strings it looks for on a suspect machine (e.g. `iex (new-object net.webclient`). SmartScreen and some AV engines score those bytes — on a brand-new, unsigned, low-download-count file — as "suspicious," even though every file is plain, readable source. **This is a known false positive, not a real infection.** You can confirm that yourself: every shipped file's SHA256 is in [`HASHES.txt`](./HASHES.txt), and uploading the ZIP to [VirusTotal](https://www.virustotal.com) shows it clean across ~70 engines.
+`alibi` is an anti-cheat *scanner*, so by design it ships the very patterns antivirus hunts for: a plaintext list of cheat-brand names (`aimbot`, `wallhack`, `pcileech`, …) and the literal attack-command strings it looks for on a suspect machine (e.g. `iex (new-object net.webclient`). SmartScreen and some AV engines score those bytes — on a brand-new, unsigned, low-download-count file — as "suspicious," even though every file is plain, readable source. **This is a known false positive, not a real infection.** You can confirm that yourself: every shipped file's SHA256 is in [`HASHES.txt`](../HASHES.txt), and uploading the ZIP to [VirusTotal](https://www.virustotal.com) shows it clean across ~70 engines.
 
 Two separate things you may hit, and the fix for each:
 
@@ -106,7 +106,7 @@ This kit's whole value is being readable by a reviewer who has no reason to trus
 - No external dependencies at runtime beyond Python 3.10+ stdlib (Python port) or the PowerShell that ships with Windows.
 - No telemetry, no analytics, no tracking.
 - Exactly one outbound network call (LOLDrivers BYOVD cross-reference) exists, prompts the user with Y/N before running, skipped by default with `-SkipLOLDrivers` / `--skip-loldrivers`, and is explicitly disclosed in every report.
-- Every shipped file has its SHA256 published in [`HASHES.txt`](./HASHES.txt) so a reviewer can confirm the kit they received matches this repo.
+- Every shipped file has its SHA256 published in [`HASHES.txt`](../HASHES.txt) so a reviewer can confirm the kit they received matches this repo.
 - The reviewer-side workflow is documented in [`docs/for-reviewers.md`](./docs/for-reviewers.md).
 - Security disclosure policy: [`SECURITY.md`](./SECURITY.md). Private vulnerability reporting is enabled — use it for bypass reports or false-positive contributions.
 

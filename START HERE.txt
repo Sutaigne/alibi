@@ -59,14 +59,14 @@ SAFETY IN ONE LINE
 ==================
 
 Every scan is read-only. Nothing leaves your machine. All scripts
-in the "scanner" subfolder are plain text - open any .ps1 in Notepad
-and read every line. Search for "Invoke-Web" and you will find
-EXACTLY ONE result: the opt-in LOLDrivers fetch on
-scanner\forensic-common.ps1 line 736. Search for "Remove-Item" or
-"Set-Item" and you'll find none in the scan path. The whole story
-is disclosed in every report's header and in:
+in the "alibi-engine\scanner" subfolder are plain text - open any
+.ps1 in Notepad and read every line. Search for "Invoke-Web" and you
+will find EXACTLY ONE result: the opt-in LOLDrivers fetch on
+alibi-engine\scanner\forensic-common.ps1 line 827. Search for
+"Remove-Item" or "Set-Item" and you'll find none in the scan path.
+The whole story is disclosed in every report's header and in:
 
-  scanner\alibi-safety-card.html
+  alibi-engine\scanner\alibi-safety-card.html
 
 
 --------------------------------------------------------------

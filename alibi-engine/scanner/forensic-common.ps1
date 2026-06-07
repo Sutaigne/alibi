@@ -876,9 +876,14 @@ function Resolve-LOLDriversDB {
     #   - If a cached DB exists at $env:TEMP\alibi-loldb.clixml and is
     #     less than 1 hour old, uses it silently (covers the unified-launcher
     #     case where PC and console-rig scans run back-to-back).
-    #   - Otherwise prompts Y/N. On Y, fetches and writes the cache. On
-    #     anything else, returns $null and writes a skip note.
-    param([switch]$SkipLOLDrivers)
+    #   - If -FetchLOLDrivers, fetches WITHOUT prompting (the launcher asks the
+    #     user once up-front, so the scan must never block on a hidden prompt).
+    #   - Otherwise prompts Y/N (interactive/direct-run case). On Y, fetches and
+    #     writes the cache. On anything else, returns $null and writes a skip note.
+    param(
+        [switch]$SkipLOLDrivers,
+        [switch]$FetchLOLDrivers
+    )
 
     if ($SkipLOLDrivers) {
         Add-Finding 'LOLDrivers' 'skipped' 'LOLDrivers cross-reference skipped (-SkipLOLDrivers)' 'INFO' 'other' @{
@@ -905,20 +910,26 @@ function Resolve-LOLDriversDB {
         } catch {}
     }
 
-    Write-Host ''
-    Write-Host '  LOLDrivers cross-reference (loldrivers.io)' -ForegroundColor Yellow
-    Write-Host '  Makes ONE network request to fetch the public vulnerable/malicious' -ForegroundColor DarkGray
-    Write-Host '  driver database. No data about this PC is sent.' -ForegroundColor DarkGray
-    Write-Host '  Press Y to fetch, any other key to skip.' -ForegroundColor Yellow
-    $key = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
-    Write-Host ''
+    if ($FetchLOLDrivers) {
+        # Launcher already asked the user up-front; fetch without prompting so
+        # the scan can never hang on an interactive keypress.
+        Write-Host '  [*] LOLDrivers: online check enabled - fetching...' -ForegroundColor DarkGray
+    } else {
+        Write-Host ''
+        Write-Host '  LOLDrivers cross-reference (loldrivers.io)' -ForegroundColor Yellow
+        Write-Host '  Makes ONE network request to fetch the public vulnerable/malicious' -ForegroundColor DarkGray
+        Write-Host '  driver database. No data about this PC is sent.' -ForegroundColor DarkGray
+        Write-Host '  Press Y to fetch, any other key to skip.' -ForegroundColor Yellow
+        $key = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
+        Write-Host ''
 
-    if ($key.Character -notin @('y','Y')) {
-        Write-Host '  Skipping LOLDrivers fetch.' -ForegroundColor DarkGray
-        Add-Finding 'LOLDrivers' 'skipped' 'LOLDrivers cross-reference skipped by user' 'INFO' 'other' @{
-            Note = 'Re-run and press Y at the prompt, or pass nothing (default) and press Y, to enable BYOVD detection.'
+        if ($key.Character -notin @('y','Y')) {
+            Write-Host '  Skipping LOLDrivers fetch.' -ForegroundColor DarkGray
+            Add-Finding 'LOLDrivers' 'skipped' 'LOLDrivers cross-reference skipped by user' 'INFO' 'other' @{
+                Note = 'Re-run and press Y at the prompt, or pass nothing (default) and press Y, to enable BYOVD detection.'
+            }
+            return $null
         }
-        return $null
     }
 
     $db = Get-LOLDriversDB

@@ -34,3 +34,6 @@ AlibiRigReport_*_visual.html
 *alibi-console.summary
 *alibi-loldb.json
 _test_*
+
+# Release build output (produced by scripts/build-release.ps1)
+dist/
