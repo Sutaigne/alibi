@@ -25,7 +25,7 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 
-$root  = Split-Path -Parent $PSScriptRoot          # repo root (scripts/ is one level down)
+$root  = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)   # repo root (this script is under dev/scripts/)
 if (-not $OutDir) { $OutDir = Join-Path $root 'dist' }
 
 # Staging dir: <temp>\alibi-build\alibi  (so the zip's top folder is "alibi")
@@ -68,6 +68,6 @@ $fileCount = (Get-ChildItem -Path $stage -Recurse -File).Count
 Write-Host ''
 Write-Host "  Built: $zip" -ForegroundColor Green
 Write-Host "  Top folder: alibi\   ($fileCount files)" -ForegroundColor DarkGray
-Write-Host "  Excluded:   python\, scripts\, netcheck\, .git*, .github\" -ForegroundColor DarkGray
+Write-Host "  Excluded:   dev\ (python, scripts, netcheck), .git*, .github\" -ForegroundColor DarkGray
 Write-Host ''
 Write-Host "  Distribute THIS zip (not the GitHub 'Download ZIP')." -ForegroundColor Yellow

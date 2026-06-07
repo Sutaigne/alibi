@@ -1,18 +1,18 @@
 # Local-machine harness state (Claude Code / agents)
 .claude/
 
-# Python build / venv / caches
-python/**/__pycache__/
-python/**/*.pyc
-python/**/*.pyo
-python/**/*.egg-info/
-python/build/
-python/dist/
-python/.venv/
-python/venv/
-python/.pytest_cache/
-python/.mypy_cache/
-python/.ruff_cache/
+# Python build / venv / caches (Python port now under dev/)
+dev/python/**/__pycache__/
+dev/python/**/*.pyc
+dev/python/**/*.pyo
+dev/python/**/*.egg-info/
+dev/python/build/
+dev/python/dist/
+dev/python/.venv/
+dev/python/venv/
+dev/python/.pytest_cache/
+dev/python/.mypy_cache/
+dev/python/.ruff_cache/
 
 # Editor / OS junk
 .DS_Store
