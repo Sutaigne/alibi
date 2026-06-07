@@ -198,7 +198,12 @@ function Finding-Timestamps {
         if (-not $seen.Add($sig)) { continue }
         [void]$out.Add(@{ Key = $key; Dt = $dt })
     }
-    return $out
+    # Return the List WITHOUT pipeline unrolling. A bare `return $out` unrolls a
+    # 1-element list to the single hashtable, whose .Count is its key-count (2) and
+    # whose [0] is $null -- that crashed Render-Historical (Iso-Date $null) and made
+    # Render-FindingCard silently drop the timestamp. The unary comma preserves the
+    # List so .Count / indexing are correct for any element count.
+    return ,$out
 }
 
 # ============================================================================
@@ -1744,7 +1749,8 @@ function Render-Historical {
         $metaHtml = if ($metaParts) { "<dl class=`"finding-meta`">$metaParts</dl>" } else { '' }
 
         $sev = Esc-Html $f.Severity
-        $kindEsc = Esc-Html (if ($f.Kind) { $f.Kind } else { 'other' })
+        $kind = if ($f.Kind) { $f.Kind } else { 'other' }
+        $kindEsc = Esc-Html $kind
         $catEsc = Esc-Html $f.Category
         $card = (
             "<li class=`"finding`" data-severity=`"$sev`" data-kind=`"$kindEsc`" data-category=`"$catEsc`">" +
