@@ -40,6 +40,19 @@ Copy-Item -LiteralPath (Join-Path $root 'START HERE.txt') -Destination $stage
 Copy-Item -LiteralPath (Join-Path $root 'HASHES.txt')     -Destination $stage
 Copy-Item -LiteralPath (Join-Path $root 'alibi-engine')   -Destination $stage -Recurse
 
+# Internal/dev docs stay in the repo but do NOT ship in a user-facing kit.
+# (for-reviewers.md is the only reviewer-facing doc and is kept.)
+$pruneDocs = @(
+    'alibi-engine\docs\handoff.md',
+    'alibi-engine\docs\NEXT_SESSION.md',
+    'alibi-engine\docs\memory-suggested.md',
+    'alibi-engine\docs\design-handoff-2026-05'
+)
+foreach ($d in $pruneDocs) {
+    $p = Join-Path $stage $d
+    if (Test-Path $p) { Remove-Item -LiteralPath $p -Recurse -Force }
+}
+
 # Drop any stray scan outputs that might sit in the tree
 Get-ChildItem -Path $stage -Recurse -Include 'AlibiReport_*','AlibiRigReport_*' -ErrorAction SilentlyContinue |
     Remove-Item -Force -ErrorAction SilentlyContinue
