@@ -2,11 +2,13 @@
 
 This is a faithful port of the high-fidelity design (Claude Design, May 2026)
 into the production renderer. The CSS (~1300 lines) and JS (~350 lines) are
-shipped as raw resource files next to this module:
+shipped as raw resource files under ``scanner/`` at the repo root so both
+this Python module AND the PowerShell visual-companion drivers can read the
+same source of truth:
 
-    visual_styles.css   — design tokens, layout, component styles
-    visual_scripts.js   — vanilla-JS interactivity (filters, hover-linking,
-                          timeline scrub, donut↔legend, copy-to-clipboard)
+    scanner/visual_styles.css   — design tokens, layout, component styles
+    scanner/visual_scripts.js   — vanilla-JS interactivity (filters, hover-linking,
+                                  timeline scrub, donut↔legend, copy-to-clipboard)
 
 Keep those resources verbatim — a reviewer should be able to open them in a
 text editor and confirm they're "just" presentation + interactivity.
@@ -37,8 +39,8 @@ import math
 import os
 import platform
 import re
-from datetime import datetime
-from importlib import resources
+from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Any, Iterable
 
 from alibi.findings import Finding, ScoredItem
@@ -47,10 +49,15 @@ from alibi.utils import Engine, is_admin
 
 
 # ---------------------------------------------------------------------------
-# Resource loading — keep CSS and JS as plain files so reviewers can read them.
+# Resource loading — CSS and JS live under scanner/ at the repo root so the
+# PowerShell drivers and this Python module read the same source of truth.
+# Layout: <repo>/python/src/alibi/visual_companion.py  →  parents[3] == <repo>
 # ---------------------------------------------------------------------------
+_SCANNER_DIR = Path(__file__).resolve().parents[3] / "scanner"
+
+
 def _load_resource(name: str) -> str:
-    return (resources.files("alibi") / name).read_text(encoding="utf-8")
+    return (_SCANNER_DIR / name).read_text(encoding="utf-8")
 
 
 _CSS = _load_resource("visual_styles.css")
@@ -706,6 +713,229 @@ def _render_timeline(
         '</svg>'
         '<div class="tl-tooltip" id="tl-tooltip"></div>'
         '</div>'
+    )
+
+
+def _render_lifecycle(
+    *,
+    recent_findings: list[Finding],
+    processes: list[ScoredItem],
+    finding_ids: dict[int, str],
+) -> str:
+    """Per-keyword lifecycle ribbon. One horizontal track per Pattern, with
+    every recoverable timestamp plotted on a linear time axis. InstallDate
+    / FirstInstall (pulled from the Windows uninstall registry) renders as
+    an open diamond; every other timestamp is a filled circle coloured by
+    severity. Hovering a marker reveals the source field + ISO date.
+
+    Complements the log-scale severity-banded timeline above by collapsing
+    "which tool, over what span" instead of "what severity, when". Skipped
+    when no recent HIGH/MEDIUM finding (or scored proc) carries a Pattern,
+    since per-keyword aggregation adds no signal on bare severity data.
+    """
+    install_keys = {"InstallDate", "FirstInstall"}
+
+    # 1. Collect events per pattern (lowercased for grouping; original case
+    # preserved for the track label).
+    tracks: dict[str, dict[str, Any]] = {}
+
+    def _add(pat_lc: str, display: str, dt: datetime, kind: str,
+             sev: str, target: str, is_install: bool) -> None:
+        t = tracks.setdefault(pat_lc, {
+            "display": display, "events": [], "sev_rank": 99, "sev": sev,
+        })
+        rank = {"HIGH": 0, "MEDIUM": 1, "WARN": 2, "INFO": 3}.get(sev, 9)
+        if rank < t["sev_rank"]:
+            t["sev_rank"] = rank
+            t["sev"] = sev
+        t["events"].append({
+            "dt": dt, "kind": kind, "sev": sev,
+            "target": target, "is_install": is_install,
+        })
+
+    # Track-key fallback chain. Pattern is the primary key, but several
+    # finding shapes don't carry it: AppData findings expose a Label
+    # ("Cronus Zen Studio", "XIM (other)"), Installed-software findings
+    # expose DisplayName, USB findings expose DeviceName. Walking this
+    # chain recovers the per-tool tracks the old v3.x renderer plotted.
+    track_key_fallbacks = ("Label", "DisplayName", "DeviceName")
+
+    for f in recent_findings:
+        if f.severity not in ("HIGH", "MEDIUM"):
+            continue
+        pat = str(f.metadata.get("Pattern") or "").strip()
+        if not pat:
+            for k in track_key_fallbacks:
+                v = str(f.metadata.get(k) or "").strip()
+                if v:
+                    pat = v
+                    break
+        if not pat:
+            continue
+        pat_lc = pat.lower()
+        target = finding_ids.get(id(f), "")
+        for key, ts in _finding_timestamps(f):
+            if key == "MostRecentTimestamp":
+                continue
+            _add(pat_lc, pat, ts, key, f.severity, target,
+                 is_install=(key in install_keys))
+
+    for p in processes:
+        if p.score not in ("HIGH", "MEDIUM"):
+            continue
+        pat = (p.pattern or "").strip()
+        if not pat:
+            continue
+        started = p.extra.get("Started", "")
+        dt = _try_parse_dt(str(started))
+        if dt:
+            _add(pat.lower(), pat, dt, "process start", p.score, "", False)
+
+    if not tracks:
+        return ""
+
+    # 2. Sort tracks: most severe first, then by earliest activity.
+    def _sort_key(item: tuple[str, dict[str, Any]]) -> tuple[int, datetime]:
+        _key, t = item
+        earliest = min(e["dt"] for e in t["events"])
+        return (t["sev_rank"], earliest)
+    sorted_tracks = sorted(tracks.items(), key=_sort_key)
+
+    MAX_TRACKS = 8
+    if len(sorted_tracks) > MAX_TRACKS:
+        keep = sorted_tracks[: MAX_TRACKS - 1]
+        merged_events: list[dict[str, Any]] = []
+        merged_rank = 99
+        merged_sev = "MEDIUM"
+        for _k, t in sorted_tracks[MAX_TRACKS - 1:]:
+            merged_events.extend(t["events"])
+            if t["sev_rank"] < merged_rank:
+                merged_rank = t["sev_rank"]
+                merged_sev = t["sev"]
+        sorted_tracks = keep + [("__other__", {
+            "display": "other", "events": merged_events,
+            "sev_rank": merged_rank, "sev": merged_sev,
+        })]
+
+    # 3. X-axis range: earliest event → today, padded a little on both sides.
+    now = datetime.now()
+    all_dates = [e["dt"] for _k, t in sorted_tracks for e in t["events"]]
+    earliest = min(all_dates)
+    span_days = max(1, (now - earliest).days)
+    pad_days = max(7, span_days * 0.04)
+    x_min = earliest - timedelta(days=pad_days)
+    x_max = now + timedelta(days=pad_days * 0.5)
+    range_secs = (x_max - x_min).total_seconds()
+    if range_secs <= 0:
+        return ""  # degenerate
+
+    # 4. SVG geometry.
+    width = 1200
+    left_pad = 180
+    right_pad = 28
+    top_pad = 44
+    row_h = 36
+    bottom_pad = 38
+    plot_w = width - left_pad - right_pad
+    plot_h = len(sorted_tracks) * row_h
+    total_h = top_pad + plot_h + bottom_pad
+
+    def _x_for(dt: datetime) -> float:
+        return left_pad + ((dt - x_min).total_seconds() / range_secs) * plot_w
+
+    # 5. Month gridlines + labels.
+    grid_svg: list[str] = []
+    cur = datetime(x_min.year, x_min.month, 1)
+    if cur < x_min:
+        cur = (datetime(cur.year + 1, 1, 1) if cur.month == 12
+               else datetime(cur.year, cur.month + 1, 1))
+    while cur <= x_max:
+        x = _x_for(cur)
+        grid_svg.append(
+            f'<line class="lc-axis-tick" x1="{x:.1f}" x2="{x:.1f}" '
+            f'y1="{top_pad}" y2="{top_pad + plot_h}"></line>'
+        )
+        lbl = cur.strftime("%b '%y").upper()
+        grid_svg.append(
+            f'<text class="lc-axis-label" x="{x:.1f}" y="{top_pad - 14}" '
+            f'text-anchor="middle">{_esc(lbl)}</text>'
+        )
+        cur = (datetime(cur.year + 1, 1, 1) if cur.month == 12
+               else datetime(cur.year, cur.month + 1, 1))
+
+    # 6. Today beam on the right.
+    now_x = _x_for(now)
+    today_svg = (
+        '<g class="lc-today">'
+        f'<line x1="{now_x:.1f}" x2="{now_x:.1f}" y1="{top_pad}" y2="{top_pad + plot_h}"></line>'
+        f'<text x="{now_x:.1f}" y="{top_pad - 4}" text-anchor="end">today</text>'
+        '</g>'
+    )
+
+    # 7. Per-track rendering.
+    track_svg: list[str] = []
+    sev_class = {"HIGH": "hi", "MEDIUM": "md"}
+    for i, (_k, t) in enumerate(sorted_tracks):
+        row_y = top_pad + i * row_h
+        cy = row_y + row_h / 2
+        track_svg.append(
+            f'<line class="lc-lane-rule" x1="{left_pad}" x2="{left_pad + plot_w}" '
+            f'y1="{cy:.1f}" y2="{cy:.1f}"></line>'
+        )
+        label = t["display"]
+        if len(label) > 14:
+            label = label[:13] + "…"
+        track_svg.append(
+            f'<text class="lc-track-label" x="{left_pad - 12}" y="{cy + 4:.1f}" '
+            f'text-anchor="end">{_esc(label.upper())}</text>'
+        )
+        for e in t["events"]:
+            x = _x_for(e["dt"])
+            cls = sev_class.get(e["sev"], "md")
+            iso = _iso_date(e["dt"])
+            title = _esc(f"{t['display']} · {e['kind']} · {iso}")
+            target_attr = (f' data-target="{_esc(e["target"])}"'
+                           if e["target"] else '')
+            if e["is_install"]:
+                r = 6
+                pts = (f"{x:.1f},{cy - r:.1f} {x + r:.1f},{cy:.1f} "
+                       f"{x:.1f},{cy + r:.1f} {x - r:.1f},{cy:.1f}")
+                track_svg.append(
+                    f'<polygon class="lc-install {cls}" points="{pts}"{target_attr}>'
+                    f'<title>{title}</title></polygon>'
+                )
+            else:
+                track_svg.append(
+                    f'<circle class="lc-event {cls}" cx="{x:.1f}" cy="{cy:.1f}" '
+                    f'r="4"{target_attr}><title>{title}</title></circle>'
+                )
+
+    n_tracks = len(sorted_tracks)
+    n_events = sum(len(t["events"]) for _k, t in sorted_tracks)
+    cap = (
+        '<p class="lc-cap">'
+        f'{n_events} dated event{"s" if n_events != 1 else ""} across '
+        f'{n_tracks} pattern{"s" if n_tracks != 1 else ""}. '
+        'Diamonds are install dates from the Windows uninstall registry; '
+        'circles are execution, write, USB-arrival, or run events. '
+        'Hover any marker for the source field and date.'
+        '</p>'
+    )
+
+    return (
+        '<section class="lifecycle">'
+        '<div class="sec-head">'
+        '<h2><span class="num">01·a</span>Activity by pattern</h2>'
+        '<span class="sec-aside">linear timeline · install diamond · activity circle</span>'
+        '</div>'
+        f'<svg class="lc-svg" viewBox="0 0 {width} {total_h:.0f}" '
+        'preserveAspectRatio="none" aria-label="per-keyword lifecycle timeline">'
+        f'{"".join(grid_svg)}'
+        f'{"".join(track_svg)}'
+        f'{today_svg}'
+        '</svg>'
+        f'{cap}'
+        '</section>'
     )
 
 
@@ -1414,10 +1644,48 @@ def _build_named_items(
     finding_ids: dict[int, str],
     process_ids: dict[int, str],
     service_ids: dict[int, str],
+    verdict: str,
 ) -> dict[str, list[dict[str, str]]]:
-    """Return {"main": [...cheats...], "also": [...input devices...]}."""
-    main: list[dict[str, str]] = []
-    also: list[dict[str, str]] = []
+    """Return {"main": [...], "also": [...]} for the "Why this verdict" block.
+
+    Dedupe rule
+    -----------
+    Every HIGH-confidence indicator is grouped by Pattern (lowercased). A
+    pattern corroborated by N different scanners (e.g. xim matrix found in
+    InstalledSoftware + Prefetch + USBHistory) produces ONE row, not N. The
+    chip shows the representative source plus a "+(N-1)" suffix when more
+    than one scanner agreed.
+
+    Routing rule (verdict-aware)
+    ----------------------------
+    The "also" bucket exists to keep input-device findings visually
+    separate when the verdict is cheat-driven. When the verdict IS about
+    input devices or a console-MITM stack, everything goes to "main" — a
+    header reading "0 named items" while 8 items render below is exactly
+    the misleading shape this routing prevents.
+
+        CHEATS DETECTED                → cheat/dual-use to main, input to also
+        INPUT DEVICES DETECTED         → all HIGH to main
+        MITM CHEAT STACK DETECTED      → all HIGH to main
+        CAPTURE STACK PRESENT          → all HIGH to main
+        UNSURE / CLEAN                 → (no HIGH findings anyway)
+    """
+    sep_input = (verdict == "CHEATS DETECTED")
+
+    # Stage 1: gather every HIGH indicator into a flat list of candidates,
+    # one entry per finding/process/service.
+    @dataclass_lite
+    class Cand:
+        pattern_key: str   # lower-cased dedup key
+        pattern: str       # original case for display
+        category: str      # source scanner / "Process" / "Service"
+        kind: str
+        target: str        # html-id to jump to
+        detail: str        # one-line summary
+        sort_key: tuple    # for picking representative within a group
+
+    cands: list[Cand] = []
+
     for f in engine.findings:
         if f.metadata.get("RecencyClass") == "historical":
             continue
@@ -1426,52 +1694,106 @@ def _build_named_items(
         target = finding_ids.get(id(f), "")
         if not target:
             continue
-        cat = f.category
-        pat = str(f.metadata.get("Pattern") or "")
-        # Short readable text: "<b>{pattern}</b> — {first part of detail}"
+        pat = str(f.metadata.get("Pattern") or "").strip()
+        key = pat.lower() if pat else f"_d:{f.detail.lower()}"  # fall back to detail
         detail_short = f.detail
-        # Strip the "[pattern] " prefix the engine writes into details.
         if pat:
             prefix = f"[{pat}] "
             if detail_short.startswith(prefix):
                 detail_short = detail_short[len(prefix):]
-        # Trim very long source paths.
         if len(detail_short) > 80:
             detail_short = detail_short[:77] + "…"
-        text_html = (f'<b>{_esc(pat)}</b> — {_esc(detail_short)}' if pat
-                     else _esc(detail_short))
-        rec = {"sev": "HIGH", "target": target, "category": cat, "html": text_html}
-        if f.kind == "input":
-            also.append(rec)
-        else:
-            main.append(rec)
+        cands.append(Cand(
+            pattern_key=key, pattern=pat, category=f.category,
+            kind=(f.kind or "other"), target=target, detail=detail_short,
+            # Prefer richer categories (Installed > Prefetch > USB > others)
+            # within a group by giving a category-priority then alpha.
+            sort_key=(_NAMED_CAT_PRIORITY.get(f.category, 9), f.category.lower()),
+        ))
 
-    # Processes + services
     for p in processes:
         if p.score != "HIGH":
             continue
         target = process_ids.get(id(p), "")
-        rec = {
-            "sev": "HIGH", "target": target, "category": "Process",
-            "html": (f'<b>{_esc(p.name)}</b> (PID {_esc(p.extra.get("ProcessId","?"))}) running'),
-        }
-        if p.kind == "input":
-            also.append(rec)
-        else:
-            main.append(rec)
+        pat = (p.pattern or "").strip()
+        key = pat.lower() if pat else f"_p:{p.name.lower()}"
+        cands.append(Cand(
+            pattern_key=key, pattern=(pat or p.name), category="Process",
+            kind=(p.kind or "other"), target=target,
+            detail=f'(PID {p.extra.get("ProcessId","?")}) running',
+            sort_key=(5, "process"),
+        ))
+
     for s in services:
         if s.score != "HIGH":
             continue
         target = service_ids.get(id(s), "")
-        rec = {
-            "sev": "HIGH", "target": target, "category": "Service",
-            "html": f'<b>{_esc(s.name)}</b> service ({_esc(s.extra.get("State","?"))})',
+        pat = (s.pattern or "").strip()
+        key = pat.lower() if pat else f"_s:{s.name.lower()}"
+        cands.append(Cand(
+            pattern_key=key, pattern=(pat or s.name), category="Service",
+            kind=(s.kind or "other"), target=target,
+            detail=f'service ({s.extra.get("State","?")})',
+            sort_key=(6, "service"),
+        ))
+
+    # Stage 2: group by pattern_key. For each group, pick the representative
+    # (lowest sort_key wins) and count corroborating sources.
+    groups: dict[str, list[Cand]] = {}
+    for c in cands:
+        groups.setdefault(c.pattern_key, []).append(c)
+
+    def _build_rec(group: list[Cand]) -> dict[str, str]:
+        rep = sorted(group, key=lambda c: c.sort_key)[0]
+        sources_n = len(group)
+        cat_label = rep.category
+        if sources_n > 1:
+            cat_label = f"{rep.category} +{sources_n - 1}"
+        text_html = (f'<b>{_esc(rep.pattern)}</b> — {_esc(rep.detail)}'
+                     if rep.pattern else _esc(rep.detail))
+        return {
+            "sev": "HIGH", "target": rep.target, "category": cat_label,
+            "html": text_html, "kind": rep.kind, "sources_n": str(sources_n),
         }
-        if s.kind == "input":
+
+    # Stage 3: route to main / also based on verdict.
+    main: list[dict[str, str]] = []
+    also: list[dict[str, str]] = []
+    # Preserve insertion order (first-seen wins for ordering inside main/also).
+    for key in groups:  # dict preserves insertion order
+        rec = _build_rec(groups[key])
+        if sep_input and rec["kind"] == "input":
             also.append(rec)
         else:
             main.append(rec)
     return {"main": main, "also": also}
+
+
+# Category priority used when picking the representative finding for a pattern
+# group: registry/install evidence beats execution evidence beats device-enum.
+# Lower number = higher priority.
+_NAMED_CAT_PRIORITY = {
+    "InstalledSoftware": 0,
+    "Uninstall": 0,
+    "LoLDriver": 0,
+    "Driver": 1,
+    "Prefetch": 2,
+    "BAM": 2,
+    "MUICache": 2,
+    "UserAssist": 2,
+    "ShimCache": 3,
+    "Amcache": 3,
+    "USBHistory": 4,
+    "RecentFiles": 4,
+    "ApplicationData": 4,
+    "ProcessModule": 4,
+    "DLLInjection": 4,
+    "LuaScript": 4,
+    "ObscuredName": 4,
+    "KnownHash": 0,
+    "Process": 5,
+    "Service": 6,
+}
 
 
 # ---------------------------------------------------------------------------
@@ -1527,6 +1849,7 @@ def render_html(
     named_items = _build_named_items(
         engine=engine, processes=processes, services=services,
         finding_ids=finding_ids, process_ids=process_ids, service_ids=service_ids,
+        verdict=verdict,
     )
 
     scan_host = os.environ.get("COMPUTERNAME", "")
@@ -1560,6 +1883,9 @@ def render_html(
     parts.append(_render_timeline(
         state=state, recent_findings=recent, archived_findings=archived,
         finding_ids=finding_ids,
+    ))
+    parts.append(_render_lifecycle(
+        recent_findings=recent, processes=processes, finding_ids=finding_ids,
     ))
     parts.append(_render_catmap(recent))
     parts.append(_render_donut(

@@ -71,14 +71,36 @@ class Engine:
 # of [regex]::Escape applied to a lowercased pattern then -match against a
 # lowercased target).
 # ---------------------------------------------------------------------------
-def match_keyword(text: str, patterns: Iterable[str]) -> str | None:
+def match_keyword(
+    text: str, patterns: Iterable[str], *, bounded: bool = False
+) -> str | None:
+    """Case-insensitive keyword match.
+
+    bounded=False (default) — substring match. Right for long specific brand
+    names ('engineowning', 'phantomoverlay') where vendors append/prefix
+    garbage to evade detection.
+
+    bounded=True — wrap each pattern with non-letter/digit lookaround so
+    short generic keywords ('esp', 'bypass', 'loader', 'hoic', 'hping')
+    don't false-match inside larger words ('hoic' inside CHOICE.EXE,
+    'hping' inside PATHPING.EXE, 'esp' inside espresso-recipes). Callers
+    opt in per-context.
+    """
     if not text or not text.strip():
         return None
     lc = text.lower()
+    if not bounded:
+        for p in patterns:
+            if not p:
+                continue
+            if p.lower() in lc:
+                return p
+        return None
     for p in patterns:
         if not p:
             continue
-        if p.lower() in lc:
+        rx = r"(?<![a-z0-9])" + re.escape(p.lower()) + r"(?![a-z0-9])"
+        if re.search(rx, lc):
             return p
     return None
 

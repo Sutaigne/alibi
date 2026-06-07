@@ -1257,6 +1257,79 @@ table.runtime .meta-row td {
 .hist .finding-head .cat-tag { color: var(--ink-4); }
 .hist .finding-title { color: var(--ink-3); }
 .hist .sev-tag { opacity: 0.7; }
+
+/* ─── lifecycle (per-keyword linear timeline) ─────────────────────── */
+.lifecycle { margin-top: 28px; }
+.lifecycle .lc-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 12px 0 6px;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 4px 0;
+}
+.lc-axis-tick {
+  stroke: var(--rule-2);
+  stroke-width: 1;
+  stroke-dasharray: 1 5;
+}
+.lc-axis-label {
+  fill: var(--ink-5);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  font-weight: 700;
+}
+.lc-lane-rule {
+  stroke: var(--rule);
+  stroke-width: 1;
+  stroke-dasharray: 1 4;
+}
+.lc-track-label {
+  fill: var(--ink-3);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+.lc-today line {
+  stroke: var(--accent, #7dd3fc);
+  stroke-width: 1.5;
+  opacity: 0.85;
+}
+.lc-today text {
+  fill: var(--accent, #7dd3fc);
+  font-family: ui-monospace, monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+.lc-event {
+  cursor: pointer;
+  transition: r 0.12s ease, opacity 0.12s ease;
+}
+.lc-event.hi { fill: var(--hi); }
+.lc-event.md { fill: var(--md); }
+.lc-event:hover { r: 6; }
+.lc-install {
+  fill: none;
+  stroke-width: 2;
+  cursor: pointer;
+  transition: stroke-width 0.12s ease;
+}
+.lc-install.hi { stroke: var(--hi); }
+.lc-install.md { stroke: var(--md); }
+.lc-install:hover { stroke-width: 3; }
+.lc-cap {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  line-height: 1.55;
+  max-width: 78ch;
+  margin-top: 8px;
+}
 .hist-orig {
   display: inline-flex; align-items: baseline; gap: 4px;
   font-family: ui-monospace, monospace;

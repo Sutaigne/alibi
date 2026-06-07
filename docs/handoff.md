@@ -57,15 +57,15 @@ D:\Claude\Projects\PC Check\
 │   ├── Run scan.bat                      (UNIFIED launcher, no menu, runs both scans)
 │   └── kit\                              (mirrors the live kit\ - keep in sync manually)
 │
-├── docs\
-│   ├── handoff.md                        (this file)
-│   └── memory-suggested.md               (draft memory entry, not yet filed)
-│
-└── archive\                              ← historical zips (DO NOT DELETE)
-    ├── pc-forensic-check.zip             (oldest, ~May 20)
-    ├── pc-forensic-check-5.22.2026.zip   (May 22, friend's tested version)
-    └── pc-forensic-check-05.22.2026.zip  (May 22 dup naming)
+└── docs\
+    ├── handoff.md                        (this file)
+    └── memory-suggested.md               (draft memory entry, not yet filed)
 ```
+
+> **Note (2026-05-29):** the `archive\` folder of historical zips (`pc-forensic-check*.zip`)
+> was removed to cut antivirus/SmartScreen false-positive triggers — nested ZIPs of
+> forensic PowerShell are a heuristic red flag, and the old versions live in git history
+> anyway. See `SECURITY.md` → "Antivirus / SmartScreen false positives".
 
 ## Architecture — current shape after the 2026-05-25 refactor
 

@@ -809,6 +809,7 @@ _USER_SCRIPT_EXCLUDE = {
     "forensic-scan.ps1", "console-rig-audit.ps1",
     "generate-visual-companion.ps1", "forensic-common.ps1",
     "generate-visual-companion-console.ps1",
+    "visual-companion-common.ps1",
 }
 
 
@@ -1096,7 +1097,13 @@ def scan_lua_scripts(engine: Engine) -> None:
             }
             lc = f"{os.path.basename(full)} {full}".lower()
 
-            hit = match_keyword(lc, lua_keywords_lc)
+            # Bounded matching: LUA_CHEAT_KEYWORDS contains short generic
+            # words (esp, hack, cheat, bypass, loader, ud_) that would
+            # substring-match any path containing those letter sequences
+            # ("espresso-recipes", "ContentLoader.lua"). Word-boundary
+            # scoping keeps true cheat-script names matched while filtering
+            # paths that just share a letter run.
+            hit = match_keyword(lc, lua_keywords_lc, bounded=True)
             if hit:
                 meta["Pattern"] = hit
                 engine.add("LuaScript", full, f"[{hit}] {os.path.basename(full)}",
@@ -1353,15 +1360,16 @@ def scan_dll_injection_timestamps(engine: Engine) -> None:
 # Scan-NetworkAttackTools
 # ---------------------------------------------------------------------------
 def _score_network_blob(blob: str) -> dict[str, str] | None:
-    if not blob or not blob.strip():
-        return None
-    lc = blob.lower()
-    for kw in NETWORK_ATTACK_HIGH:
-        if kw.lower() in lc:
-            return {"sev": SEV_HIGH, "kind": "cheat", "pat": kw}
-    for kw in NETWORK_ATTACK_MEDIUM:
-        if kw.lower() in lc:
-            return {"sev": SEV_MEDIUM, "kind": "dual-use", "pat": kw}
+    # Bounded matching required: every keyword in NETWORK_ATTACK_* is a
+    # named tool (hoic, hping, masscan, etc.) that substring-matches
+    # Windows binaries when scanned across Prefetch/BAM/installed-software
+    # blobs (hoic->CHOICE.EXE, hping->PATHPING.EXE).
+    hi = match_keyword(blob, NETWORK_ATTACK_HIGH, bounded=True)
+    if hi:
+        return {"sev": SEV_HIGH, "kind": "cheat", "pat": hi}
+    md = match_keyword(blob, NETWORK_ATTACK_MEDIUM, bounded=True)
+    if md:
+        return {"sev": SEV_MEDIUM, "kind": "dual-use", "pat": md}
     return None
 
 
