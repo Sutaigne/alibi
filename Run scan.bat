@@ -211,20 +211,23 @@ if defined PC_HTML (
     )
 )
 
-REM --- Copy all four paths to the clipboard so the user can paste
-REM     straight into Discord / email / a ticket comment. ---
-(
-    echo Alibi scan report ^(!PC_VERDICT! / !CONSOLE_VERDICT!^)
-    echo.
-    if defined PC_TXT   echo PC .txt:        !PC_TXT!
-    if defined PC_HTML  echo PC .html:       !PC_HTML!
-    if defined CONSOLE_TXT  echo Console .txt:  !CONSOLE_TXT!
-    if defined CONSOLE_HTML echo Console .html: !CONSOLE_HTML!
-    echo.
-    echo Verify the kit at: https://github.com/Sutaigne/alibi
-    echo                    Reviewer guide: alibi-engine/docs/for-reviewers.md
-    echo                    Kit integrity:  HASHES.txt
-) | clip
+REM --- Copy all four paths to the clipboard so the user can paste straight
+REM     into Discord / email / a ticket. We build the text in a temp file and
+REM     pipe THAT to clip: piping a ( ) block that contains `if defined`
+REM     triggers a cmd parse error ("echo was unexpected at this time"). ---
+set "CLIPTMP=%TEMP%\alibi-clip.txt"
+> "%CLIPTMP%" echo Alibi scan report - !PC_VERDICT! / !CONSOLE_VERDICT!
+>>"%CLIPTMP%" echo.
+if defined PC_TXT       >>"%CLIPTMP%" echo PC .txt:        !PC_TXT!
+if defined PC_HTML      >>"%CLIPTMP%" echo PC .html:       !PC_HTML!
+if defined CONSOLE_TXT  >>"%CLIPTMP%" echo Console .txt:   !CONSOLE_TXT!
+if defined CONSOLE_HTML >>"%CLIPTMP%" echo Console .html:  !CONSOLE_HTML!
+>>"%CLIPTMP%" echo.
+>>"%CLIPTMP%" echo Verify the kit at: https://github.com/Sutaigne/alibi
+>>"%CLIPTMP%" echo                    Reviewer guide: alibi-engine/docs/for-reviewers.md
+>>"%CLIPTMP%" echo                    Kit integrity:  HASHES.txt
+clip < "%CLIPTMP%"
+del "%CLIPTMP%" 2>nul
 
 echo   ============================================================
 echo    WHAT TO DO NEXT

@@ -592,5 +592,5 @@ Write-Host ''
 # consolidated end-of-run summary across both scans.
 try {
     $sum = "$verdict|$OutputPath|$totalCheatHigh|$totalInputHigh|$totalMedium"
-    Set-Content -Path "$env:TEMP\alibi-console.summary" -Value $sum -Encoding UTF8 -ErrorAction Stop
+    [System.IO.File]::WriteAllText("$env:TEMP\alibi-console.summary", $sum, (New-Object System.Text.UTF8Encoding($false)))
 } catch {}

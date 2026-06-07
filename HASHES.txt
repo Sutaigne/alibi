@@ -5,14 +5,14 @@
 # Format: <SHA256> *<relative-path>
 
 # --- root: what the user runs ---
-39b0e2be9b54d03c8a2e46e38600fff6c90e1a0213b6d967a8fe0769ed721a08 *Run scan.bat
+2fcd99c6874a4f420ee4316d762aba02e0a3c8e04a8b8f545c760270958e0d87 *Run scan.bat
 fa9091092521b3bc8133c6e65d084e2abec86ffccaf0c10b525b86e7264a9145 *START HERE.txt
 
 # --- alibi-engine/scanner — PowerShell engine (canonical) ---
 25b3d75f4707d28bd9f3cf4e8aa42d9241776de17e068a55eddd17efb866fb18 *alibi-engine/scanner/README.txt
-761bb405d59fe216db4c45aff801dae1c32b4b564e74f5d2472e6da3d060ea43 *alibi-engine/scanner/console-rig-audit.ps1
+4308a16f9a363bfd88ccbfe7a6a28035acde3da7bc67337599175854ea63a5a2 *alibi-engine/scanner/console-rig-audit.ps1
 86e66637f114953981bdd5e2b71d9cefbb173f434fa390673d783dcf36b77dfc *alibi-engine/scanner/forensic-common.ps1
-c0686b2d0f3db555abdc24c307630acb667d907811c75913fccfc3fa1b107c3a *alibi-engine/scanner/forensic-scan.ps1
+a04cc8de41876651519b347a3cf26313f67112d6155ad6dbe4c8df59791a0c32 *alibi-engine/scanner/forensic-scan.ps1
 d751ba1df46dad9379f88a4aa92cefbf580cf31ec0bc4e554964c7afb43ffc0b *alibi-engine/scanner/generate-visual-companion-console.ps1
 afbffe792aa48d6f5a560c23f335ee6426e12c2548fb42579c70ae6c0f47d8e6 *alibi-engine/scanner/generate-visual-companion.ps1
 66dcee1503f58bb0546a0e8d5095b2e3483710a7ed614f9c2505eae6ef5684a6 *alibi-engine/scanner/visual-companion-common.ps1
