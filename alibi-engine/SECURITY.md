@@ -18,7 +18,6 @@ Reports we want to receive:
 - **Side effects** — anything the kit modifies on the host (registry, files, services) that violates the read-only guarantee. The opt-in LOLDrivers fetch is the one disclosed network call; anything else is a bug.
 - **Parsing crashes** — malformed input (a weird Prefetch entry, a registry value the kit doesn't expect, a non-UTF8 path) that crashes the scanner before it writes a report.
 - **HTML / JS issues** in the visual companion — XSS via untrusted finding metadata, broken offline behavior, anything that calls out to the network.
-- **PowerShell / Python parity drift** — a scenario where the canonical PowerShell kit and the Python parity port produce materially different verdicts on the same machine.
 
 ## What's out of scope
 
@@ -43,7 +42,7 @@ This routes the report directly to the maintainers and gives you a private chann
 
 A forensic anti-cheat scanner is, byte-for-byte, hard to tell apart from the things it hunts. `alibi` deliberately contains:
 
-- a plaintext database of cheat-brand, spoofer, and DMA-hardware names (`keywords.py`, `forensic-common.ps1`);
+- a plaintext database of cheat-brand, spoofer, and DMA-hardware names (`forensic-common.ps1`);
 - the literal high-risk command strings it scans a suspect machine for — e.g. `powershell -encodedcommand`, `iex (new-object net.webclient`, driver-signing-bypass flags (`forensic-common.ps1`);
 - `.bat` launchers that self-elevate (`-Verb RunAs`) and run unsigned PowerShell (`-ExecutionPolicy Bypass`), because a downloaded, unsigned script won't run otherwise.
 
@@ -79,7 +78,7 @@ We aim for an initial response within 7 days of the report. Substantive fixes ta
 ## What we don't do
 
 - **We don't sign Authenticode certificates.** This is a plain-source kit; binary signing fights the "read every line" trust model.
-- **We don't ship a binary that can't be audited.** Every file in the kit is plain `.ps1` / `.py` / `.html` / `.css` / `.js` / `.txt` — no compiled binaries, and no opaque archives. Version history lives in git, not in committed ZIPs.
+- **We don't ship a binary that can't be audited.** Every file in the kit is plain `.ps1` / `.html` / `.css` / `.js` / `.txt` — no compiled binaries, and no opaque archives. Version history lives in git, not in committed ZIPs.
 - **We don't run a bug bounty.** This is an open community kit, not a commercial product. Credit and a `CHANGELOG.md` entry are what we have to offer.
 
 ## Authors

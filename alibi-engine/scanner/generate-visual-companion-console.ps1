@@ -17,8 +17,7 @@
 
     The previous v3.x cream/serif implementation lived directly in this
     file (~800 lines of embedded HTML). It was replaced in v4.2 by the
-    shared renderer that mirrors python/src/alibi/visual_companion.py
-    byte-for-byte.
+    shared renderer in visual-companion-common.ps1.
 
 .NOTES
     Author: Bread

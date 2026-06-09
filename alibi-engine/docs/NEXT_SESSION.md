@@ -1,17 +1,69 @@
-# NEXT SESSION — open items after v4.2.0 visual companion ship
+# NEXT SESSION — open items after the crossover split (2026-06-09)
 
-Fresh-session pickup doc. The previous session (committed in `e8ec1f3`)
-landed the v4.2.0 PowerShell visual-companion port to the dark-tactical
-design, added the new **Activity by pattern** lifecycle section, fixed
-several rendering bugs, and tightened scanner keyword matching to drop a
-class of false positives. Two carryover issues from the v4.1.5 field
-test remain — one of which (Issue 1) was deliberately deferred when Brad
-chose to pursue Issue 2 first.
+Fresh-session pickup doc. The 2026-06-09 session **executed the
+Python-port separation**: the parity port moved out of this repo into a
+new standalone GitHub repo, `Sutaigne/crossover`, and alibi is now a
+PowerShell-only product. Before that, the v4.2.0 session landed the
+PowerShell visual-companion port, the **Activity by pattern** lifecycle
+section, rendering-bug fixes, and tightened keyword matching.
 
-**Read this first**, then `docs/handoff.md` for project context, then
-`git show e8ec1f3 --stat` to see exactly what shipped.
+**Read this first**, then `docs/handoff.md` for project context.
 
-Repo: https://github.com/Sutaigne/alibi · current tip: `e8ec1f3` (untagged)
+Repos:
+- alibi (this repo, canonical PowerShell product): https://github.com/Sutaigne/alibi
+- crossover (Python parity port, separate entity): https://github.com/Sutaigne/crossover
+
+---
+
+## crossover split — SHIPPED (2026-06-09)
+
+The directive below (locked 2026-05-26) is now **done**. Record of what
+the 2026-06-09 session did:
+
+1. **Created `Sutaigne/crossover`** (public — the same code was already
+   public in `Sutaigne/alibi`, so no new exposure) from the old
+   `dev/python/` tree. Made it self-contained: `visual_styles.css` and
+   `visual_scripts.js` now ship **inside** `src/alibi/` (private copy of
+   the alibi scanner assets), and the renderer loads them from the
+   package dir instead of the old repo-relative `scanner/` path. Carries
+   its own python CI + a Pages example showcase
+   (`https://sutaigne.github.io/crossover/`). 10 tests pass; examples
+   render. The internal Python **package** is still named `alibi`; only
+   the **repo** is `crossover`.
+2. **Excised Python from alibi:**
+   - `git rm -r dev/python` (dev/ now holds only `netcheck`, `scripts`).
+   - `.github/workflows/ci.yml` — removed the `python parity port` job;
+     re-pointed the PS parse-check from `kit, scanner` → `alibi-engine/scanner`.
+   - `.github/workflows/pages.yml` — **removed** (the showcase moved to
+     crossover). The alibi GitHub Pages site is retired.
+   - `alibi-engine/README.md` — dropped the Python-parity section and
+     `alibi`/`alibi-rig` install steps; the example-outputs live-preview
+     now points at `sutaigne.github.io/crossover`; `.py` dropped from the
+     auditability "plain source" line.
+   - `alibi-engine/SECURITY.md` — removed the parity-drift in-scope line;
+     dropped `keywords.py` / `.py` mentions.
+   - `alibi-engine/docs/for-reviewers.md` — removed the python
+     hash-verification line and the `keywords.py` grep target.
+   - `HASHES.txt` — regenerated the 3 changed doc hashes (README,
+     SECURITY, for-reviewers); `sha256sum -c HASHES.txt` passes (23/23).
+3. **Engine-comment scrub (also done this session).** The three
+   visual-companion `.ps1` files (`visual-companion-common.ps1`,
+   `generate-visual-companion.ps1`, `generate-visual-companion-console.ps1`)
+   had ~11 code comments referencing `python/src/alibi/visual_companion.py`
+   as the upstream the PS "mirrors / is a port of." Reframed: alibi PS is
+   now the canonical spec and the crossover Python port mirrors it; the
+   inline function-name anchors now read "Parity anchor: crossover
+   visual_companion.py :: _fn". Re-hashed all 3 engine `.ps1` (CRLF) in
+   HASHES.txt; parse-check + `sha256sum -c` still pass.
+
+**Still open after the split (low-risk):**
+
+- **`docs/design-handoff-2026-05/`** is a frozen historical design spec,
+  deeply python-centric (`render_html()` in `visual_companion.py`). Left
+  as-is intentionally — internal, non-shipped, not in the release zip.
+- **Verify crossover CI + Pages went green** on GitHub
+  (`gh run list --repo Sutaigne/crossover`) and that the Pages site
+  actually serves at `https://sutaigne.github.io/crossover/`.
 
 ---
 

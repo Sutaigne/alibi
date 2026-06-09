@@ -3,7 +3,8 @@
     Shared visual-companion renderer for the Alibi PowerShell scanners.
 
 .DESCRIPTION
-    This module is a faithful PowerShell port of python/src/alibi/visual_companion.py.
+    This module is alibi's canonical visual-companion renderer. The Python
+    parity port (Sutaigne/crossover) mirrors it.
     It exposes one public function:
 
         Render-AlibiHtml -InputPath <txt> -OutputPath <html> `
@@ -15,15 +16,17 @@
     file, supply mode-specific coverage text, and invoke Render-AlibiHtml.
 
     CSS and JS are loaded from $PSScriptRoot/visual_styles.css and
-    $PSScriptRoot/visual_scripts.js. Those files are the SAME source of truth
-    the Python renderer reads — keep them verbatim.
+    $PSScriptRoot/visual_scripts.js. These are alibi's canonical copy of those
+    assets; the crossover parity port keeps its own private mirror — keep them
+    verbatim.
 
 .NOTES
     Author: Bread
     Contributor: Drownmw
 
-    KEEP IN PARITY with python/src/alibi/visual_companion.py. Section order,
-    HTML class names, SVG coordinates, and id-slug scheme must match so that
+    This renderer is the canonical spec; the crossover Python parity port keeps
+    in parity with it. Section order, HTML class names, SVG coordinates, and
+    id-slug scheme must stay stable so that
     docs/design-handoff-2026-05/reports/*.html stays the byte-for-byte spec.
 #>
 
@@ -183,7 +186,7 @@ function Try-Parse-Dt {
 
 function Finding-Timestamps {
     # Walk a finding's metadata; return ordered list of @{ Key=$k; Dt=$dt }
-    # preferring TIMESTAMP_KEYS order. Mirrors visual_companion.py :: _finding_timestamps.
+    # preferring TIMESTAMP_KEYS order. Parity anchor: crossover visual_companion.py :: _finding_timestamps.
     param([hashtable]$Finding)
     $out = [System.Collections.Generic.List[hashtable]]::new()
     if (-not $Finding.Metadata) { return $out }
@@ -611,7 +614,7 @@ function Score-Items {
 }
 
 # ============================================================================
-# RENDER — sections in document order. Mirrors visual_companion.py one-to-one.
+# RENDER — sections in document order. Parity anchor: crossover visual_companion.py, one-to-one.
 # ============================================================================
 
 function Render-DocBar {
@@ -744,7 +747,7 @@ function Render-Verdict {
 
 # Category priority for picking the representative finding when a pattern is
 # corroborated by N scanners. Lower number = better representative.
-# Mirrors python/src/alibi/visual_companion.py :: _NAMED_CAT_PRIORITY.
+# Parity anchor: crossover visual_companion.py :: _NAMED_CAT_PRIORITY.
 $script:NAMED_CAT_PRIORITY = @{
     'InstalledSoftware' = 0; 'Uninstall' = 0; 'LoLDriver' = 0; 'KnownHash' = 0
     'Driver' = 1
@@ -757,7 +760,7 @@ $script:NAMED_CAT_PRIORITY = @{
 
 function Build-NamedItems {
     # Return @{ main = [...]; also = [...] } for the "Why this verdict" block.
-    # Mirrors python/src/alibi/visual_companion.py :: _build_named_items.
+    # Parity anchor: crossover visual_companion.py :: _build_named_items.
     #
     # Dedupe: one row per Pattern (lowercased). A pattern corroborated by N
     # scanners shows once, with the chip suffix "+(N-1)".
@@ -1090,7 +1093,7 @@ function Render-Timeline {
 }
 
 function Render-Lifecycle {
-    # Per-keyword lifecycle ribbon. Mirrors visual_companion.py :: _render_lifecycle.
+    # Per-keyword lifecycle ribbon. Parity anchor: crossover visual_companion.py :: _render_lifecycle.
     # One horizontal track per Pattern; install date (InstallDate / FirstInstall)
     # renders as an open diamond, every other timestamp is a filled circle
     # coloured by severity. Complements the log-scale timeline by collapsing
