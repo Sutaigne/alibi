@@ -114,12 +114,20 @@ route them to the artifact arrays.
   traffic — NO fuzzing, dir-busting, or auth bypass. The actual loader binary is
   purchase-gated, so don't expect it here. ToS-clean and batchable, so this part CAN
   run in the unattended cron (unlike the Discord co-browse).
-  - **Do NOT tokenize the asset filenames it returns.** Site assets are marketing
-    images / CSS / JS (`.webp`, `.jpg`, `.css`, `.js`) — **not** software artifacts. A
-    product banner named `COD-Phantom.webp` never lands on a cheater's disk. The only
-    carry-over is the product **name-string**, and only as **corroborating LowConfidence**
-    signal — it nudges confidence *if the same string independently shows up as a
-    process/file/folder on a scanned machine*. It never triggers a verdict on its own.
+  - **Triage asset hits by type — don't dismiss them wholesale.** The asset bucket
+    mixes two kinds:
+    - *(a) media / framework* (`.webp`, `.jpg`, `.css`, `.js`) = marketing, **not**
+      software. A banner `COD-Phantom.webp` never lands on a cheater's disk — don't
+      tokenize it. The embedded product **name-string** is only **corroborating
+      LowConfidence** signal *if independently found as a process/file/folder on a
+      scanned machine*; never a trigger.
+    - *(b) executable / archive / download paths* (`.exe`, `.zip`, `.dll`, `.bin`,
+      `.msi`, `/download`, `/loader`, `/release`) = **real candidate artifacts —
+      evaluate per the tier table.**
+    The 2026-06 sample (3 polished IPB/WooCommerce storefronts) returned only (a)
+    because they gate downloads — a free/open cheat, a direct-download host, a
+    GitHub-release link, or a sloppily-modded site will surface (b). A few sanitized
+    targets is NOT a verdict on the method; judge every run by what that target leaks.
 
 **Artifact → array routing:**
 
