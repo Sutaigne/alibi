@@ -1,0 +1,18 @@
+# Cheat-intel pulse — feed watchlist (RSS/Atom). One URL per line; '#' = comment.
+# Polled by poll-feeds.py, which flags entries NEW since the last run (diff loop).
+# Why feeds: no API key, no 403, no anti-bot — routes around the walls that block
+# Reddit JSON / WebFetch / the Chrome filter. GitHub per-repo .atom has no rate limit.
+
+# --- GitHub: open-source cheat repos (releases = new loader/asset filenames) ---
+https://github.com/Babyhamsta/Aimmy/releases.atom
+https://github.com/TheRyoSaeba/BLOPS7/releases.atom
+
+# repos with no releases — watch commits for activity instead:
+https://github.com/IntelSDM/Cod4DMA/commits.atom
+# lauralex/xDefiantDMA — removed/private as of 2026-06-24 (404); re-add if it returns.
+
+# --- Forums (RSS where exposed; bot-tolerant). Verify IDs, then uncomment. ---
+# UnknownCheats vBulletin RSS pattern (per-forum):
+#   https://www.unknowncheats.me/forum/external.php?type=RSS2&forumids=<FORUM_ID>
+
+# --- Add new watch targets below as the pulse confirms them ---

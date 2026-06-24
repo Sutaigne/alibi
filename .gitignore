@@ -37,3 +37,8 @@ _test_*
 
 # Release build output (produced by scripts/build-release.ps1)
 dist/
+
+# Cheat-intel feed-watcher local state + generated scan outputs (dev/intel)
+dev/intel/feeds-state.json
+dev/intel/known-tokens.txt
+dev/intel/pulses/api-scan-*.json

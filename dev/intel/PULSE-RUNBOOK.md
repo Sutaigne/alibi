@@ -44,6 +44,11 @@ Search repos + code, sort by recently created/updated. Starting queries:
 Capture: repo URL, name, stars, last push, what it targets.
 
 ### A2. Durable feeds (RSS/Atom) — the bot-friendly layer
+**Tool:** `python dev/intel/poll-feeds.py` reads the watchlist `dev/intel/feeds.txt`,
+fetches each feed, and prints entries **new since the last run** (diff against the
+gitignored `feeds-state.json`; first run = baseline). `--all` shows everything,
+`--out report.json` writes structured results. stdlib only — no deps.
+
 The most reliable monitor is a published feed: no API key, no 403, no anti-bot
 (routes AROUND the walls that block Reddit JSON / the Chrome filter / WebFetch).
 - **GitHub** exposes per-repo Atom with no rate limit: `github.com/<o>/<r>/releases.atom`
