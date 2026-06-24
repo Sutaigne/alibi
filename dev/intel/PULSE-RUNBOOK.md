@@ -109,11 +109,17 @@ route them to the artifact arrays.
 - **Website API/asset intercept** — `python dev/intel/api-intercept.py <urls...>`
   (headless Playwright, Swiss Army Tool core from `Fun/bridge-server.py`). Captures
   the JSON endpoints + asset/file paths a candidate site loads on a normal visit.
-  Yields **platform fingerprint** (IPB vs WooCommerce — clusters vendors), **product
-  asset filenames + dates**, and **affiliations** (e.g. epvp logo). **Boundary:** it
-  only observes the page's own traffic — NO fuzzing, dir-busting, or auth bypass. The
-  actual loader binary is purchase-gated, so don't expect it here. ToS-clean and
-  batchable, so this part CAN run in the unattended cron (unlike the Discord co-browse).
+  Yields **platform fingerprint** (IPB vs WooCommerce — clusters vendors) and
+  **affiliations** (e.g. epvp logo). **Boundary:** it only observes the page's own
+  traffic — NO fuzzing, dir-busting, or auth bypass. The actual loader binary is
+  purchase-gated, so don't expect it here. ToS-clean and batchable, so this part CAN
+  run in the unattended cron (unlike the Discord co-browse).
+  - **Do NOT tokenize the asset filenames it returns.** Site assets are marketing
+    images / CSS / JS (`.webp`, `.jpg`, `.css`, `.js`) — **not** software artifacts. A
+    product banner named `COD-Phantom.webp` never lands on a cheater's disk. The only
+    carry-over is the product **name-string**, and only as **corroborating LowConfidence**
+    signal — it nudges confidence *if the same string independently shows up as a
+    process/file/folder on a scanned machine*. It never triggers a verdict on its own.
 
 **Artifact → array routing:**
 
