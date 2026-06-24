@@ -35,6 +35,24 @@ Running both covers every scenario this PC could be involved in. If you only pla
 | PC | `CHEATS DETECTED` / `INPUT DEVICES DETECTED` / `UNSURE` / `CLEAN` |
 | Console-rig | `MITM CHEAT STACK DETECTED` / `CAPTURE STACK PRESENT` / `UNSURE` / `CLEAN` |
 
+## What it looks like
+
+Every scan writes a self-contained `_visual.html` next to the `.txt` report — verdict banner, recent-findings breakdown, a named "why this verdict" list, a log-scale recency timeline, and a per-scanner category signal map. No external assets; it works offline.
+
+**🔴 PC — `CHEATS DETECTED`**
+
+![Alibi PC report showing a red CHEATS DETECTED verdict with named findings, recency timeline, and category signal map](docs/screenshots/report-cheats-detected.png)
+
+**🟡 Console-rig — `CAPTURE STACK PRESENT`**
+
+![Alibi console-rig report showing an amber CAPTURE STACK PRESENT verdict, disclosed streamer/capture stack, and reviewer note](docs/screenshots/report-console-capture-stack.png)
+
+**🟢 PC — `CLEAN`**
+
+![Alibi PC report showing a green CLEAN verdict with all 14 detector groups returning no matches](docs/screenshots/report-clean.png)
+
+> **Live, interactive previews** (full HTML, no download) are hosted at [**sutaigne.github.io/crossover**](https://sutaigne.github.io/crossover/) — the markup is bit-identical to what a real scan produces.
+
 ## Safety in one line
 
 Every scan is **read-only**. Nothing leaves your machine. Every script under [`alibi-engine/scanner/`](alibi-engine/scanner/) is plain text you can open and read. Search for `Invoke-Web` and you'll find exactly one result — the opt-in LOLDrivers fetch. Search for `Remove-Item` or `Set-Item` and you'll find none in the scan path.
