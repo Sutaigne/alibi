@@ -106,6 +106,14 @@ route them to the artifact arrays.
   for the loader name and install path.
 - **Forum setup guides** — UnknownCheats/MPGH "how to run" posts list the loader
   exe, the DLL, and where to drop it.
+- **Website API/asset intercept** — `python dev/intel/api-intercept.py <urls...>`
+  (headless Playwright, Swiss Army Tool core from `Fun/bridge-server.py`). Captures
+  the JSON endpoints + asset/file paths a candidate site loads on a normal visit.
+  Yields **platform fingerprint** (IPB vs WooCommerce — clusters vendors), **product
+  asset filenames + dates**, and **affiliations** (e.g. epvp logo). **Boundary:** it
+  only observes the page's own traffic — NO fuzzing, dir-busting, or auth bypass. The
+  actual loader binary is purchase-gated, so don't expect it here. ToS-clean and
+  batchable, so this part CAN run in the unattended cron (unlike the Discord co-browse).
 
 **Artifact → array routing:**
 
