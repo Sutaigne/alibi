@@ -12,7 +12,7 @@ Author: **Bread** — Activision ID `Bread#3266221`, GitHub [@Sutaigne](https://
 
 ## Quick start
 
-1. Get the kit: download [`dist/alibi.zip`](dist/alibi.zip) and unzip it.
+1. Get the kit: download **[`alibi.zip`](https://github.com/Sutaigne/alibi/releases/latest/download/alibi.zip)** from the [latest release](https://github.com/Sutaigne/alibi/releases/latest), then unzip it. *(Use this built kit — not GitHub's "Download ZIP", which includes developer-only folders.)*
 2. Right-click **`Run scan.bat`** → **Run as administrator**.
 3. Click **YES** on the UAC prompt and wait ~2–3 minutes.
 4. Collect the four output files from your Desktop and send the ones with findings.
