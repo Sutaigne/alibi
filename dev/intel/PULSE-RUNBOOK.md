@@ -43,6 +43,19 @@ Search repos + code, sort by recently created/updated. Starting queries:
 - `gh search repos --sort updated --created '>=<last-run-date>'` to bound to new activity.
 Capture: repo URL, name, stars, last push, what it targets.
 
+### A2. Durable feeds (RSS/Atom) — the bot-friendly layer
+The most reliable monitor is a published feed: no API key, no 403, no anti-bot
+(routes AROUND the walls that block Reddit JSON / the Chrome filter / WebFetch).
+- **GitHub** exposes per-repo Atom with no rate limit: `github.com/<o>/<r>/releases.atom`
+  (new release filenames + dates — proven on Aimmy), `.../commits.atom`, `.../tags.atom`.
+  Keep a watchlist of known cheat repos and poll these.
+- **Forums** that still expose RSS (UnknownCheats / vBulletin `external.php?type=RSS2`)
+  are bot-tolerant — prefer the feed over scraping the hostile HTML.
+- The pulse supplies the **diff** (entries since the last report) + the human-review gate.
+- **Don't** buy all-in-one social-scraper MCPs (SocialCrawl/Apify/etc.) — they cover
+  X/IG/TikTok/LinkedIn, which are the *wrong* surfaces; cheat intel lives on
+  Discord/Telegram/forums/GitHub. Breadth you'll never query.
+
 ### B. Forums & marketplaces (search/research, not scraping)
 Anti-bot + login walls make direct scraping brittle — use web search scoped to:
 - UnknownCheats, MPGH, elitepvpers (thread titles, "release" / "undetected" posts)
