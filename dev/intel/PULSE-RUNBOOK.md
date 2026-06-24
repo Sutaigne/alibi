@@ -74,10 +74,18 @@ Reddit is **un-pullable from this environment**: WebFetch refuses reddit.com, th
 public JSON API 403s anti-bot, and the Chrome MCP safety filter blocks `reddit.com`.
 So Reddit is a **manual source** — Brad (a real logged-in user) browses and drops
 notable threads, same posture as the Discord co-browse.
-- **Best signal = discussion subs, not selling subs** (dedicated cheat-selling subs
-  get banned by Reddit ToS and don't persist). Value is **ban-wave reports, anti-cheat
-  patch reactions, and "what cheat was that?" brand sightings** — scene pulse + brand
-  names, rarely filenames.
+- **Best signal = persistent discussion/review communities, not overt selling subs.**
+  Same adaptation as the Discords (verification gates / "use code words"): the subs
+  that LAST survive by not making selling the overt purpose — they frame as discussion,
+  **provider reviews**, and "is X legit," and lean on **coded vocabulary**. Don't write
+  them off as low-signal; the brand intel lives there.
+- **Search the coded vocabulary, NOT "aimbot/cheat"** (obvious terms under-surface these
+  communities). High-yield terms: *provider, private, menu, loader, config, spoofer,
+  unlock-all, "legit check," "vouch"/"rep," "is it undetected," "best provider for <game>,"
+  "got banned using <X>."* **Provider-review / vouch / legit-check threads name brands
+  constantly** — that is the gold.
+- Lower-value but real: ban-wave reports + anti-cheat patch reactions = scene pulse.
+  Reddit gives names, rarely filenames.
 - **Subs to watch:** general — `r/gamehacks`, `r/gamecheats` (casual/mixed signal).
   Per-game discussion (highest intel) — `r/CODWarzone`, `r/Warzone`, `r/blackops6`,
   `r/BlackOps7` (verify), `r/CompetitiveCoD`; and for the other engine-covered games
