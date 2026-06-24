@@ -69,6 +69,22 @@ them is valuable but constrained:
 - **Invite *metadata*** (server name, member/online counts, operator handle) IS
   automatable and ToS-clean via the invites API — that part can run in the cron.
 
+### C3. Reddit (ATTENDED/MANUAL — blocked from automation here)
+Reddit is **un-pullable from this environment**: WebFetch refuses reddit.com, the
+public JSON API 403s anti-bot, and the Chrome MCP safety filter blocks `reddit.com`.
+So Reddit is a **manual source** — Brad (a real logged-in user) browses and drops
+notable threads, same posture as the Discord co-browse.
+- **Best signal = discussion subs, not selling subs** (dedicated cheat-selling subs
+  get banned by Reddit ToS and don't persist). Value is **ban-wave reports, anti-cheat
+  patch reactions, and "what cheat was that?" brand sightings** — scene pulse + brand
+  names, rarely filenames.
+- **Subs to watch:** general — `r/gamehacks`, `r/gamecheats` (casual/mixed signal).
+  Per-game discussion (highest intel) — `r/CODWarzone`, `r/Warzone`, `r/blackops6`,
+  `r/BlackOps7` (verify), `r/CompetitiveCoD`; and for the other engine-covered games
+  `r/EscapeFromTarkov`, `r/playrust`, `r/apexlegends`, `r/cs2`, `r/MarvelRivals`.
+- Treat any brand name seen here as a **lead** → confirm with a verifiable URL (site/
+  GitHub) before it becomes a candidate token.
+
 ## Step 2 — Triage & route
 
 For each surviving candidate decide **tier** and **array**. Routing table:
