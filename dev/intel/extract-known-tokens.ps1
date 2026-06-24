@@ -14,14 +14,17 @@
     deliberately EXCLUDED — those are legitimate vendors, not cheat tokens.
 
 .OUTPUTS
-    Sorted, lower-cased, unique token list to stdout (one per line). Pipe to a
-    file for the pulse: extract-known-tokens.ps1 > known-tokens.txt
+    Sorted, lower-cased, unique token list. Always echoed to stdout. If -OutFile
+    is given, ALSO written there as UTF-8 (no BOM) so downstream grep/text tools
+    work — do NOT use a PowerShell `>` redirect, which writes UTF-16 and crashes grep.
 
 .NOTES
-    Run:  powershell -File dev\intel\extract-known-tokens.ps1
+    Run:  powershell -File dev\intel\extract-known-tokens.ps1 -OutFile dev\intel\known-tokens.txt
 #>
 [CmdletBinding()]
-param()
+param(
+    [string]$OutFile
+)
 $ErrorActionPreference = 'Stop'
 
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)   # this script is dev/intel/
@@ -51,6 +54,12 @@ foreach ($pat in $includePatterns) {
     }
 }
 
-$sorted = $tokens | Sort-Object
+$sorted = @($tokens | Sort-Object)
 $sorted
+if ($OutFile) {
+    # UTF-8 no-BOM, LF — safe for grep and cross-tool reads.
+    $utf8 = [System.Text.UTF8Encoding]::new($false)
+    [System.IO.File]::WriteAllText($OutFile, ($sorted -join "`n") + "`n", $utf8)
+    [Console]::Error.WriteLine("  wrote $OutFile (UTF-8)")
+}
 [Console]::Error.WriteLine("`n  $($sorted.Count) unique known tokens across intel arrays.")

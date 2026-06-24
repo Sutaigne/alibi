@@ -1,0 +1,460 @@
+_top.bin
+| iex
+|iex
+add-mppreference -exclusionextension
+add-mppreference -exclusionpath
+add-mppreference -exclusionprocess
+ahk_recoil
+ai-aimbot
+aim_bot
+aim_bot_yolo
+aimahead
+aimbot
+aim-bot
+aimi_yolov3
+aimmy
+aimmy.exe
+aimware
+aimware.net
+andosid
+anti_cheat
+anti_recoil
+anticheat
+antirecoil
+anti-recoil
+anyx.gg
+anyxcheat
+apex_hacksuite
+apex-hacksuite
+arbor
+ardoras
+atomic rust
+atomic_dma
+atomic_rust
+atomicdma
+atomic-dma
+atomicdma.com
+autohotkey_recoil
+axion cs2
+axion_rage
+axion-cs2
+babyhamsta
+battlelog.co
+bcdedit /set nointegritychecks
+bcdedit /set testsigning
+bcdedit -set testsigning
+bhop
+bleachbit
+booter_client
+bunny_hop
+bunnyhop
+byob_ddos
+bypass
+captain_dma
+captain_fuser
+captaindma
+captainfuser
+chamscheats
+chamscheats.com
+cheat
+cheat engine
+cheatengine
+cheater.ninja
+cheaterninja
+cheatseller.com
+cheatvault eft
+cheatvault r6
+cheatvault.net
+cheatvault_r6
+chimera
+cipher /w:
+clear-eventlog
+clutchsolution
+clutch-solution
+clutch-solution.com
+cobra rust
+cobra_rust
+cobracheat
+cobracheats
+cobrasn
+consoletuner
+cosmocheats apex
+cosmocheats.com
+cosmoloader
+cronus
+cronusmax
+cronuszen
+cs2-cheats.com
+csmacro
+csmacro_ai
+curl http
+cynical software
+cynical_loader
+cynicalsoftware
+ddos_attack
+ddos_tool
+ddostool
+deprimereshop
+deprimereshop.com
+depshop
+dll_inject
+dllinjector
+dma_cfw
+dma-cfw
+echeats
+echeats.io
+elitehacks.ru
+elitepvpers.com
+elocarry
+elocarry rivals
+elocarry.net
+embedded_aim_assist
+engine owning
+engineowning
+enigma_x1
+enigmax1
+enigma-x1
+equalcheats
+esp
+eucheats
+event == "mouse_button
+exloader.net
+exploit
+extreme_injector
+extremeinjector
+fatality.win
+fatality_loader
+fsutil usn deletejournal
+gamesense.pub
+gcaimx
+gdinjector
+get-ciminstance win32_baseboard
+getmouseposition
+get-wmiobject win32_baseboard
+get-wmiobject win32_diskdrive
+golden gun
+goldeneye
+goldeneyetool
+gpcscript
+gtuner
+guidedhacking.com
+gulf_spoofer
+gulfcheats
+gulfcheats.com
+hack
+hack_dma
+hackdma
+hackvshack
+hackvshack.net
+hdcheat
+hid hide
+hidhide
+hidhidecli
+hidhideclient
+hidhidedrv
+high orbit ion cannon
+high-minded.cx
+hoic
+hping
+hping3
+hulk.py
+hulk_ddos
+hwid_spoof
+hwidchanger
+hwid-spoof
+hwidspoofer
+hwidspoofer.com
+hyper_force_cheat
+hyperforcecheats
+hyperforcecheats.com
+i want cheats
+ida pro
+ida.exe
+ida64.exe
+iex (new-object net.webclient
+iex(new-object net.webclient
+infocheats.net
+iniquus.io
+inject
+injector
+invoke-expression (new-object net.webclient
+iperf3
+ismousebuttonpressed
+iwantcheats
+iwr ${
+kernaim
+kernaim.to
+kinuzo_ardoras
+km_box
+kmbox
+km-box
+lambdaconcept
+lavi cheats
+lavicheats
+lavicheats.com
+ldr_
+leet_dma
+leetdma
+loader
+loadlibrary_injector
+loic
+low orbit ion cannon
+lurker_dma
+lurkerdma
+mac_spoof
+macspoof
+madchad.net
+magicxuantung
+manual_map
+manualmap
+marvel maxim
+marvel_maxim
+masscan
+maxim_rivals
+memes_loader
+memesense
+memesense.gg
+midnight cs2
+midnight_cs2
+moddingassociation
+mouse_button_pressed
+mouse_button_released
+mouseclick,
+mousemove,
+movemouserelative
+movemouseto
+mpgh.net
+mvp_dma
+mvpdma
+neverlose
+neverlose.cc
+nl_loader
+nl-loader
+no_recoil
+norecoil
+no-recoil
+old.rut.gg
+ollydbg
+onetap
+onetap.com
+onetapv4
+onevent("mouse_button
+ostinato
+overlord spoofer
+overlord.exe
+overlord_
+ownage software
+ownage_eft
+ownagesoftware
+ownagesoftware.com
+ownedcore.com
+pcileech
+pcileech_captaindma
+pcileech_enigma
+pcileech_fpga
+pcileech_hackdma
+pcileech_leetdma
+pcileech_lurker
+pcileech_macku
+pcileech_mvp
+pcileech_screamer
+pcileech_squirrel
+pcileech_zdma
+pcileech-fpga
+phantom eft
+phantom overlay
+phantom_eft
+phantom-eft
+phantomloader
+phantomoverlay
+phoenix_dma
+phoenixlabs
+phoenixlabstore
+phoenixlabstore.com
+pi_aimbot
+pokespoof
+powershell -enc
+powershell -encodedcommand
+powershell.exe -enc
+predator cs2
+predator_cs2
+pressandreleasemousebutton
+pressmousebutton
+primordial.cc
+primordial_loader
+privatecheatz.com
+privazer
+process hacker
+process_hollowing
+processhacker
+processhollowing
+proofcore
+proofcore.io
+pyloris
+qlmshop.com
+radar_hack
+radarhack
+rainbowsixcheats
+rapid_fire_lua
+rapidfire_lua
+rbcleaner
+reasnow
+reasnow s1
+reclass
+reclass.net
+recoil_compensation
+recoil_control
+recoilcontrol
+reflex_aimbot
+releasemousebutton
+remoteinjection
+remoteinjector
+rewasd
+rewasd engine
+rewasd.exe
+rewasdengine
+rivera unlock
+rivera unlock tool
+riveras rut
+riveras unlock
+rootkit_aimbot
+rootkit-ai-aimbot
+ruavt
+r-u-dead-yet
+rudy
+rut and ruavt
+rut launcher
+rut uav
+rut unlock tool
+rut unlocker
+rut v3 launcher
+rut v3.exe
+rut v4 launcher
+rut v4.exe
+rut.gg
+rutandruavt
+rutforcod
+rut-uav
+rutv3.exe
+rutv4.exe
+rzcustom_macro
+rzmacro
+sc create
+sc stop bedaisy
+sc stop vgc
+sc stop vgk
+sc.exe create
+screamer_squirrel
+securecheats
+sendinput {click
+set-mppreference -disablebehaviormonitoring
+set-mppreference -disableioavprotection
+set-mppreference -disablerealtime
+shellcode
+shellcode_inject
+shtreload
+siegex
+skeet.cc
+skin_changer
+skinchanger
+sky cheats
+skycheats
+skycheats.com
+slothytech
+slowloris
+speed_hack
+speedhack
+spin_bot
+spinbot
+squirrel_dma
+ssz.gg
+ssz_dma
+sternclient.biz
+stop-service -name vgc
+stop-service -name vgk
+stop-service vgc
+stresser_client
+sunone
+sunone_aimbot
+sunone_aimbot_2
+suspect_dma
+suspectcheats
+suspectcheats.com
+suspectdma
+sync spoofer
+syncspoofer
+synctop
+sync-top
+syringe
+taskkill /f /im battleye
+taskkill /f /im easyanticheat
+taskkill /f /im esea
+taskkill /f /im faceit
+taskkill /f /im ricochet
+taskkill /f /im vanguard
+taskkill /im be-service
+taskkill /im eac
+tateware
+tharushavj
+titan two
+titan.two
+tomware
+tomware_loader
+tomwareloader
+tor hammer
+torshammer
+tracex
+trigger_bot
+triggerbot
+tshark
+two2nd
+two2nd_loader
+ud_
+ufonet
+undetected
+unibot
+unknowncheats.me
+vike256_unibot
+vivado
+vredux.com
+vssadmin delete shadows
+wall_hack
+wallhack
+wall-hack
+wevtutil cl
+wevtutil clear-log
+whsatano
+wh-satano
+wh-satano.ru
+winject
+winject64
+wmic baseboard get serialnumber
+wmic bios get serialnumber
+wmic csproduct get uuid
+wmic diskdrive get serialnumber
+x22 cheats
+x22cheats
+x32dbg
+x64dbg
+xenos
+xenos64
+xerxes
+xilinx vivado
+xim apex
+xim manager
+xim matrix
+xim4
+ximmanager
+xxreflextheone
+yolov5_aimbot
+yolov8_aimbot
+z_dma
+zdma
+zelesis.com
+zelesis_neo
+zelesisneo
+zen studio
+zhex cheats
+zhexcheats
+zmap
+zsoft.store

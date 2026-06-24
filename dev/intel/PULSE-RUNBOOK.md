@@ -17,12 +17,16 @@ scanner's job. This feeds the scanner's keyword arrays.
 ## Step 0 — Build the dedupe corpus
 
 ```
-powershell -File dev\intel\extract-known-tokens.ps1 > dev\intel\known-tokens.txt
+powershell -File dev\intel\extract-known-tokens.ps1 -OutFile dev\intel\known-tokens.txt
 ```
 
-~460 tokens. Every candidate is checked against this; already-covered brands are
-dropped (or noted as "alias of <existing>"). This file is regenerated each run —
-never trust a stale copy.
+~460 tokens. Use `-OutFile` (UTF-8) — **not** a `>` redirect, which writes UTF-16
+in PowerShell 5.1 and crashes `grep`. Every candidate is checked against this;
+already-covered brands are dropped (or noted as "alias of <existing>"). Note that
+several reseller domains live in `$CheatMarketplaceDomains`, so a brand may match
+as a `.com` domain without being a HIGH brand token. Regenerated each run — never
+trust a stale copy. For the dedup checks use **ripgrep or PowerShell `-contains`** —
+the Git-Bash `grep` binary on this machine SIGABRTs on this file.
 
 ## Step 1 — Discover (fan out across sources, CoD-first)
 
