@@ -34,7 +34,7 @@
 # CONSTANTS — verdict mapping, lane geometry, log-scale math, recency
 # ============================================================================
 
-$script:ALIBI_VERSION = '4.2.0'
+$script:ALIBI_VERSION = '4.2.1'
 
 $script:VERDICT_STATE = @{
     'CHEATS DETECTED'           = 'red'
@@ -467,6 +467,7 @@ $script:Keywords_High_PC = @(
     'engineowning','engine owning','phantomoverlay','phantom overlay','lavicheats','lavi cheats',
     'skycheats','sky cheats','iwantcheats','i want cheats','x22cheats','x22 cheats','golden gun',
     'tateware','gcaimx','hdcheat','securecheats','overlord spoofer','zhexcheats','zhex cheats',
+    'burgercheats','vindycheats','cod vindy','safecheats',  # v4.2.1 pulse
     # Spoofers
     'sync spoofer','syncspoofer','tracex','slothytech','pokespoof','overlord.exe','overlord_',
     # (HidHide moved to $Keywords_Medium_PC - dual-use HID hider, not a spoofer)
@@ -503,7 +504,8 @@ $script:Keywords_Medium_PC = @(
     'midnight cs2','predator cs2','anyx.gg','eucheats','siegex',
     'rainbowsixcheats','wh-satano','proofcore','chamscheats',
     'deprimereshop','sternclient.biz','hackvshack','madchad.net',
-    'gulfcheats','moddingassociation'
+    'gulfcheats','moddingassociation',
+    'blastaim','hazcheats','caruso dma','team073','devware','zenith cheat','zenithcheats','vindy'  # v4.2.1 pulse
 )
 
 $script:Input_Keywords = @(

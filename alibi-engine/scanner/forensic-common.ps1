@@ -57,7 +57,10 @@ $CheatBrands_COD = @(
     # if a user's machine wasn't fully wiped after these brands shut down.
     'two2nd','two2nd_loader',
     'tomware','tomwareloader','tomware_loader',
-    'cynicalsoftware','cynical_loader','cynical software'
+    'cynicalsoftware','cynical_loader','cynical software',
+    # v4.2.1 (2026-06 cheat-intel pulse) - active BO7/CoD sellers, multi-source
+    # (site visited + API-intercepted). Distinctive compound names, low FP risk.
+    'burgercheats','vindycheats','cod vindy','safecheats'
 )
 $Spoofer_Brands = @(
     'sync spoofer','syncspoofer','tracex','slothytech','pokespoof','overlord.exe','overlord_',
@@ -286,7 +289,11 @@ $CheatBrands_LowConfidence = @(
     'hackvshack',
     'madchad.net',
     'gulfcheats','gulf_spoofer',
-    'moddingassociation'
+    'moddingassociation',
+    # v4.2.1 (2026-06 pulse) - single-source / thin / dictionary-word risk.
+    # Bare 'zenith' excluded (ROG Zenith hardware FP); qualified tokens only.
+    'blastaim','hazcheats','caruso dma','team073','devware',
+    'zenith cheat','zenithcheats','vindy'
 )
 
 # PC-side AI-vision aimbots. These run on the SAME gaming PC (vs. console-rig
@@ -328,7 +335,10 @@ $CheatMarketplaceDomains = @(
     'sternclient.biz','cs2-cheats.com','madchad.net','phoenixlabstore.com',
     'suspectcheats.com','echeats.io','ssz.gg','atomicdma.com',
     'unknowncheats.me','elitepvpers.com','mpgh.net','ownedcore.com',
-    'guidedhacking.com','high-minded.cx'
+    'guidedhacking.com','high-minded.cx',
+    # v4.2.1 (2026-06 pulse) - new vendor domains for the future browser-history scanner.
+    'burgercheats.com','vindycheats.com','safecheats.io',
+    'blastaim.com','hazcheats.com','team073.com'
 )
 
 # Known cheat-sample SHA256 hashes. Each entry MUST cite its source.
