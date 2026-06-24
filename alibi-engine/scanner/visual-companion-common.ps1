@@ -469,7 +469,7 @@ $script:Keywords_High_PC = @(
     'tateware','gcaimx','hdcheat','securecheats','overlord spoofer','zhexcheats','zhex cheats',
     # Spoofers
     'sync spoofer','syncspoofer','tracex','slothytech','pokespoof','overlord.exe','overlord_',
-    'hidhide','hid hide','hidhideclient','hidhidecli','hidhidedrv',
+    # (HidHide moved to $Keywords_Medium_PC - dual-use HID hider, not a spoofer)
     # Feature names
     'aimbot','wallhack','wall_hack','wall-hack','triggerbot','trigger_bot','norecoil','no-recoil','no_recoil',
     'hwidspoofer','hwid_spoof','hwid-spoof','hwidchanger','macspoof','mac_spoof',
@@ -498,6 +498,7 @@ $script:Keywords_Medium_PC = @(
     'vivado','xilinx vivado','arbor','dma-cfw','dma_cfw',
     'bleachbit','privazer','rbcleaner','cheatengine','cheat engine','processhacker','process hacker',
     'ollydbg','x64dbg','x32dbg','reclass','reclass.net','ida.exe','ida64.exe','ida pro',
+    'hidhide','hid hide','hidhideclient','hidhidecli','hidhidedrv',
     'hping','hping3','masscan','zmap','ostinato','iperf3','tshark',
     'midnight cs2','predator cs2','anyx.gg','eucheats','siegex',
     'rainbowsixcheats','wh-satano','proofcore','chamscheats',

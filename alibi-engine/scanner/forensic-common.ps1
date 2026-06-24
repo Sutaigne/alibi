@@ -61,7 +61,10 @@ $CheatBrands_COD = @(
 )
 $Spoofer_Brands = @(
     'sync spoofer','syncspoofer','tracex','slothytech','pokespoof','overlord.exe','overlord_',
-    'hidhide','hid hide','hidhideclient','hidhidecli','hidhidedrv',
+    # NOTE: HidHide moved to $DualUse_Tools (MEDIUM). It is a HID device-hider
+    # from the Nefarius stack (ViGEmBus/HidHide), shipped as a dependency of
+    # reWASD/DS4Windows/Steam Input - not a HWID spoofer. A lone match should
+    # never reach a CHEATS verdict; the active injector (ViGEmBus) isn't flagged.
     # v3.8 - additional spoofer brands and storefronts
     'hwidspoofer','hwidspoofer.com',
     'synctop','sync-top'
@@ -104,7 +107,11 @@ $InputDevices = @(
 $DMA_DualUse = @('vivado','xilinx vivado','arbor','dma-cfw','dma_cfw')
 $DualUse_Tools = @(
     'bleachbit','privazer','rbcleaner','cheatengine','cheat engine','processhacker','process hacker',
-    'ollydbg','x64dbg','x32dbg','reclass','reclass.net','ida.exe','ida64.exe','ida pro'
+    'ollydbg','x64dbg','x32dbg','reclass','reclass.net','ida.exe','ida64.exe','ida pro',
+    # HID device-hider (Nefarius stack). Legitimate dependency of reWASD /
+    # DS4Windows / Steam Input; a component of input-translation stacks but
+    # not proof of one. Dual-use MEDIUM, never HIGH.
+    'hidhide','hid hide','hidhideclient','hidhidecli','hidhidedrv'
 )
 
 # Suspicious script-content patterns - Things a normal user's script never
