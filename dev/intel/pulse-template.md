@@ -20,6 +20,15 @@
 *Conf. = confidence the token is a real, current cheat AND won't false-positive
 on legit software. Low-confidence items go MEDIUM regardless of tier guess.*
 
+## Artifact deep-dive (Layer 2 — files, not just names)
+For confirmed candidates / watch-list repos with public file trees or setup guides.
+Distinctive artifacts only — no generic names, no hashes this version.
+
+| Brand | Artifact | Type | Source (repo/thread) | → Array | Conf. |
+|---|---|---|---|---|---|
+| Example | `exampleloader.exe` | exe | https://github.com/…/contents | `$CheatBrands_COD` (filename) | high |
+| Example | `models\*.onnx` + `configs\*.cfg` | constellation | https://github.com/…/ | `$VisionAimbot_AI_PC` | med |
+
 ## Aliases / already-covered (dropped)
 - `xyz` — alias of existing `<token>`, no action.
 

@@ -77,6 +77,39 @@ HIGH-cheat if its *primary purpose is cheating*. Dual-use components, controller
 adapters, and anything thinly sourced go MEDIUM/INPUT — never HIGH. When unsure,
 default DOWN a tier; an accusation false-positive is worse than a missed dot.
 
+## Step 2b — Artifact deep-dive (Layer 2: the *files*, not just the name)
+
+A brand name only catches a cheater if their on-disk files contain it. The
+higher-fidelity signal is the **concrete artifact** the cheat drops. For each
+confirmed candidate (and worthwhile watch-list repos), dig for artifacts and
+route them to the artifact arrays.
+
+**Where to look (GitHub & forums are gold; seller pages rarely expose files):**
+- **GitHub file trees** — list the repo contents directly, no clone, no download:
+  `gh api repos/<owner>/<repo>/contents` and drill into subdirs
+  (`/contents/models`, `/configs`, `/src`). Read the README/SetUp/"how to use"
+  for the loader name and install path.
+- **Forum setup guides** — UnknownCheats/MPGH "how to run" posts list the loader
+  exe, the DLL, and where to drop it.
+
+**Artifact → array routing:**
+
+| Artifact | → Array | Token form |
+|---|---|---|
+| Distinctive loader/exe (`Aimmy2.exe`) | the brand array, as a filename | `aimmy2.exe` / `aimmy2` |
+| Injected DLL name | `$DLLInjector_Names` | the dll basename |
+| `.lua` cheat script name | `$LuaCheat_Keywords` | the script token |
+| AppData/Documents folder | `$AppDataPatterns` | the distinctive dir name |
+| `.onnx` model + `models\` + `.cfg` together | `$VisionAimbot_AI_PC` | the **constellation**, not a lone `.onnx` |
+| Service / driver name | `$Spoofer_Brands` / brand array | the service basename |
+
+**FP discipline (critical):** only **distinctive** artifacts. NEVER tokenize
+generic names a legit app could ship — `loader.exe`, `config.cfg`, `cheat.dll`,
+a bare `.onnx`, `models\`. Those only count as part of a constellation that
+`Scan-AIVisionArtifacts` already requires. **This version handles filenames &
+paths only — no downloading binaries, no hashes** (that's a deliberate
+scope line; `$KnownCheatHashes` stays manual).
+
 ## Step 3 — Emit the candidate report
 
 Write `dev/intel/pulses/pulse-YYYY-MM.md` from `pulse-template.md`. One row per
