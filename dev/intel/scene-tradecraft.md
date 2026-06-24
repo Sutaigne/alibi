@@ -12,6 +12,11 @@ runs through all of it:
 This doc is the index; the **`PULSE-RUNBOOK.md`** has the step-by-step. Both are
 dev-side (never shipped in the kit).
 
+> **Lineage:** this methodology was generalized into **Ventris** — a domain-agnostic
+> forensic-intel engine (engine + per-topic domain packs + a bootstrapper). Alibi's
+> cheat-intel pulse is its origin/reference domain. *(Ventris = its own project; the
+> cheat pack stays here.)*
+
 ## Surface map
 
 | Surface | How they sanitize it | Where the intel actually is | Our counter-method | Tool |
