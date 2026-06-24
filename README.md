@@ -6,7 +6,7 @@ You run one scan. Four files land on your Desktop — two plain-text reports and
 
 Primarily built for **Call of Duty**, but the same engine covers CS2, Apex, Tarkov, Rust, R6, and Marvel Rivals.
 
-Author: **Bread** — Activision ID `Bread#3266221`, GitHub [@Sutaigne](https://github.com/Sutaigne). Contributor: **Drownmw**.
+Author: **Bread** — Activision ID `Bread#3266221`, GitHub [@Sutaigne](https://github.com/Sutaigne).
 
 ---
 
