@@ -134,6 +134,14 @@ route them to the artifact arrays.
     because they gate downloads — a free/open cheat, a direct-download host, a
     GitHub-release link, or a sloppily-modded site will surface (b). A few sanitized
     targets is NOT a verdict on the method; judge every run by what that target leaks.
+  - **Wrong tool for static pages.** Blog/forum/SEO-spam posts (itch.io blogs, MPGH
+    threads) fire no relevant on-load network calls — the interceptor returns nothing.
+    Their download link is *body text*; use text extraction (WebFetch / get_page_text)
+    to pull it. The interceptor shines on AJAX stores + file-host landing pages.
+  - **Boundary:** do NOT follow free-cheat download chains to malware file hosts just
+    to exercise the executable bucket. Loading throwaway distribution domains is real
+    risk for marginal proof. GitHub release names (`gh api releases`, names only) cover
+    the open/free class cleanly.
 
 **Artifact → array routing:**
 
