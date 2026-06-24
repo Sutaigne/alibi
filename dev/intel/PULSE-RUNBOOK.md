@@ -104,6 +104,12 @@ route them to the artifact arrays.
   `gh api repos/<owner>/<repo>/contents` and drill into subdirs
   (`/contents/models`, `/configs`, `/src`). Read the README/SetUp/"how to use"
   for the loader name and install path.
+- **GitHub release assets** — `gh api repos/<owner>/<repo>/releases` lists the
+  **actual download filenames** (the loader/archive) + download counts, without
+  fetching the file. This is the proven clean source for real artifact names from
+  the open/free target class — e.g. `AimmyV2.5.0.zip` (Babyhamsta/Aimmy, 100k+ dl),
+  `Release.rar` (TheRyoSaeba/BLOPS7). **NEVER download the asset** (it's malware /
+  dual-use); the *name* is the intel. Distinctive names → brand-as-filename token.
 - **Forum setup guides** — UnknownCheats/MPGH "how to run" posts list the loader
   exe, the DLL, and where to drop it.
 - **Website API/asset intercept** — `python dev/intel/api-intercept.py <urls...>`
