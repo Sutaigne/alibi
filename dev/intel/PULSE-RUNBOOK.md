@@ -54,6 +54,21 @@ Capture: brand name, the page URL, what game, whether it's sold or free.
 - YouTube / TikTok ("cod cheat 2026", "warzone aimbot undetected"), Telegram/Discord invite mentions.
 - These rarely yield clean tokens but surface *names* to chase back to A/B for a verifiable URL.
 
+### C2. Discord co-browse (ATTENDED ONLY — never in the unattended cron)
+Cheat sites link to Discord invites with rich `#updates`/`#changelog` content. Reading
+them is valuable but constrained:
+- **Brad must be present.** Joining/navigating a server is automating his `breadlyAI`
+  account (Discord ToS) — he authorizes it per-run; the scheduled job does NOT do this.
+- **Hard stops:** the agent does NOT solve **CAPTCHAs** or accept **rules/verification
+  gates** — hand back to Brad, who clears them, then the agent resumes read-only.
+- **Join → read target channels → LEAVE.** No messages, reactions, or DMs.
+- **Known limitation (2026-06 BurgerCheats co-browse):** the Layer-2 gold (loader
+  filenames, DLLs, install paths) lives in **customer-role-gated** channels. A free
+  join yields product codenames + changelog prose, not on-disk artifacts. Don't expect
+  filenames from a free account.
+- **Invite *metadata*** (server name, member/online counts, operator handle) IS
+  automatable and ToS-clean via the invites API — that part can run in the cron.
+
 ## Step 2 — Triage & route
 
 For each surviving candidate decide **tier** and **array**. Routing table:
