@@ -139,7 +139,7 @@ $Keywords_MouseMacro  = $ScriptContent_MouseMacro
 # ============================================================================
 Clear-Host
 Write-Host ''
-Write-Host '  Alibi v4.0 (console-rig mode)' -ForegroundColor Cyan
+Write-Host '  Alibi v4.3.0 (console-rig mode)' -ForegroundColor Cyan
 Write-Host '  =======================' -ForegroundColor Cyan
 Write-Host ''
 Write-Host "  Host:   $env:COMPUTERNAME"
@@ -349,7 +349,7 @@ $lines.Add('')
 
 # Standard report body
 $lines.Add('================================================================')
-$lines.Add('  ALIBI v4.0 (CONSOLE-RIG MODE) - CONSOLIDATED REPORT')
+$lines.Add('  ALIBI v4.3.0 (CONSOLE-RIG MODE) - CONSOLIDATED REPORT')
 $lines.Add('================================================================')
 $lines.Add('')
 $lines.Add("  Generated:  $(Get-Date)")
