@@ -6,8 +6,8 @@
 
 | Version | Supported |
 |---|---|
-| v3.8.x  | yes |
-| < v3.8  | no — please upgrade |
+| v4.3.x  | yes |
+| < v4.3  | no — please upgrade |
 
 ## What's in scope
 
@@ -44,11 +44,11 @@ A forensic anti-cheat scanner is, byte-for-byte, hard to tell apart from the thi
 
 - a plaintext database of cheat-brand, spoofer, and DMA-hardware names (`forensic-common.ps1`);
 - the literal high-risk command strings it scans a suspect machine for — e.g. `powershell -encodedcommand`, `iex (new-object net.webclient`, driver-signing-bypass flags (`forensic-common.ps1`);
-- `.bat` launchers that self-elevate (`-Verb RunAs`) and run unsigned PowerShell (`-ExecutionPolicy Bypass`), because a downloaded, unsigned script won't run otherwise.
+- `.bat` launchers that require elevation (right-click → *Run as administrator*) and run unsigned PowerShell (`-ExecutionPolicy Bypass`), because a downloaded, unsigned script won't run otherwise.
 
 Signature and heuristic engines — and especially **SmartScreen reputation**, which blocks *new, unsigned, rarely-downloaded* files regardless of content — score those exactly as they'd score the real thing. The result is a false positive at download or extract time.
 
-The detection you're most likely to see is **`Trojan:Script/Wacatac.B!ml`** on the GitHub ZIP download. The `!ml` suffix means it's a cloud machine-learning verdict, not a confirmed signature — `Wacatac.B!ml` is a well-known generic ML false positive that fires on many legitimate scripts and tools. An offline Defender signature scan of the same files returns clean, which is the tell. This false positive has been reported to Microsoft for reclassification.
+Detections observed so far, both on GitHub ZIP downloads: **`Trojan:Script/Wacatac.B!ml`** and **`Trojan:Win32/Sprisky.U!cl`** (the latter on the *source* ZIP, 2026-06-25). The `!ml` / `!cl` suffixes mean cloud machine-learning / cloud-heuristic verdicts, not confirmed signatures — both are well-known generic false-positive families that fire on many legitimate scripts and tools. A local Defender scan of the same files returns clean, which is the tell (re-verified 2026-07-12: full tree, built release ZIP, and source-style ZIP all scan clean, including with the internet-download Mark of the Web applied). These false positives have been reported to Microsoft for reclassification.
 
 None of it is an infection, and you can prove that:
 

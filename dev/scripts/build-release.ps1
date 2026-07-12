@@ -44,7 +44,9 @@ Copy-Item -LiteralPath (Join-Path $root 'alibi-engine')   -Destination $stage -R
 # (for-reviewers.md is the only reviewer-facing doc and is kept.)
 $pruneDocs = @(
     'alibi-engine\docs\handoff.md',
+    'alibi-engine\docs\HANDOFF-v4.3.md',
     'alibi-engine\docs\NEXT_SESSION.md',
+    'alibi-engine\docs\PROPOSAL-v5.md',
     'alibi-engine\docs\memory-suggested.md',
     'alibi-engine\docs\design-handoff-2026-05'
 )

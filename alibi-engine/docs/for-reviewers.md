@@ -36,7 +36,7 @@ Open the `.txt` file. The first 20 lines should look like:
   ...
 
 ================================================================
-  ALIBI v4.0 - CONSOLIDATED REPORT
+  ALIBI v4.3.0 - CONSOLIDATED REPORT
 ================================================================
 
   Generated:  <timestamp>
