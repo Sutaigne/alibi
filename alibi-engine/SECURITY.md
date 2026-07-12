@@ -44,7 +44,7 @@ A forensic anti-cheat scanner is, byte-for-byte, hard to tell apart from the thi
 
 - a plaintext database of cheat-brand, spoofer, and DMA-hardware names (`forensic-common.ps1`);
 - the literal high-risk command strings it scans a suspect machine for — e.g. `powershell -encodedcommand`, `iex (new-object net.webclient`, driver-signing-bypass flags (`forensic-common.ps1`);
-- `.bat` launchers that require elevation (right-click → *Run as administrator*) and run unsigned PowerShell (`-ExecutionPolicy Bypass`), because a downloaded, unsigned script won't run otherwise.
+- `.bat` launchers that need elevation — the main `Run scan.bat` requires right-click → *Run as administrator*, and the single-scan helpers self-elevate via `-Verb RunAs` — and run unsigned PowerShell (`-ExecutionPolicy Bypass`), because a downloaded, unsigned script won't run otherwise.
 
 Signature and heuristic engines — and especially **SmartScreen reputation**, which blocks *new, unsigned, rarely-downloaded* files regardless of content — score those exactly as they'd score the real thing. The result is a false positive at download or extract time.
 
