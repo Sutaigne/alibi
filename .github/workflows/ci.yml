@@ -28,3 +28,6 @@ jobs:
             }
           }
           if ($hadError) { exit 1 }
+      - name: P0 regression tests
+        shell: pwsh
+        run: ./alibi-engine/tests/p0-regression.Tests.ps1

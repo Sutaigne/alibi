@@ -53,7 +53,7 @@ Every scan writes a self-contained `_visual.html` next to the `.txt` report — 
 
 ![Alibi PC report showing a green CLEAN verdict with all 14 detector groups returning no matches](docs/screenshots/report-clean.png)
 
-> **Live, interactive previews** (full HTML, no download) are hosted at [**sutaigne.github.io/crossover**](https://sutaigne.github.io/crossover/) — the markup is bit-identical to what a real scan produces.
+> **Live, interactive example reports** (full HTML, no download) are hosted at [**sutaigne.github.io/alibi**](https://sutaigne.github.io/alibi/) — synthetic data rendered in the report's real layout. The hosted examples may lag the newest release.
 
 ## Safety in one line
 
