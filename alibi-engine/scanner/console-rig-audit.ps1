@@ -137,7 +137,8 @@ $Keywords_MouseMacro  = $ScriptContent_MouseMacro
 # ============================================================================
 # Banner
 # ============================================================================
-Clear-Host
+# Don't clear the launcher's "[ 2 of 2 ]" progress context (see forensic-scan.ps1).
+if (-not $env:ALIBI_LAUNCHER) { Clear-Host }
 Write-Host ''
 Write-Host '  Alibi v4.3.0 (console-rig mode)' -ForegroundColor Cyan
 Write-Host '  =======================' -ForegroundColor Cyan

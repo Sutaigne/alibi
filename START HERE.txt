@@ -2,10 +2,11 @@
   ALIBI - START HERE
 ================================================================
 
-This folder lets you produce credible proof your gaming setup
-isn't running cheats. You run a scan on your machine, two .txt
-reports (plus HTML visuals) appear on your Desktop, you send
-them to whoever asked.
+Someone asked you to prove your gaming setup is clean? That is
+what this folder is for. You run one scan, four report files
+appear on your Desktop, and you send them to whoever asked.
+Nothing gets installed, nothing on your PC gets changed, and
+nothing about your PC is sent anywhere.
 
 
 HOW TO USE

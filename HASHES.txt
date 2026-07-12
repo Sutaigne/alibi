@@ -1,18 +1,18 @@
-# alibi HASHES.txt Ã¢â‚¬â€ SHA256 of every shipped file
+# alibi HASHES.txt ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â SHA256 of every shipped file
 #
 # Verify a kit:  from this folder, run   sha256sum -c HASHES.txt
 #
 # Format: <SHA256> *<relative-path>
 
 # --- root: what the user runs ---
-2fcd99c6874a4f420ee4316d762aba02e0a3c8e04a8b8f545c760270958e0d87 *Run scan.bat
-debbc924627a5b4e435bd5fb8f98a97c5f841d0dbde8613c1982577292a3b378 *START HERE.txt
+30bd275fc6822951096f86806d8a3d96e35bb680da2feb04340c94224e4d2fa6 *Run scan.bat
+55f44543b0cdf136c9b697f8b2764846a24b120c7ed8fba101499959ad62e118 *START HERE.txt
 
-# --- alibi-engine/scanner Ã¢â‚¬â€ PowerShell engine (canonical) ---
+# --- alibi-engine/scanner ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â PowerShell engine (canonical) ---
 040b3d9fffdc4427875d63b9864b4bf0bf50e36cddb8c713b78807ea2b94b24b *alibi-engine/scanner/README.txt
-e4be06e6b62afee2654363a6458d233ce9b0cedf009b243a49b35eb2a3f6c2bd *alibi-engine/scanner/console-rig-audit.ps1
+8697624265c74bca3666d560a692120aec9539d6348b30d2bf4eb14bd06ca02b *alibi-engine/scanner/console-rig-audit.ps1
 3b403123e91941c0c6ae37a6f55371f0414c15724632ef9a3e8e24fca6525eeb *alibi-engine/scanner/forensic-common.ps1
-6b18a896c76e4a83f82cbb0c25dde27ce6749e9c69db1d4072ed813c9a64ee27 *alibi-engine/scanner/forensic-scan.ps1
+9a4fe52d45e25a205ce4647cf2e963b9729ef964ad362c36449a0056391d1046 *alibi-engine/scanner/forensic-scan.ps1
 61183ed2e609b4ca57441268effcad88b000a356463e8d1c38001557aa65ea08 *alibi-engine/scanner/generate-visual-companion-console.ps1
 72e2bb1d4c8bb85ba606565d91e6efa16745edf670ceb40b1f6f0c13018fb1b8 *alibi-engine/scanner/generate-visual-companion.ps1
 e23bf311bee7c03138286204260ce72c94192c0a3d4988710bc9e6b043d1bcdc *alibi-engine/scanner/visual-companion-common.ps1
@@ -27,7 +27,7 @@ cd52ac27cf67c2035965e0e8dc73f3923f44e4b448d67af7fc36113c5114fb15 *alibi-engine/s
 6612ac71a95ed1e5411a19d6305f8a62535d419be58c340220272cf79bae0e9c *alibi-engine/scanner/visual_scripts.js
 1f34e794ed22b736ee56685c1dab9575ae091823d6dbe8de054f130754c91787 *alibi-engine/scanner/visual_styles.css
 
-# --- alibi-engine Ã¢â‚¬â€ attestation + reviewer docs ---
+# --- alibi-engine ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â attestation + reviewer docs ---
 bff6841af53a8911e62eec41aab01433fe21584563ffb7840c6c3c1c64068110 *alibi-engine/README.md
 d3a9979fde537c26d4c7e8af847f169690aa01873479c79eb8984db8e03b73c1 *alibi-engine/SECURITY.md
 08cc5d577a2e8eafc5887c65b712c90746df4f47e4dfa8dec48af4d8436b06d6 *alibi-engine/LICENSE

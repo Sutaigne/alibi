@@ -1,8 +1,10 @@
 # Alibi
 
-**A read-only forensic kit for Windows that lets a gamer prove their machine isn't running cheats.**
+**Someone thinks you're cheating. You know you're not. Alibi helps you prove it.**
 
-You run one scan. Four files land on your Desktop — two plain-text reports and two matching HTML visuals. You send them to whoever asked. **No system changes, no installed software, no telemetry.** Exactly one outbound network call (the opt-in LOLDrivers BYOVD cross-reference) is prompted before it runs and disclosed in every report.
+You run one scan — right-click, wait a couple of minutes — and four files land on your Desktop: two plain-text reports and two visual HTML versions of the same thing. Send them to whoever asked: the tournament admin, the Discord mod, the lobby that called you out. That's the whole flow.
+
+Under the hood it's a **read-only forensic kit for Windows**: it looks at your machine the way an investigator would and writes down what it finds, without changing anything. No install, no account, no telemetry — nothing about your PC leaves your PC. The one optional network call (downloading a public driver-safety list) asks permission first and is disclosed in every report.
 
 Primarily built for **Call of Duty**, but the same engine covers CS2, Apex, Tarkov, Rust, R6, and Marvel Rivals.
 

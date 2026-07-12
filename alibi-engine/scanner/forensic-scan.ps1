@@ -86,9 +86,12 @@ $Keywords_MouseMacro  = $ScriptContent_MouseMacro
 # ============================================================================
 # Banner
 # ============================================================================
-Clear-Host
+# When the unified launcher hosts us it shows "[ 1 of 2 ] / [ 2 of 2 ]"
+# progress context; clearing the screen here erased it and made the second
+# scan look like the first one restarting. Only clear when run standalone.
+if (-not $env:ALIBI_LAUNCHER) { Clear-Host }
 Write-Host ''
-Write-Host '  Alibi v4.3.0' -ForegroundColor Cyan
+Write-Host '  Alibi v4.3.0 (PC mode)' -ForegroundColor Cyan
 Write-Host '  =======================' -ForegroundColor Cyan
 Write-Host ''
 Write-Host "  Host:   $env:COMPUTERNAME"

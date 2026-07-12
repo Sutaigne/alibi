@@ -58,6 +58,11 @@ if "!ADMINRC!" NEQ "0" (
 
 set "KIT=%~dp0alibi-engine\scanner"
 
+REM --- Tell the scanners the launcher is hosting them so they don't clear
+REM     the screen (which erased the "[ 1 of 2 ] / [ 2 of 2 ]" progress
+REM     context and made scan 2 look like scan 1 restarting). ---
+set "ALIBI_LAUNCHER=1"
+
 REM --- Optional online driver-safety check. Asked ONCE here, up front, with a
 REM     10-second auto-skip, so the scan itself never blocks on a hidden prompt. ---
 set "LOL=-SkipLOLDrivers"
