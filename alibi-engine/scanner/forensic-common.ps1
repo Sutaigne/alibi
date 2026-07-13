@@ -60,7 +60,9 @@ $CheatBrands_COD = @(
     'cynicalsoftware','cynical_loader','cynical software',
     # v4.2.1 (2026-06 cheat-intel pulse) - active BO7/CoD sellers, multi-source
     # (site visited + API-intercepted). Distinctive compound names, low FP risk.
-    'burgercheats','vindycheats','cod vindy','safecheats'
+    'burgercheats','vindycheats','cod vindy','safecheats',
+    # v4.3.0-p1 (2026-07 pulse)
+    'arcticcheats','artificialaiming'
 )
 $Spoofer_Brands = @(
     'sync spoofer','syncspoofer','tracex','slothytech','pokespoof','overlord.exe','overlord_',
@@ -95,7 +97,10 @@ $DMA_Indicators = @(
     'screamer_squirrel','squirrel_dma','lambdaconcept',
     'echeats','echeats.io','equalcheats',
     'ssz_dma','ssz.gg',
-    'clutchsolution','clutch-solution'
+    'clutchsolution','clutch-solution',
+    # v4.3.0-p1 (2026-07 pulse) - MAKCU/MAKCM: open-source DMA input emulator
+    # (dual ESP32-S3, sold on Amazon). Functionally supplements KMBox.
+    'makcu','makcm'
 )
 
 # Input devices - separate verdict category from cheat brands
@@ -293,7 +298,9 @@ $CheatBrands_LowConfidence = @(
     # v4.2.1 (2026-06 pulse) - single-source / thin / dictionary-word risk.
     # Bare 'zenith' excluded (ROG Zenith hardware FP); qualified tokens only.
     'blastaim','hazcheats','caruso dma','team073','devware',
-    'zenith cheat','zenithcheats','vindy'
+    'zenith cheat','zenithcheats','vindy',
+    # v4.3.0-p1 (2026-07 pulse)
+    'cheatrise','dmacheese'
 )
 
 # PC-side AI-vision aimbots. These run on the SAME gaming PC (vs. console-rig
@@ -336,9 +343,11 @@ $CheatMarketplaceDomains = @(
     'suspectcheats.com','echeats.io','ssz.gg','atomicdma.com',
     'unknowncheats.me','elitepvpers.com','mpgh.net','ownedcore.com',
     'guidedhacking.com','high-minded.cx',
-    # v4.2.1 (2026-06 pulse) - new vendor domains for the future browser-history scanner.
+    # v4.2.1 (2026-06 pulse)
+    # v4.3.0-p1 (2026-07 pulse)
     'burgercheats.com','vindycheats.com','safecheats.io',
-    'blastaim.com','hazcheats.com','team073.com'
+    'blastaim.com','hazcheats.com','team073.com',
+    'arcticcheats.wtf','artificialaiming.net','cheatrise.com','dmacheese.com'
 )
 
 # Known cheat-sample SHA256 hashes. Each entry MUST cite its source.

@@ -27,7 +27,11 @@ anyxcheat
 apex_hacksuite
 apex-hacksuite
 arbor
+arcticcheats
+arcticcheats.wtf
 ardoras
+artificialaiming
+artificialaiming.net
 atomic rust
 atomic_dma
 atomic_rust
@@ -44,16 +48,21 @@ bcdedit /set nointegritychecks
 bcdedit /set testsigning
 bcdedit -set testsigning
 bhop
+blastaim
+blastaim.com
 bleachbit
 booter_client
 bunny_hop
 bunnyhop
+burgercheats
+burgercheats.com
 byob_ddos
 bypass
 captain_dma
 captain_fuser
 captaindma
 captainfuser
+caruso dma
 chamscheats
 chamscheats.com
 cheat
@@ -61,6 +70,8 @@ cheat engine
 cheatengine
 cheater.ninja
 cheaterninja
+cheatrise
+cheatrise.com
 cheatseller.com
 cheatvault eft
 cheatvault r6
@@ -77,6 +88,7 @@ cobra_rust
 cobracheat
 cobracheats
 cobrasn
+cod vindy
 consoletuner
 cosmocheats apex
 cosmocheats.com
@@ -97,10 +109,13 @@ ddostool
 deprimereshop
 deprimereshop.com
 depshop
+devware
 dll_inject
 dllinjector
 dma_cfw
 dma-cfw
+dmacheese
+dmacheese.com
 echeats
 echeats.io
 elitehacks.ru
@@ -146,6 +161,8 @@ hack_dma
 hackdma
 hackvshack
 hackvshack.net
+hazcheats
+hazcheats.com
 hdcheat
 hid hide
 hidhide
@@ -205,6 +222,8 @@ mac_spoof
 macspoof
 madchad.net
 magicxuantung
+makcm
+makcu
 manual_map
 manualmap
 marvel maxim
@@ -339,6 +358,8 @@ rutv3.exe
 rutv4.exe
 rzcustom_macro
 rzmacro
+safecheats
+safecheats.io
 sc create
 sc stop bedaisy
 sc stop vgc
@@ -395,6 +416,8 @@ taskkill /f /im vanguard
 taskkill /im be-service
 taskkill /im eac
 tateware
+team073
+team073.com
 tharushavj
 titan two
 titan.two
@@ -415,6 +438,9 @@ undetected
 unibot
 unknowncheats.me
 vike256_unibot
+vindy
+vindycheats
+vindycheats.com
 vivado
 vredux.com
 vssadmin delete shadows
@@ -454,6 +480,8 @@ zelesis.com
 zelesis_neo
 zelesisneo
 zen studio
+zenith cheat
+zenithcheats
 zhex cheats
 zhexcheats
 zmap

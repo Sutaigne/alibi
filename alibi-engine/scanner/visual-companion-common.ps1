@@ -468,6 +468,7 @@ $script:Keywords_High_PC = @(
     'skycheats','sky cheats','iwantcheats','i want cheats','x22cheats','x22 cheats','golden gun',
     'tateware','gcaimx','hdcheat','securecheats','overlord spoofer','zhexcheats','zhex cheats',
     'burgercheats','vindycheats','cod vindy','safecheats',  # v4.2.1 pulse
+    'arcticcheats','artificialaiming',  # v4.3.0-p1 pulse
     # Spoofers
     'sync spoofer','syncspoofer','tracex','slothytech','pokespoof','overlord.exe','overlord_',
     # (HidHide moved to $Keywords_Medium_PC - dual-use HID hider, not a spoofer)
@@ -492,7 +493,9 @@ $script:Keywords_High_PC = @(
     # AI vision PC aimbots
     'aimmy','sunone_aimbot','rootkit_aimbot','aimahead','zelesisneo',
     'reflex_aimbot','aimi_yolov3','yolov8_aimbot','aim_bot_yolo','unibot',
-    'ardoras','embedded_aim_assist','csmacro'
+    'ardoras','embedded_aim_assist','csmacro',
+    # DMA input emulators (v4.3.0-p1 pulse)
+    'makcu','makcm'
 )
 
 $script:Keywords_Medium_PC = @(
@@ -505,7 +508,8 @@ $script:Keywords_Medium_PC = @(
     'rainbowsixcheats','wh-satano','proofcore','chamscheats',
     'deprimereshop','sternclient.biz','hackvshack','madchad.net',
     'gulfcheats','moddingassociation',
-    'blastaim','hazcheats','caruso dma','team073','devware','zenith cheat','zenithcheats','vindy'  # v4.2.1 pulse
+    'blastaim','hazcheats','caruso dma','team073','devware','zenith cheat','zenithcheats','vindy',  # v4.2.1 pulse
+    'cheatrise','dmacheese'  # v4.3.0-p1 pulse
 )
 
 $script:Input_Keywords = @(

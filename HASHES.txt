@@ -1,4 +1,4 @@
-# alibi HASHES.txt ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â SHA256 of every shipped file
+# alibi HASHES.txt — SHA256 of every shipped file
 #
 # Verify a kit:  from this folder, run   sha256sum -c HASHES.txt
 #
@@ -8,27 +8,28 @@
 30bd275fc6822951096f86806d8a3d96e35bb680da2feb04340c94224e4d2fa6 *Run scan.bat
 55f44543b0cdf136c9b697f8b2764846a24b120c7ed8fba101499959ad62e118 *START HERE.txt
 
-# --- alibi-engine/scanner ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â PowerShell engine (canonical) ---
-040b3d9fffdc4427875d63b9864b4bf0bf50e36cddb8c713b78807ea2b94b24b *alibi-engine/scanner/README.txt
+# --- alibi-engine/scanner — PowerShell engine (canonical) ---
+25b3d75f4707d28bd9f3cf4e8aa42d9241776de17e068a55eddd17efb866fb18 *alibi-engine/scanner/README.txt
 8697624265c74bca3666d560a692120aec9539d6348b30d2bf4eb14bd06ca02b *alibi-engine/scanner/console-rig-audit.ps1
-3b403123e91941c0c6ae37a6f55371f0414c15724632ef9a3e8e24fca6525eeb *alibi-engine/scanner/forensic-common.ps1
+db4d46fb823e8c133a9f6ce442f8adc8bde2535763a9511fca12b890341594c9 *alibi-engine/scanner/forensic-common.ps1
 9a4fe52d45e25a205ce4647cf2e963b9729ef964ad362c36449a0056391d1046 *alibi-engine/scanner/forensic-scan.ps1
 61183ed2e609b4ca57441268effcad88b000a356463e8d1c38001557aa65ea08 *alibi-engine/scanner/generate-visual-companion-console.ps1
 72e2bb1d4c8bb85ba606565d91e6efa16745edf670ceb40b1f6f0c13018fb1b8 *alibi-engine/scanner/generate-visual-companion.ps1
-e23bf311bee7c03138286204260ce72c94192c0a3d4988710bc9e6b043d1bcdc *alibi-engine/scanner/visual-companion-common.ps1
+1557abd90ec39021c6ecfcfa80e12ff5e283e6988f1d6bd25102d17c49e47c83 *alibi-engine/scanner/visual-companion-common.ps1
 0b680b000ecc2b500bbde276aadac5a850a8dcbc11c8990f52a96e21a11b22a1 *alibi-engine/scanner/console-run-check.bat
 4eb22872d1f12906902ecada273417e120180716d42cede4dffcb48162375fe7 *alibi-engine/scanner/run-check.bat
 c513f2fa83c4999d3032685025c314a49adfa22447abae0a90ef11ae5e1e9e20 *alibi-engine/scanner/alibi-safety-card.html
-ce7a66236c2fad748e80668c0caa28eeb0b0a03802c8481e6682c707d457277c *alibi-engine/scanner/console-lockdown-explained.html
-174cfb64e60876c5dab4f59f87e1077bebcf29f824376182931753569f1ebcf7 *alibi-engine/scanner/console-setup-checklist.html
+da10d733a8628d518a9931693761f02645eb63d8278d08d9df7f8c1d7e53108f *alibi-engine/scanner/console-lockdown-explained.html
+065ef704012b8c3f410916e702165dc1fd197d586d852fc8473af735273b0d0b *alibi-engine/scanner/console-setup-checklist.html
 a5f63ef7c954f1792f0cf5beca70e652d6cb2e8cee7f195b0b6e16842366011d *alibi-engine/scanner/one-page-guide.html
-cd52ac27cf67c2035965e0e8dc73f3923f44e4b448d67af7fc36113c5114fb15 *alibi-engine/scanner/top-bin-explainer-offline.html
-9ae80b290a33ffc58fad5e00d01aa3b34edc190c3421618c1fceec3f49d7d112 *alibi-engine/scanner/top-bin-explainer.html
-6612ac71a95ed1e5411a19d6305f8a62535d419be58c340220272cf79bae0e9c *alibi-engine/scanner/visual_scripts.js
-1f34e794ed22b736ee56685c1dab9575ae091823d6dbe8de054f130754c91787 *alibi-engine/scanner/visual_styles.css
+7772e751a53e65606655a8883777613c74ceed2a7e3d29892dfdc3c6b8a5b815 *alibi-engine/scanner/top-bin-explainer-offline.html
+bea5014e7990755b1876742bea7c579529cf2633dfae0facecfb09149c743302 *alibi-engine/scanner/top-bin-explainer.html
+f3e79c3acd09342608c7d37e78d04cad7577edf4bdae7d7bfc9e5908872c707a *alibi-engine/scanner/visual_scripts.js
+7af488a7bce339a492b149cc724eb33abbc35d97ca9dd18cd650ec6aede58e68 *alibi-engine/scanner/visual_styles.css
 
-# --- alibi-engine ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â attestation + reviewer docs ---
+# --- alibi-engine — attestation + reviewer docs ---
 bff6841af53a8911e62eec41aab01433fe21584563ffb7840c6c3c1c64068110 *alibi-engine/README.md
 eff15614f5f3eaf55b924834b0056fc16bc1e51cb0e3cc1385c2ce021560c19f *alibi-engine/SECURITY.md
 08cc5d577a2e8eafc5887c65b712c90746df4f47e4dfa8dec48af4d8436b06d6 *alibi-engine/LICENSE
 6387ebe0831d314bc5ee0ef1aee506a488e2fea905c4befbc730965d4fac1ae9 *alibi-engine/docs/for-reviewers.md
+
