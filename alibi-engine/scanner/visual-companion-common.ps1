@@ -34,7 +34,7 @@
 # CONSTANTS — verdict mapping, lane geometry, log-scale math, recency
 # ============================================================================
 
-$script:ALIBI_VERSION = '4.2.1'
+$script:ALIBI_VERSION = '4.3.0'
 
 $script:VERDICT_STATE = @{
     'CHEATS DETECTED'           = 'red'

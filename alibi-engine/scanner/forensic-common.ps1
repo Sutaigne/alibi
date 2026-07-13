@@ -359,7 +359,16 @@ $KnownGood = @(
     'corsair','steelseries','dell','hp','lenovo','asus','asustek','msi',
     'steam','epic','battle.net','riot','origin','ubisoft','rockstar',
     'github','vscode','code.exe','jetbrains','notion','postman','docker',
-    'python','node','npm','git','antigravity','claude','codex','uv.exe','blender'
+    'python','node','npm','git','antigravity','claude','codex','uv.exe','blender',
+    # v4.3 P0-2: common apps that install to %LOCALAPPDATA%/%APPDATA% by design.
+    # Without these, every legit Electron/Chromium app becomes a MEDIUM
+    # "user-writable, no allowlist match" (observed: Opera GX -> 16 MEDIUMs, 4070PC).
+    'opera','opera gx','brave','vivaldi','firefox','mozilla','tor browser',
+    'telegram','whatsapp','obs','streamlabs','epic games','epicgames',
+    'gog galaxy','ea desktop','ea app','playnite','overwolf',
+    'armoury crate','armourycrate','icue','synapse','g hub','lghub','ghub',
+    'wallpaper engine','1password','bitwarden','proton','nordvpn','expressvpn',
+    'zen browser','arc.exe','figma','obsidian','spotifylauncher'
 )
 
 # Driver publishers whose drivers are explicitly allowed (suppresses the
@@ -511,6 +520,40 @@ function Match-Allowlist {
     return $false
 }
 
+# ---------------------------------------------------------------------------
+# Authenticode trust (v4.3, P0-2)
+# ---------------------------------------------------------------------------
+# A hardcoded vendor allowlist can never enumerate every legitimate app that
+# installs to a user-writable path (browsers, Electron apps, launchers). The
+# durable signal is the code signature: a binary with a VALID Authenticode
+# chain from a real CA is not the profile of an injected cheat DLL dropped to
+# %APPDATA%. This is a fallback ONLY for the user-writable / no-keyword-match
+# branch; keyword hits (cheat/input/dual-use) are scored BEFORE we get here, so
+# a signed-but-branded binary is still caught. Results cached by path (the same
+# signed exe often spawns dozens of processes, e.g. Opera GX -> 16 PIDs).
+$Script:SignatureTrustCache = @{}
+function Test-TrustedSignature {
+    param([string]$Path)
+    if ([string]::IsNullOrWhiteSpace($Path)) { return $false }
+    # Strip arguments / quotes to recover the bare image path.
+    $img = $Path.Trim().Trim('"')
+    if ($img -match '^(.+?\.(exe|dll|sys))(\s|$|"|/)') { $img = $matches[1] }
+    $key = $img.ToLower()
+    if ($Script:SignatureTrustCache.ContainsKey($key)) { return $Script:SignatureTrustCache[$key] }
+    $trusted = $false
+    try {
+        if (Test-Path -LiteralPath $img -ErrorAction SilentlyContinue) {
+            $sig = Get-AuthenticodeSignature -LiteralPath $img -ErrorAction Stop
+            # 'Valid' = intact chain to a trusted root. Signer subject is recorded
+            # by the caller for transparency. We deliberately do NOT trust
+            # 'UnknownError'/'NotSigned'/'HashMismatch'.
+            if ($sig.Status -eq 'Valid' -and $sig.SignerCertificate) { $trusted = $true }
+        }
+    } catch {}
+    $Script:SignatureTrustCache[$key] = $trusted
+    return $trusted
+}
+
 function Classify-PathRisk {
     param([string]$Path)
     if ([string]::IsNullOrWhiteSpace($Path)) { return 'unknown' }
@@ -547,7 +590,13 @@ function Score-Item {
         if (Match-Allowlist "$Path $Name") {
             return @{ Score='CLEAN'; Kind='other'; Pattern=''; Reason='user-writable but known-good vendor' }
         }
-        return @{ Score='MEDIUM'; Kind='other'; Pattern=''; Reason='user-writable location, no allowlist match' }
+        # v4.3 P0-2: a valid Authenticode signature clears the user-writable
+        # MEDIUM. Demote to LOW (visible, not verdict-driving) rather than CLEAN
+        # so a reviewer can still see it ran.
+        if (Test-TrustedSignature $Path) {
+            return @{ Score='LOW'; Kind='other'; Pattern=''; Reason='user-writable but Authenticode-signed (valid chain)' }
+        }
+        return @{ Score='MEDIUM'; Kind='other'; Pattern=''; Reason='user-writable location, unsigned / no allowlist match' }
     }
     if ($bucket -eq 'unknown')  { return @{ Score='LOW';   Kind='other'; Pattern=''; Reason='image path not recorded' } }
     if ($bucket -eq 'typical')  { return @{ Score='LOW';   Kind='other'; Pattern=''; Reason='runs from Program Files' } }
@@ -609,6 +658,39 @@ $Script:DefaultPrunedDirNames = @(
     '.next', '.nuxt', '.cargo', '.rustup'
 )
 
+# ---------------------------------------------------------------------------
+# Self-immunity (v4.3, P0-1)
+# ---------------------------------------------------------------------------
+# alibi is a KEYWORD scanner whose own source, dev-intel corpus, and sample
+# reports contain every cheat brand string it hunts for (that is their job).
+# If a user downloads the GitHub source zip to \Downloads and runs a scan, the
+# content scanners walk straight into dev\intel\extract-known-tokens.ps1, match
+# 'aimbot', and return HIGH/cheat -> CHEATS DETECTED against alibi itself.
+# (Observed: 4070PC / lj031, 2026-07-11.) These guards make alibi ignore any
+# file that is part of an alibi kit/checkout, wherever it lives.
+$Script:AlibiSelfPathPatterns = @(
+    '[\\/]alibi-engine[\\/]',        # engine tree (built kit AND source checkout)
+    '[\\/]alibi[-_ ]?main',          # github source zip: alibi-main, "alibi-main (2)"
+    '[\\/]dev[\\/]intel[\\/]',       # cheat-intel corpus (token lists, feeds, pulses)
+    '[\\/]dev[\\/]scripts[\\/]'      # build / rename helpers
+)
+$Script:AlibiSelfFileNames = @(
+    'forensic-common.ps1','forensic-scan.ps1','console-rig-audit.ps1',
+    'generate-visual-companion.ps1','generate-visual-companion-console.ps1',
+    'visual-companion-common.ps1','extract-known-tokens.ps1',
+    'poll-feeds.py','api-intercept.py','known-tokens.txt','feeds.txt'
+)
+
+function Test-IsAlibiOwnPath {
+    # True if $Path belongs to an alibi kit/checkout and must never be scored.
+    param([string]$Path)
+    if ([string]::IsNullOrWhiteSpace($Path)) { return $false }
+    $p = $Path.ToLower()
+    foreach ($rx in $Script:AlibiSelfPathPatterns) { if ($p -match $rx) { return $true } }
+    if ($Script:AlibiSelfFileNames -contains [System.IO.Path]::GetFileName($p)) { return $true }
+    return $false
+}
+
 function Get-PrunedFiles {
     [CmdletBinding()]
     param(
@@ -647,6 +729,7 @@ function Get-PrunedFiles {
         try {
             foreach ($f in $dir.EnumerateFiles()) {
                 if ($extSet -and -not $extSet.ContainsKey($f.Extension.ToLower())) { continue }
+                if (Test-IsAlibiOwnPath $f.FullName) { continue }   # v4.3 P0-1: never score alibi's own files
                 [void]$results.Add($f)
                 if ($ResultCap -gt 0 -and $results.Count -ge $ResultCap) { return $results }
             }
@@ -657,6 +740,7 @@ function Get-PrunedFiles {
         try {
             foreach ($d in $dir.EnumerateDirectories()) {
                 if ($excludeSet.ContainsKey($d.Name.ToLower())) { continue }
+                if (Test-IsAlibiOwnPath $d.FullName) { continue }   # v4.3 P0-1: prune alibi kit/checkout subtrees
                 $stack.Push(@{ Dir = $d; Depth = $depth + 1 })
             }
         } catch {}
@@ -1005,21 +1089,23 @@ function Scan-Drivers {
         }
     } catch {}
 
-    # Hash drivers in non-standard locations (vulnerable drivers often get
-    # dropped to user-writable paths). Skip Windows\System32 entries - those
-    # are the OS's own drivers and not the BYOVD target.
+    # Hash EVERY driver with a readable path (v4.3 P0-3). The prior version
+    # skipped System32 to save time, but that left OS drivers matchable ONLY by
+    # filename against the LOLDrivers tag list - and that list contains legit OS
+    # names (afd.sys, KslD.sys/MpKslDrv, etc.) precisely because malware has
+    # masqueraded under them. Result: alibi flagged Windows itself as a
+    # vulnerable BYOVD driver. Hashing ~300 small .sys files is cheap and lets
+    # the hash gate below cryptographically clear the impersonation FPs.
     foreach ($d in $driverRows) {
         if (-not $d.FilePath -or -not (Test-Path $d.FilePath -ErrorAction SilentlyContinue)) { continue }
-        $bucket = Classify-PathRisk $d.FilePath
-        if ($bucket -in @('user-writable','unknown','typical')) {
-            try {
-                $hash = (Get-FileHash $d.FilePath -Algorithm SHA256 -ErrorAction Stop).Hash
-                $d.SHA256 = $hash.ToLower()
-            } catch {}
-        }
+        try {
+            $hash = (Get-FileHash $d.FilePath -Algorithm SHA256 -ErrorAction Stop).Hash
+            $d.SHA256 = $hash.ToLower()
+        } catch {}
     }
 
     # Score each driver against the existing rules + LOLDrivers (if loaded).
+    $seenUnsigned = @{}   # v4.3 P0-5: dedup identical unsigned-device findings
     foreach ($d in $driverRows) {
         $meta = @{
             DeviceName   = $d.DeviceName
@@ -1040,7 +1126,12 @@ function Scan-Drivers {
             }
             if ((-not $d.Manufacturer -or $d.Manufacturer -eq 'N/A') -and
                 $d.DeviceName -match '^(USB|HID|WUDF|Microsoft|Bluetooth)') { $allow = $true }
-            if (-not $allow) {
+            # v4.3 P0-5: dedup. One physical device (e.g. a LIGHTSPEED receiver)
+            # enumerates many endpoints and produced ~11 identical MEDIUMs. Key
+            # by DeviceName+FileName so a device is reported once.
+            $dedupKey = "$($d.DeviceName)|$($d.FileName)".ToLower()
+            if (-not $allow -and -not $seenUnsigned.ContainsKey($dedupKey)) {
+                $seenUnsigned[$dedupKey] = $true
                 Add-Finding 'Drivers' $d.DeviceName "UNSIGNED: $($d.DeviceName)" 'MEDIUM' 'dual-use' $meta
             }
         }
@@ -1050,8 +1141,16 @@ function Scan-Drivers {
 
         $lolHit = $null
 
-        # 3a: filename match (weaker - filenames can be spoofed).
-        if ($d.FileName) {
+        # 3a: SHA256 match first (v4.3 P0-3) - cryptographic confirmation is the
+        # strong signal and must win over a filename collision.
+        if ($d.SHA256 -and $LOLDb.HashIndex.ContainsKey($d.SHA256)) {
+            $lolHit = $LOLDb.HashIndex[$d.SHA256]
+            $lolHit['MatchedBy'] = 'SHA256'
+        }
+
+        # 3b: filename match (weaker - filenames can be spoofed, and legit OS
+        # driver names appear in the tag list due to malware masquerade).
+        if (-not $lolHit -and $d.FileName) {
             $fnKey = $d.FileName.ToLower()
             if ($LOLDb.FileIndex.ContainsKey($fnKey)) {
                 $lolHit = $LOLDb.FileIndex[$fnKey]
@@ -1059,15 +1158,29 @@ function Scan-Drivers {
             }
         }
 
-        # 3b: SHA256 match (stronger - cryptographic confirmation).
-        if (-not $lolHit -and $d.SHA256) {
-            if ($LOLDb.HashIndex.ContainsKey($d.SHA256)) {
-                $lolHit = $LOLDb.HashIndex[$d.SHA256]
-                $lolHit['MatchedBy'] = 'SHA256'
+        if (-not $lolHit) { continue }
+
+        # v4.3 P0-3: suppress filename-ONLY matches on Microsoft-signed drivers.
+        # The LOLDrivers entry for afd.sys / KslD.sys refers to a MALICIOUS
+        # impersonator with a different hash; a validly Microsoft-signed file of
+        # that name on this box is the genuine OS driver, not BYOVD. A real
+        # attacker's dropped driver of the same name would NOT carry a valid
+        # Microsoft signature, so it still fires. Hash matches are never
+        # suppressed.
+        if ($lolHit.MatchedBy -eq 'Filename') {
+            $sigOk = $false
+            try {
+                $sig = Get-AuthenticodeSignature -LiteralPath $d.FilePath -ErrorAction Stop
+                if ($sig.Status -eq 'Valid' -and $sig.SignerCertificate -and
+                    $sig.SignerCertificate.Subject -match 'Microsoft (Windows|Corporation)') { $sigOk = $true }
+            } catch {}
+            if ($sigOk) {
+                Add-Finding 'LOLDrivers' $d.FilePath `
+                    "Filename collides with a LOLDrivers entry but file is Microsoft-signed (not BYOVD): $($d.FileName)" `
+                    'INFO' 'other' ($meta + @{ LOLDrivers_Id = $lolHit.Id; LOLDrivers_MatchBy = 'Filename (suppressed: MS-signed)' })
+                continue
             }
         }
-
-        if (-not $lolHit) { continue }
 
         $lolMeta = $meta + @{
             LOLDrivers_Id       = $lolHit.Id
@@ -1114,6 +1227,7 @@ function Scan-Downloads {
     $dl = "$env:USERPROFILE\Downloads"
     if (-not (Test-Path $dl)) { return }
     Get-ChildItem $dl -Recurse -File -Depth 8 -ErrorAction SilentlyContinue | ForEach-Object {
+        if (Test-IsAlibiOwnPath $_.FullName) { return }   # v4.3 P0-1: alibi kit/checkout immunity
         $zone = Get-DownloadSourceUrl $_.FullName
         $meta = @{
             FileName = $_.Name; SizeBytes = $_.Length
@@ -1236,6 +1350,7 @@ function Scan-UserScriptContents {
             if ($f.Length -ge 10MB) { continue }
             if ($f.Name.ToLower() -in $excludeNames) { continue }
             if ($selfDir -and $f.DirectoryName.ToLower().StartsWith($selfDir)) { continue }
+            if (Test-IsAlibiOwnPath $f.FullName) { continue }   # v4.3 P0-1: alibi kit/checkout immunity
             [void]$scriptFiles.Add($f)
         }
     }
@@ -1383,10 +1498,14 @@ function Scan-ProcessModules {
             }
             $bucket = Classify-PathRisk $modPath
             if ($bucket -eq 'user-writable') {
-                if (-not (Match-Allowlist "$modPath $modName")) {
-                    Add-Finding 'ProcessModules' "$procName (PID $($p.Id))" "DLL loaded from user-writable path: $modName loaded into $procName" 'MEDIUM' 'dual-use' @{
+                # v4.3 P0-2: allowlist OR valid Authenticode clears it. A signed
+                # module (e.g. Opera GX's own opera_browser.dll in %LOCALAPPDATA%)
+                # is not an injected cheat DLL. Only unsigned, unlisted modules
+                # from user-writable paths remain MEDIUM.
+                if (-not (Match-Allowlist "$modPath $modName") -and -not (Test-TrustedSignature $modPath)) {
+                    Add-Finding 'ProcessModules' "$procName (PID $($p.Id))" "DLL loaded from user-writable path (unsigned): $modName loaded into $procName" 'MEDIUM' 'dual-use' @{
                         ProcessName=$procName; ProcessId=$p.Id; ModuleName=$modName; ModulePath=$modPath
-                        Reason='DLL loaded from user-writable location, not on known-good vendor allowlist - common pattern for injected cheat DLLs'
+                        Reason='Unsigned DLL loaded from user-writable location, not on known-good vendor allowlist - common pattern for injected cheat DLLs'
                     }
                 }
             }
@@ -1518,6 +1637,22 @@ function Scan-DLLInjectionTimestamps {
     Write-Host '  [*] DLL injection timestamps (Sysmon + Event Log + Prefetch)...' -ForegroundColor DarkGray
 
     $injectorPattern = ($DLLInjector_Names | ForEach-Object { [regex]::Escape($_) }) -join '|'
+
+    # v4.3 P0-4: the Application-log fallback (Source 3) below matches against
+    # whole event MESSAGE bodies, not filenames. The generic tokens 'inject' /
+    # 'injector' matched inside Windows Error Reporting crash text (e.g. a
+    # "Fault bucket ..." 1001 whose module list happens to contain 'inject'),
+    # producing 10 phantom MEDIUMs on 4070PC. For free-text matching we (a) drop
+    # the two generic tokens, (b) require a word-BOUNDED match, and (c) skip
+    # crash/WER providers entirely.
+    $strictInjectorNames = @($DLLInjector_Names | Where-Object { $_ -notin @('inject','injector') })
+    $injectorPatternStrict = '(?<![a-z0-9])(' +
+        (($strictInjectorNames | ForEach-Object { [regex]::Escape($_.ToLower()) }) -join '|') +
+        ')(?![a-z0-9])'
+    $werProviders = @(
+        'Windows Error Reporting','Application Error','.NET Runtime',
+        'Application Hang','Microsoft-Windows-WER-SystemErrorReporting'
+    )
     $found = [System.Collections.Generic.List[hashtable]]::new()
 
     # Time-window filter: align with recency-decay rule (no point pulling
@@ -1587,17 +1722,24 @@ function Scan-DLLInjectionTimestamps {
     } catch {}
 
     # Source 3: Application Event Log (generic fallback).
+    # v4.3 P0-4: skip WER/crash providers, use the word-bounded strict pattern,
+    # and record WHICH token matched (the old code truncated the message to 200
+    # chars, hiding the — usually spurious — reason).
     try {
         $appEvents = Get-WinEvent -FilterHashtable @{
             LogName   = 'Application'
             StartTime = $eventCutoff
         } -MaxEvents 1500 -ErrorAction Stop |
-            Where-Object { $_.Message -match "($injectorPattern)" }
+            Where-Object {
+                $_.ProviderName -notin $werProviders -and
+                $_.Message -and ($_.Message.ToLower() -match $injectorPatternStrict)
+            }
         foreach ($ev in $appEvents) {
+            $matchedTok = if ($ev.Message.ToLower() -match $injectorPatternStrict) { $matches[1] } else { '' }
             [void]$found.Add(@{
                 Source      = 'Application EventLog'
                 Timestamp   = $ev.TimeCreated.ToString('s')
-                ImageLoaded = "EventLog message match: $($ev.Message.Substring(0,[math]::Min(200,$ev.Message.Length)))"
+                ImageLoaded = "EventLog injector token '$matchedTok' in $($ev.ProviderName) event $($ev.Id)"
                 TargetProc  = ''
                 ProcessId   = ''
                 Hashes      = ''
