@@ -61,6 +61,15 @@ Every scan writes a self-contained `_visual.html` next to the `.txt` report — 
 
 Every scan is **read-only**. Nothing leaves your machine. Every script under [`alibi-engine/scanner/`](alibi-engine/scanner/) is plain text you can open and read. Search for `Invoke-Web` and you'll find exactly one result — the opt-in LOLDrivers fetch. Search for `Remove-Item` or `Set-Item` and you'll find none in the scan path.
 
+## Research ethics
+
+Alibi's detection list is built from public sources only.
+
+- **No purchases, no downloads.** No cheat was bought, downloaded or run to build Alibi.
+- **No bypassing.** No login, paywall or access control was circumvented.
+- **Vendor Discords:** a few were read in attended sessions to follow public update channels. Reading stopped at the paywall.
+- **Auditable:** every detection token sits in the plain-text scanner source, so anyone can check what Alibi looks for.
+
 ## Documentation
 
 | Doc | For |
