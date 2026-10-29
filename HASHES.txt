@@ -14,7 +14,7 @@
 db4d46fb823e8c133a9f6ce442f8adc8bde2535763a9511fca12b890341594c9 *alibi-engine/scanner/forensic-common.ps1
 9a4fe52d45e25a205ce4647cf2e963b9729ef964ad362c36449a0056391d1046 *alibi-engine/scanner/forensic-scan.ps1
 61183ed2e609b4ca57441268effcad88b000a356463e8d1c38001557aa65ea08 *alibi-engine/scanner/generate-visual-companion-console.ps1
-72e2bb1d4c8bb85ba606565d91e6efa16745edf670ceb40b1f6f0c13018fb1b8 *alibi-engine/scanner/generate-visual-companion.ps1
+d0a673ba6a833842f91e7052392a44fa890a89e4bbccd351248c50fdfdc3662b *alibi-engine/scanner/generate-visual-companion.ps1
 1557abd90ec39021c6ecfcfa80e12ff5e283e6988f1d6bd25102d17c49e47c83 *alibi-engine/scanner/visual-companion-common.ps1
 0b680b000ecc2b500bbde276aadac5a850a8dcbc11c8990f52a96e21a11b22a1 *alibi-engine/scanner/console-run-check.bat
 4eb22872d1f12906902ecada273417e120180716d42cede4dffcb48162375fe7 *alibi-engine/scanner/run-check.bat
@@ -28,7 +28,7 @@ f3e79c3acd09342608c7d37e78d04cad7577edf4bdae7d7bfc9e5908872c707a *alibi-engine/s
 7af488a7bce339a492b149cc724eb33abbc35d97ca9dd18cd650ec6aede58e68 *alibi-engine/scanner/visual_styles.css
 
 # --- alibi-engine — attestation + reviewer docs ---
-bff6841af53a8911e62eec41aab01433fe21584563ffb7840c6c3c1c64068110 *alibi-engine/README.md
+41fb74c2e3320d06467cddbdc4dc7d0b4967dd9d73b83a770e8ab55e79ed66a1 *alibi-engine/README.md
 eff15614f5f3eaf55b924834b0056fc16bc1e51cb0e3cc1385c2ce021560c19f *alibi-engine/SECURITY.md
 08cc5d577a2e8eafc5887c65b712c90746df4f47e4dfa8dec48af4d8436b06d6 *alibi-engine/LICENSE
 6387ebe0831d314bc5ee0ef1aee506a488e2fea905c4befbc730965d4fac1ae9 *alibi-engine/docs/for-reviewers.md

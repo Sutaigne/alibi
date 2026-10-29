@@ -10,7 +10,7 @@
     The previous v3.x cream/serif implementation lived directly in this
     file (~950 lines of embedded HTML). It was replaced in v4.2 by the
     shared renderer in visual-companion-common.ps1, eliminating the
-    keyword-array and HTML-template drift flagged in docs/handoff.md.
+    keyword-array and HTML-template drift between the two copies.
 
 .NOTES
     Author: Bread

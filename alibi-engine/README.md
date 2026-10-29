@@ -86,7 +86,7 @@ This kit's whole value is being readable by a reviewer who has no reason to trus
 
 ## Project history
 
-See [`docs/handoff.md`](https://github.com/Sutaigne/alibi/blob/main/alibi-engine/docs/handoff.md) for the full PowerShell-side history (v3.2 through v3.8, 2026-05-25), the design rationale for each scanner, the recency-decay architecture, and the dev workflow.
+See the [commit history](https://github.com/Sutaigne/alibi/commits/main) for the full change log, and [`docs/for-reviewers.md`](./docs/for-reviewers.md) for what each verdict means and what a `CLEAN` result does not rule out.
 
 See [`docs/design-handoff-2026-05/`](https://github.com/Sutaigne/alibi/tree/main/alibi-engine/docs/design-handoff-2026-05) for the visual design's source-of-truth bundle (reference HTMLs, design canvas, design tokens spec).
 

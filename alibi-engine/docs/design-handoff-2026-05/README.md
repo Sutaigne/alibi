@@ -177,7 +177,7 @@ body::before {
 Top of every page. Two lines, mono, ink-4.
 
 ```
-●  pc-check 3.8 · python · consolidated report           scan BREAD-PC · 2026-05-25T20:37:06 · read-only · no system state was modified
+●  pc-check 3.8 · python · consolidated report           scan EXAMPLE-PC · 2026-05-25T20:37:06 · read-only · no system state was modified
 ```
 
 The leading `●` is a pulsing dot, colored by verdict state:
