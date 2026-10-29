@@ -38,7 +38,12 @@ _test_*
 # Release build output (produced by scripts/build-release.ps1)
 dist/
 
-# Cheat-intel feed-watcher local state + generated scan outputs (dev/intel)
-dev/intel/feeds-state.json
-dev/intel/known-tokens.txt
-dev/intel/pulses/api-scan-*.json
+# Cheat-intel research tooling and pulse notes: kept locally, not published
+dev/intel/
+
+# Internal session/handoff notes: kept locally, not published
+alibi-engine/docs/NEXT_SESSION.md
+alibi-engine/docs/handoff.md
+alibi-engine/docs/memory-suggested.md
+alibi-engine/docs/HANDOFF-v4.3.md
+dev/HANDOFF-github-ship.md
