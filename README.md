@@ -41,17 +41,19 @@ Running both covers every scenario this PC could be involved in. If you only pla
 
 Every scan writes a self-contained `_visual.html` next to the `.txt` report — verdict banner, recent-findings breakdown, a named "why this verdict" list, a log-scale recency timeline, and a per-scanner category signal map. No external assets; it works offline.
 
-**🔴 PC — `CHEATS DETECTED`**
+*The three screenshots below are **synthetic examples**: fabricated design data for placeholder machines (`EXAMPLE-PC`, `GLASS-PC`), not scans of any real PC.*
 
-![Alibi PC report showing a red CHEATS DETECTED verdict with named findings, recency timeline, and category signal map](docs/screenshots/report-cheats-detected.png)
+**🔴 PC — `CHEATS DETECTED`** *(synthetic example)*
 
-**🟡 Console-rig — `CAPTURE STACK PRESENT`**
+![Synthetic example (fabricated data, not a real scan): Alibi PC report for placeholder host EXAMPLE-PC showing a red CHEATS DETECTED verdict with named findings, recency timeline, and category signal map](docs/screenshots/report-cheats-detected.png)
 
-![Alibi console-rig report showing an amber CAPTURE STACK PRESENT verdict, disclosed streamer/capture stack, and reviewer note](docs/screenshots/report-console-capture-stack.png)
+**🟡 Console-rig — `CAPTURE STACK PRESENT`** *(synthetic example)*
 
-**🟢 PC — `CLEAN`**
+![Synthetic example (fabricated data, not a real scan): Alibi console-rig report for placeholder host EXAMPLE-PC showing an amber CAPTURE STACK PRESENT verdict, disclosed streamer/capture stack, and reviewer note](docs/screenshots/report-console-capture-stack.png)
 
-![Alibi PC report showing a green CLEAN verdict with all 14 detector groups returning no matches](docs/screenshots/report-clean.png)
+**🟢 PC — `CLEAN`** *(synthetic example)*
+
+![Synthetic example (fabricated data, not a real scan): Alibi PC report for placeholder host GLASS-PC showing a green CLEAN verdict with all 14 detector groups returning no matches](docs/screenshots/report-clean.png)
 
 > **Live, interactive example reports** (full HTML, no download) are hosted at [**sutaigne.github.io/alibi**](https://sutaigne.github.io/alibi/) — synthetic data rendered in the report's real layout. The hosted examples may lag the newest release.
 
