@@ -1,6 +1,6 @@
 # Alibi
 
-**Someone thinks you're cheating. You know you're not. Alibi helps you prove it.**
+**Someone thinks you're cheating. You know you're not. Alibi gives you a record to show them.**
 
 You run one scan — right-click, wait a couple of minutes — and four files land on your Desktop: two plain-text reports and two visual HTML versions of the same thing. Send them to whoever asked: the tournament admin, the Discord mod, the lobby that called you out. That's the whole flow.
 
@@ -25,10 +25,10 @@ New here? Read [**`START HERE.txt`**](START%20HERE.txt) first.
 
 | Mode | Looks at your PC as… | Detects |
 |---|---|---|
-| **PC** | a PC gamer's machine | PC cheats, DMA artifacts, HWID spoofers |
+| **PC** | a PC gamer's machine | PC cheats, DMA build artifacts, HWID spoofers |
 | **Console-rig** | a PC wired into a console rig | capture-card software, vision aimbots, XIM/Cronus/ReaSnow adapters |
 
-Running both covers every scenario this PC could be involved in. If you only play one way, the other report will be `CLEAN` — that's expected. The relevant report is the one with findings.
+Running both covers the two ways this PC could be set up. If you only play one way, the other report will be `CLEAN` — that's expected. The relevant report is the one with findings.
 
 ## Verdict tiers
 
@@ -36,6 +36,16 @@ Running both covers every scenario this PC could be involved in. If you only pla
 |---|---|
 | PC | `CHEATS DETECTED` / `INPUT DEVICES DETECTED` / `UNSURE` / `CLEAN` |
 | Console-rig | `MITM CHEAT STACK DETECTED` / `CAPTURE STACK PRESENT` / `UNSURE` / `CLEAN` |
+
+## What a clean result does not show
+
+A `CLEAN` report is necessary, not sufficient. Read it as "nothing was found on this PC", not as proof that no one cheated.
+
+- **DMA cheats in use.** A hardware DMA cheat runs on a separate device and leaves no footprint on the gaming PC. No scan that runs on that PC can see it, and Alibi does not claim to. It flags DMA *build* artifacts only (`pcileech` outputs, FPGA build folders, branded hardware names). Someone who buys a finished DMA card and never builds firmware on this PC will produce no DMA finding.
+- **Input devices paired somewhere else,** and machines that were professionally cleaned.
+- **Where it is strong:** software cheats that run on the PC itself. That is the use it was built and tested for.
+
+The full list is in the [reviewer guide](alibi-engine/docs/for-reviewers.md) and in every report's "Known limitations" section.
 
 ## What it looks like
 
