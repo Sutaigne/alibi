@@ -526,6 +526,9 @@ $script:Capture_Keywords = @(
     'scptoolkit','scp toolkit','scp-toolkit','ds4windows','ds4 windows'
 )
 
+# v4.3 P0-2: kept in sync with $KnownGood in forensic-common.ps1. The HTML
+# companion re-scores processes/services independently, so this list MUST match
+# the canonical engine or the .txt and .html reports disagree on the verdict.
 $script:KnownGood = @(
     'microsoft','windows','onedrive','teams','office','edgewebview','msedge',
     'google','chrome','update','slack','discord','zoom','signal','spotify',
@@ -533,7 +536,13 @@ $script:KnownGood = @(
     'corsair','steelseries','dell','hp','lenovo','asus','asustek','msi',
     'steam','epic','battle.net','riot','origin','ubisoft','rockstar',
     'github','vscode','code.exe','jetbrains','notion','postman','docker',
-    'python','node','npm','git','antigravity'
+    'python','node','npm','git','antigravity','claude','codex','uv.exe','blender',
+    'ollama','lm studio','lmstudio','opera','opera gx','brave','vivaldi','firefox',
+    'mozilla','tor browser','telegram','whatsapp','obs','streamlabs','epic games',
+    'epicgames','gog galaxy','ea desktop','ea app','playnite','overwolf',
+    'armoury crate','armourycrate','icue','synapse','g hub','lghub','ghub',
+    'wallpaper engine','1password','bitwarden','proton','nordvpn','expressvpn',
+    'zen browser','arc.exe','figma','obsidian'
 )
 
 function Match-Keyword {
@@ -554,6 +563,28 @@ function Match-Allowlist {
         if ($lc -match [regex]::Escape($g)) { return $true }
     }
     return $false
+}
+
+# v4.3 P0-2: mirror of Test-TrustedSignature from forensic-common.ps1. A valid
+# Authenticode chain clears a user-writable binary the allowlist doesn't name.
+$script:SignatureTrustCache = @{}
+function Test-TrustedSignature {
+    param([string]$Path)
+    if ([string]::IsNullOrWhiteSpace($Path)) { return $false }
+    $img = $Path.Trim().Trim('"')
+    if ($img -match '^(.+?\.(exe|dll|sys))(\s|$|"|/)') { $img = $matches[1] }
+    $key = $img.ToLower()
+    if ($script:SignatureTrustCache.ContainsKey($key)) { return $script:SignatureTrustCache[$key] }
+    $trusted = $false
+    try {
+        if ((Get-Command Get-AuthenticodeSignature -ErrorAction SilentlyContinue) -and
+            (Test-Path -LiteralPath $img -ErrorAction SilentlyContinue)) {
+            $sig = Get-AuthenticodeSignature -LiteralPath $img -ErrorAction Stop
+            if ($sig.Status -eq 'Valid' -and $sig.SignerCertificate) { $trusted = $true }
+        }
+    } catch {}
+    $script:SignatureTrustCache[$key] = $trusted
+    return $trusted
 }
 
 function Classify-PathRisk {
@@ -601,7 +632,11 @@ function Score-Item {
         if (Match-Allowlist "$Path $Name") {
             return @{ Score='CLEAN'; Reason='user-writable location but known-good vendor'; Pattern=''; Kind='other' }
         }
-        return @{ Score='MEDIUM'; Reason='runs from user-writable location, no allowlist match'; Pattern=''; Kind='other' }
+        # v4.3 P0-2: a valid Authenticode signature clears the user-writable MEDIUM.
+        if (Test-TrustedSignature $Path) {
+            return @{ Score='LOW'; Reason='user-writable but Authenticode-signed (valid chain)'; Pattern=''; Kind='other' }
+        }
+        return @{ Score='MEDIUM'; Reason='runs from user-writable location, unsigned / no allowlist match'; Pattern=''; Kind='other' }
     }
     if ($bucket -eq 'unknown') { return @{ Score='LOW'; Reason='image path not recorded or non-standard'; Pattern=''; Kind='other' } }
     if ($bucket -eq 'typical') { return @{ Score='LOW'; Reason='runs from Program Files or similar'; Pattern=''; Kind='other' } }
@@ -670,18 +705,18 @@ function Render-Verdict {
     if (-not $segs) { $segs = '<span class="b-info" style="flex:1; opacity:0.3"></span>' }
 
     $readoutRows = (
-        "<span class=`"dot hi`"></span><span class=`"l`">HIGH</span><span class=`"n`">$($sevCount.HIGH)</span><span class=`"note`">verdict-driving</span>" +
-        "<span class=`"dot md`"></span><span class=`"l`">MEDIUM</span><span class=`"n`">$($sevCount.MEDIUM)</span><span class=`"note`">dual-use signals</span>" +
-        "<span class=`"dot wn`"></span><span class=`"l`">WARN</span><span class=`"n`">$($sevCount.WARN)</span><span class=`"note`">access denied</span>" +
-        "<span class=`"dot info`"></span><span class=`"l`">INFO</span><span class=`"n`">$($sevCount.INFO)</span><span class=`"note`">scan summary</span>"
+        "<span class=`"dot hi`"></span><span class=`"l`">HIGH</span><span class=`"n`">$($sevCount.HIGH)</span><span class=`"note`">this set your result</span>" +
+        "<span class=`"dot md`"></span><span class=`"l`">MEDIUM</span><span class=`"n`">$($sevCount.MEDIUM)</span><span class=`"note`">worth a look, usually fine</span>" +
+        "<span class=`"dot wn`"></span><span class=`"l`">WARN</span><span class=`"n`">$($sevCount.WARN)</span><span class=`"note`">couldn't check (needs admin)</span>" +
+        "<span class=`"dot info`"></span><span class=`"l`">INFO</span><span class=`"n`">$($sevCount.INFO)</span><span class=`"note`">background info</span>"
     )
 
     $archivedCount = $ArchivedFindings.Count
     $readoutFoot = (
-        "<span>cheat-kind&nbsp;<b>$($kindCount.cheat)</b></span>" +
-        "<span>input-kind&nbsp;<b>$($kindCount.input)</b></span>" +
-        "<span>dual-use&nbsp;<b>$($kindCount['dual-use'])</b></span>" +
-        "<span>archived&nbsp;<b>$archivedCount</b> <span style=`"color:var(--ink-5)`">(off-verdict)</span></span>"
+        "<span>cheats&nbsp;<b>$($kindCount.cheat)</b></span>" +
+        "<span>input devices&nbsp;<b>$($kindCount.input)</b></span>" +
+        "<span>grey-area&nbsp;<b>$($kindCount['dual-use'])</b></span>" +
+        "<span>old, ignored&nbsp;<b>$archivedCount</b></span>"
     )
 
     $readoutClass = 'readout'
@@ -1038,7 +1073,7 @@ function Render-Timeline {
     $archiveLabel = if ($archiveCount -gt 0) { "archive &middot; $archiveCount" } else { 'archive &middot; &mdash; none &mdash;' }
 
     $hotClass = if ($s7 -gt 0) { 'tl-stat hot' } else { 'tl-stat' }
-    $tlH = "<h3 class=`"tl-h`">Log-scale recency &middot; <span class=`"accent`">$($RecentFindings.Count) recent</span> + <span style=`"color: var(--ink-4)`">$($ArchivedFindings.Count) archived</span> findings</h3>"
+    $tlH = "<h3 class=`"tl-h`">Newest on the right &middot; <span class=`"accent`">$($RecentFindings.Count) recent</span> + <span style=`"color: var(--ink-4)`">$($ArchivedFindings.Count) older</span> findings</h3>"
 
     $dx = FmtCoord $densityX
     $dw = FmtCoord $densityW
