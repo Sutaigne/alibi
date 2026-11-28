@@ -8,7 +8,7 @@
   Run:  pwsh -File alibi-engine/tests/p0-regression.Tests.ps1
   (Pure-logic only — no Windows cmdlets invoked, so this runs on PS7/Linux CI too.)
 
-  Verified passing on PowerShell 7.4.6 at authoring time (14/14).
+  Verified passing on PowerShell 7.4.6 at authoring time (29/29).
 #>
 $ErrorActionPreference = 'Stop'
 $engine = Join-Path $PSScriptRoot '..\scanner\forensic-common.ps1'
@@ -41,6 +41,28 @@ Check 'Program Files -> typical'        ((Classify-PathRisk 'C:\Program Files\x\
 Write-Host '== Match-Allowlist (P0-2 allowlist expansion) =='
 Check 'opera now allowlisted'           ([bool](Match-Allowlist 'C:\Users\lj031\AppData\Local\Programs\Opera GX\opera.exe opera.exe'))
 Check 'random appdata NOT allowlisted'  (-not (Match-Allowlist 'C:\Users\x\AppData\Local\Temp\qwzx.exe qwzx.exe'))
+
+Write-Host '== HWID identifier read (class query alone is not a finding) =='
+$benign = '$b = Get-CimInstance Win32_BaseBoard; $bi = Get-CimInstance Win32_BIOS' + "`n" + '$res = "$($b.Manufacturer) $($b.Product) | BIOS: $($bi.SMBIOSBIOSVersion)"'
+Check 'benign hardware-audit script -> no HWID hit'   ($null -eq (Test-HwidIdentifierRead $benign))
+Check 'benign script no longer matches HighRisk list' ($null -eq (Match-Keyword $benign $ScriptContent_HighRisk))
+Check 'CIM BaseBoard .SerialNumber -> hit'            ([bool](Test-HwidIdentifierRead '(Get-CimInstance Win32_BaseBoard).SerialNumber'))
+Check 'WMI DiskDrive | Select SerialNumber -> hit'    ([bool](Test-HwidIdentifierRead 'Get-WmiObject Win32_DiskDrive | Select-Object Model, SerialNumber'))
+Check 'CIM -ClassName CSProduct | select UUID -> hit' ([bool](Test-HwidIdentifierRead 'Get-CimInstance -ClassName Win32_ComputerSystemProduct | select UUID'))
+Check 'gwmi alias win32_bios | % serialnumber -> hit' ([bool](Test-HwidIdentifierRead 'gwmi win32_bios | % serialnumber'))
+Check 'wmic baseboard get serialnumber still HighRisk' ([bool](Match-Keyword 'wmic baseboard get serialnumber' $ScriptContent_HighRisk))
+Check 'serialnumber without hardware class -> no hit' ($null -eq (Test-HwidIdentifierRead '$cert.SerialNumber'))
+
+Write-Host '== .NET single-file bundle extraction (signed-app FP) =='
+$codProc = 'C:\Users\brads\Downloads\COD_SecureAttestationWizard (1)\CODSecureAttestationWizard.exe'
+$codMod  = 'C:\Users\brads\AppData\Local\Temp\.net\CODSecureAttestationWizard\2dNrptOeSzYT\System.Linq.dll'
+Check 'COD bundle module -> true'                 (Test-DotNetBundleModule $codMod $codProc)
+Check 'mixed case + subfolder below id -> true'   (Test-DotNetBundleModule 'c:\users\brads\appdata\local\temp\.NET\codsecureattestationwizard\2dNrptOeSzYT\runtimes\win-x64\native\x.dll' $codProc)
+Check 'other app .net folder -> false'            (-not (Test-DotNetBundleModule 'C:\Users\b\AppData\Local\Temp\.net\OtherApp\abc\x.dll' $codProc))
+Check 'name-prefix lookalike (...WizardX) -> false' (-not (Test-DotNetBundleModule 'C:\Users\b\AppData\Local\Temp\.net\CODSecureAttestationWizardX\abc\x.dll' $codProc))
+Check 'no id folder -> false'                     (-not (Test-DotNetBundleModule 'C:\Users\b\AppData\Local\Temp\.net\CODSecureAttestationWizard\x.dll' $codProc))
+Check 'plain Temp dll -> false'                   (-not (Test-DotNetBundleModule 'C:\Users\b\AppData\Local\Temp\evil.dll' $codProc))
+Check 'empty ProcessPath -> false'                (-not (Test-DotNetBundleModule $codMod ''))
 
 Write-Host ''
 Write-Host ("RESULT: {0} passed, {1} failed" -f $pass, $fail)

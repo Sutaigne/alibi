@@ -141,8 +141,8 @@ $ScriptContent_HighRisk = @(
     # HWID query patterns
     'wmic csproduct get uuid','wmic baseboard get serialnumber',
     'wmic diskdrive get serialnumber','wmic bios get serialnumber',
-    'get-wmiobject win32_baseboard','get-wmiobject win32_diskdrive',
-    'get-ciminstance win32_baseboard',
+    # v4.3.x: bare class queries (Get-CimInstance Win32_BaseBoard etc.) were removed - benign
+    # hardware-audit scripts use them. Identifier reads are caught by Test-HwidIdentifierRead.
     # Encoded / remote-execution patterns
     'powershell -enc ','powershell -encodedcommand','powershell.exe -enc ',
     'iex(new-object net.webclient','iex (new-object net.webclient',
@@ -519,6 +519,19 @@ function Match-Keyword {
     return $null
 }
 
+function Test-HwidIdentifierRead {
+    # v4.3.x: querying a hardware class is not the HWID signal; reading its
+    # serial/UUID is. Returns a short hit string or $null. Pure (no cmdlets).
+    param([string]$Text)
+    if ([string]::IsNullOrWhiteSpace($Text)) { return $null }
+    $lc = $Text.ToLower()
+    $q = [regex]::Match($lc, '(?<![a-z0-9_-])(get-ciminstance|get-wmiobject|gcim|gwmi)(?![a-z0-9_-])[^\r\n;|]*?(?<![a-z0-9_])(win32_baseboard|win32_diskdrive|win32_computersystemproduct|win32_bios|win32_physicalmedia)(?![a-z0-9_])')
+    if (-not $q.Success) { return $null }
+    $i = [regex]::Match($lc, '(?<![a-z0-9_])(serialnumber|uuid|identifyingnumber|processorid)(?![a-z0-9_])')
+    if (-not $i.Success) { return $null }
+    return ('{0} {1} + {2}' -f $q.Groups[1].Value, $q.Groups[2].Value, $i.Groups[1].Value)
+}
+
 function Match-Allowlist {
     param([string]$Text)
     if ([string]::IsNullOrWhiteSpace($Text)) { return $false }
@@ -561,6 +574,42 @@ function Test-TrustedSignature {
     } catch {}
     $Script:SignatureTrustCache[$key] = $trusted
     return $trusted
+}
+
+# v4.3.x: .NET single-file apps extract their bundled assemblies to
+# %TEMP%\.net\<AppName>\<random-id>\. Pure path logic (no Windows cmdlets).
+function Test-DotNetBundleModule {
+    param([string]$ModulePath, [string]$ProcessPath)
+    if ([string]::IsNullOrWhiteSpace($ModulePath) -or [string]::IsNullOrWhiteSpace($ProcessPath)) { return $false }
+    $proc = $ProcessPath.Trim().Trim('"')
+    if ($proc -notmatch '\.exe$') { return $false }
+    $base = [System.IO.Path]::GetFileNameWithoutExtension($proc.Replace('/', '\'))
+    if ([string]::IsNullOrWhiteSpace($base)) { return $false }
+    $mod = $ModulePath.Trim().Trim('"')
+    return [bool]($mod -match ('(?i)\\\.net\\' + [regex]::Escape($base) + '\\[^\\]+\\.+\.dll$'))
+}
+
+# Signer display name (CN) of a signed file; cached by lowercased path. '' on any failure.
+$Script:SignerNameCache = @{}
+function Get-SignerName {
+    param([string]$Path)
+    if ([string]::IsNullOrWhiteSpace($Path)) { return '' }
+    $img = $Path.Trim().Trim('"')
+    $key = $img.ToLower()
+    if ($Script:SignerNameCache.ContainsKey($key)) { return $Script:SignerNameCache[$key] }
+    $name = ''
+    try {
+        $sig = Get-AuthenticodeSignature -LiteralPath $img -ErrorAction Stop
+        if ($sig.SignerCertificate -and $sig.SignerCertificate.Subject) {
+            $subj = $sig.SignerCertificate.Subject
+            if ($subj -match '(?:^|,\s*)CN=(?:"([^"]+)"|([^,]+))') {
+                $name = if ($matches[1]) { $matches[1] } else { $matches[2] }
+                $name = $name.Trim()
+            } else { $name = $subj }
+        }
+    } catch { $name = '' }
+    $Script:SignerNameCache[$key] = $name
+    return $name
 }
 
 function Classify-PathRisk {
@@ -1412,6 +1461,12 @@ function Scan-UserScriptContents {
                 Add-Finding 'UserScripts' $f.FullName "[$hit] $rel - high-risk command pattern inside script" 'HIGH' 'cheat' $meta
                 continue
             }
+            $hit = Test-HwidIdentifierRead $content
+            if ($hit) {
+                $meta = $baseMeta.Clone(); $meta['Pattern'] = $hit; $meta['MatchKind'] = 'HWID identifier read in script'
+                Add-Finding 'UserScripts' $f.FullName "[$hit] $rel - script reads hardware serial / UUID (HWID harvest pattern)" 'HIGH' 'cheat' $meta
+                continue
+            }
             $hit = Match-Keyword $content $Keywords_MouseMacro
             if ($hit) {
                 $meta = $baseMeta.Clone(); $meta['Pattern'] = $hit; $meta['MatchKind'] = 'mouse-macro / anti-recoil script'
@@ -1483,8 +1538,9 @@ function Scan-ProcessModules {
         try { $mods = $p.Modules } catch { continue }
         if (-not $mods -or $mods.Count -eq 0) { continue }
         $modList = if ($mods.Count -gt 300) { $mods | Select-Object -First 300 } else { $mods }
+        $bundleCount = 0
         foreach ($m in $modList) {
-            if ($totalScanned -ge $globalCap) { break proc }
+            if ($totalScanned -ge $globalCap) { break }
             $modPath = ''
             $modName = ''
             try { $modPath = $m.FileName; $modName = $m.ModuleName } catch { continue }
@@ -1511,12 +1567,26 @@ function Scan-ProcessModules {
                 # module (e.g. Opera GX's own opera_browser.dll in %LOCALAPPDATA%)
                 # is not an injected cheat DLL. Only unsigned, unlisted modules
                 # from user-writable paths remain MEDIUM.
+                # v4.3.x: modules from a signed .NET single-file app's own extraction
+                # dir (%TEMP%\.net\<App>\<id>\) are unsigned by design; summarized
+                # in ONE INFO finding below. Residual risk: a DLL planted inside that
+                # folder is absorbed into the count (keyword checks above still apply).
+                if ((Test-DotNetBundleModule $modPath $p.Path) -and (Test-TrustedSignature $p.Path)) {
+                    $bundleCount++
+                    continue
+                }
                 if (-not (Match-Allowlist "$modPath $modName") -and -not (Test-TrustedSignature $modPath)) {
                     Add-Finding 'ProcessModules' "$procName (PID $($p.Id))" "DLL loaded from user-writable path (unsigned): $modName loaded into $procName" 'MEDIUM' 'dual-use' @{
                         ProcessName=$procName; ProcessId=$p.Id; ModuleName=$modName; ModulePath=$modPath
                         Reason='Unsigned DLL loaded from user-writable location, not on known-good vendor allowlist - common pattern for injected cheat DLLs'
                     }
                 }
+            }
+        }
+        if ($bundleCount -gt 0) {
+            $signer = Get-SignerName $p.Path
+            Add-Finding 'ProcessModules' "$procName (PID $($p.Id))" "$bundleCount modules from $procName's .NET single-file bundle extraction - host exe is Authenticode-signed ($signer)" 'INFO' 'other' @{
+                ProcessName=$procName; ProcessId=$p.Id; ProcessPath=$p.Path; BundleModuleCount=$bundleCount; Signer=$signer
             }
         }
     }
