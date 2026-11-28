@@ -91,7 +91,7 @@ $Keywords_MouseMacro  = $ScriptContent_MouseMacro
 # scan look like the first one restarting. Only clear when run standalone.
 if (-not $env:ALIBI_LAUNCHER) { Clear-Host }
 Write-Host ''
-Write-Host '  Alibi v4.3.0 (PC mode)' -ForegroundColor Cyan
+Write-Host '  Alibi v4.3.2 (PC mode)' -ForegroundColor Cyan
 Write-Host '  =======================' -ForegroundColor Cyan
 Write-Host ''
 Write-Host "  Host:   $env:COMPUTERNAME"
@@ -239,7 +239,7 @@ switch ($verdict) {
         $lines.Add('  - The scan report is the only data source.')
         $lines.Add('')
         $lines.Add('Context for interpretation:')
-        $lines.Add('  - This log was produced by Alibi v4.3.0, a read-only forensic')
+        $lines.Add('  - This log was produced by Alibi v4.3.2, a read-only forensic')
         $lines.Add('    scan that matches Windows artifact data against a research-confirmed')
         $lines.Add('    keyword database of cheat software, HWID spoofers, DMA-cheat artifacts,')
         $lines.Add('    and commercial input devices (XIM, Cronus, ReaSnow, etc.).')
@@ -295,7 +295,7 @@ $lines.Add('================================================================')
 $lines.Add('')
 
 # Standard report body
-$bannerTitle = 'ALIBI v4.3.0 - CONSOLIDATED REPORT'
+$bannerTitle = 'ALIBI v4.3.2 - CONSOLIDATED REPORT'
 $lines.Add('================================================================')
 $lines.Add("  $bannerTitle")
     $lines.Add('================================================================')
